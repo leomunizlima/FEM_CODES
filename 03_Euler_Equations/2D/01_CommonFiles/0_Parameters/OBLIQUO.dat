@@ -1,0 +1,31 @@
+Exp1CNMAC	:Experiments
+OBLIQUO	:Problem title
+1e-8	:Solver tolerance
+1e-2	:correction tolerance
+1e-3	:time integration tolerance
+1e-8	:Stabilization coefficient tolerance
+1000	:Maximum number of solver iterations
+30	:Number of vectors in krylov basis
+GMRES	:Solver
+NOT	:Preconditioner(ILUp, BlockDiag, Diag or NOT)
+NOT	:Reordering (Spectral, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
+Predictor1	:Time integration method (Predictor1, Predictor1_BDF, Predictor1_TRBDF2, Predictor2, Predictor2_BDF, or Predictor2_TRBDF2)
+NO	:Stop at steady state 
+0.5	:Alpha
+1e-2	:step time
+3.0	:final time
+NO	:Dimensionless (YES or NO)
+1.0	:Mach of reference
+3	:number of multicorrection
+ITERATION	:stop multicorrection(NORM or ITERATION)
+EBE	:Matrix vector product scheme
+SUPG	:Stabilization form
+YZBeta	:Operator captures
+1.0	:invY[0]=1/U1
+1.015426612	:invY[1]=1/U2
+-5.758770505	:invY[2]=1/U3
+1.056607762	:invY[3]=1/U4
+3759	:number of nodes
+7292	:number of elements
+9	:number of nodes
+8	:number of elements

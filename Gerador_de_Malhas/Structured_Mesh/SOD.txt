@@ -1,0 +1,12 @@
+direita	:inclinacao da malha(direita ou esquerda)
+400	:numero de subintervalos na direcao x
+1	:numero de subintervalos na direcao y
+2	:numero de  na direcao x que cria o dominio
+2	:numero de nos na direcao y que cria o dominio
+4	:numero de nos que compoem do dominio (total do produto cartesiano da direcao x pela y)
+0.0	0.0	:x1 y1
+1.0	0.0	:x2 y2
+1.0	0.0025	:x3 y3 (dividir 1.0/(numero de subintervalos na direcao x))
+0.0	0.0025	:x4 y4 (dividir 1.0/(numero de subintervalos na direcao x))
+
+
