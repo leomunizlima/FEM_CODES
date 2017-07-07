@@ -32,6 +32,7 @@ set_h_Shock.c \
 setStabilizationForm.c \
 setSolver.c \
 setPreconditioner.c \
+setScaling.c \
 setProblem.c \
 setMatrixVectorProductType.c \
 setzeros.c \
