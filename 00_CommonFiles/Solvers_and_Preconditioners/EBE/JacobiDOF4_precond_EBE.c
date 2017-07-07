@@ -4,7 +4,7 @@
  * D * p = z
  * z out
 */
-int JacobiDOF4_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, double *p, double *z) 
+int JacobiDOF4_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, double *p, double *z)
 {
 	int I;
 	int lm0, lm1, lm2, lm3, lm4, lm5, lm6, lm7, lm8, lm9, lm10, lm11; //auxiliar
@@ -75,9 +75,9 @@ int JacobiDOF4_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixDa
 		z[lm9] += z9;
 		z[lm10] += z10;
 		z[lm11] += z11;
-
-		z[neq] = 0.0;
 	}
+
+	z[neq] = 0.0;
 
   return 0;
 }

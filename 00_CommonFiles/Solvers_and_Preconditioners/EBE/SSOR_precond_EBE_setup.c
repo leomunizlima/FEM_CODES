@@ -8,16 +8,16 @@ int SSOR_precond_EBE_setup (ParametersType *Parameters, MatrixDataType *MatrixDa
 	int nel = Parameters->nel;
 
 	if (tag==1){
-		MatrixData->invoneaux = mycalloc("invDeaux of 'SGS_precond_EBE_setup'",NNOEL*nel,sizeof(double));
-		MatrixData->invone = mycalloc("invDe of 'SGS_precond_EBE_setup'",nel,sizeof(double*));
+		MatrixData->invDeaux = mycalloc("invDeaux of 'SGS_precond_EBE_setup'",NNOEL*nel,sizeof(double));
+		MatrixData->invDe = mycalloc("invDe of 'SGS_precond_EBE_setup'",nel,sizeof(double*));
 		for (I=0; I<nel; I++)
-			MatrixData->invone[I] = &(MatrixData->invoneaux[NNOEL*I]);
+			MatrixData->invDe[I] = &(MatrixData->invDeaux[NNOEL*I]);
 	}
 
 	for (I=0; I<nel; I++){
-		MatrixData->invone[I][0] = 1.0/(1.0 + MatrixData->A[I][0]);
-		MatrixData->invone[I][1] = 1.0/(1.0 + MatrixData->A[I][4]);
-		MatrixData->invone[I][2] = 1.0/(1.0 + MatrixData->A[I][8]);
+		MatrixData->invDe[I][0] = 1.0/(1.0 + MatrixData->A[I][0]);
+		MatrixData->invDe[I][1] = 1.0/(1.0 + MatrixData->A[I][4]);
+		MatrixData->invDe[I][2] = 1.0/(1.0 + MatrixData->A[I][8]);
 	}
 
 	/* F preconditioning */
@@ -34,5 +34,3 @@ int SSOR_precond_EBE_setup (ParametersType *Parameters, MatrixDataType *MatrixDa
 
 	return 0;
 }
-
-

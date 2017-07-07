@@ -16,7 +16,7 @@ int SSOR_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 	int neq = Parameters->neq; //number of equations
 	int **lm = FemStructs->lm; //array LM
 	double **A = MatrixData->A; //matrix data
-	double **inv = MatrixData->invone; //1.0 / (De + 1.0)
+	double **inv = MatrixData->invDe; //1.0 / (De + 1.0)
 
 	double omega;
 	omega = atof(&(Parameters->Preconditioner[3])); // In SORw, w is the weight coefficient
@@ -27,7 +27,7 @@ int SSOR_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 	z[neq] = 0;
 
 	// OPTION 1: (D + wU) (D +wL)
-	
+
 	for (I = 0; I < nel; I++){
 		lm0 = lm[I][0];
 	 	lm1 = lm[I][1];
@@ -52,8 +52,8 @@ int SSOR_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 		z[lm2] += z2;
 
 		z[neq] = 0.0;
-	}
 
+	}
 
 	// OPTION 2: (D + wU) D^{-1} (D +wL)
 	/*
@@ -86,8 +86,8 @@ int SSOR_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 		z[lm1] += z1;
 		z[lm2] += z2;
 
-		z[neq] = 0.0;
 	}
+	z[neq] = 0.0;
 	*/
 
 	return 0;

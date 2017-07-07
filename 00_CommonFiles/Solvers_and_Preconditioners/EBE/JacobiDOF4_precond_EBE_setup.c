@@ -34,18 +34,18 @@ int JacobiDOF4_precond_EBE_setup (ParametersType *Parameters, MatrixDataType *Ma
 		MatrixData->invDe[I][0] = 1.0/(1.0+MatrixData->A[I][0]);
 		MatrixData->invDe[I][1] = 1.0/(1.0+MatrixData->A[I][13]);
 		MatrixData->invDe[I][2] = 1.0/(1.0+MatrixData->A[I][26]);
-    	MatrixData->invDe[I][3] = 1.0/(1.0+MatrixData->A[I][39]);
+    MatrixData->invDe[I][3] = 1.0/(1.0+MatrixData->A[I][39]);
 
-    	MatrixData->invDe[I][4] = 1.0/(1.0+MatrixData->A[I][52]);
+    MatrixData->invDe[I][4] = 1.0/(1.0+MatrixData->A[I][52]);
 		MatrixData->invDe[I][5] = 1.0/(1.0+MatrixData->A[I][65]);
 		MatrixData->invDe[I][6] = 1.0/(1.0+MatrixData->A[I][78]);
-    	MatrixData->invDe[I][7] = 1.0/(1.0+MatrixData->A[I][91]);
+    MatrixData->invDe[I][7] = 1.0/(1.0+MatrixData->A[I][91]);
 
-    	MatrixData->invDe[I][8] = 1.0/(1.0+MatrixData->A[I][104]);
+    MatrixData->invDe[I][8] = 1.0/(1.0+MatrixData->A[I][104]);
 		MatrixData->invDe[I][9] = 1.0/(1.0+MatrixData->A[I][117]);
 		MatrixData->invDe[I][10] = 1.0/(1.0+MatrixData->A[I][130]);
-    	MatrixData->invDe[I][11] = 1.0/(1.0+MatrixData->A[I][143]);
-		 */
+    MatrixData->invDe[I][11] = 1.0/(1.0+MatrixData->A[I][143]);
+		*/
 	}
 
 	/* F preconditioning */

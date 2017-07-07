@@ -15,9 +15,15 @@ int Jacobi_precond_EBE_setup (ParametersType *Parameters, MatrixDataType *Matrix
 	}
 
 	for (I=0; I<nel; I++){
-		MatrixData->invDe[I][0] = 1.0/(1.0+MatrixData->A[I][0]);
-		MatrixData->invDe[I][1] = 1.0/(1.0+MatrixData->A[I][4]);
-		MatrixData->invDe[I][2] = 1.0/(1.0+MatrixData->A[I][8]);
+		MatrixData->invDe[I][0] = 1.0 / (MatrixData->A[I][0]);
+		MatrixData->invDe[I][1] = 1.0 / (MatrixData->A[I][4]);
+		MatrixData->invDe[I][2] = 1.0 / (MatrixData->A[I][8]);
+
+		/*
+		MatrixData->invDe[I][0] = 1.0 / (1.0 + MatrixData->A[I][0]);
+		MatrixData->invDe[I][1] = 1.0 / (1.0 + MatrixData->A[I][4]);
+		MatrixData->invDe[I][2] = 1.0 / (1.0 + MatrixData->A[I][8]);
+		*/
 	}
 
 	/* F preconditioning */
