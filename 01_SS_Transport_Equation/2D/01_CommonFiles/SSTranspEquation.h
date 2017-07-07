@@ -102,6 +102,8 @@ typedef struct
 	int (*mv)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond_setup)(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+	int (*scaling)(ParametersType *, MatrixDataType *, FemStructsType *);
+	int (*unscaling)(ParametersType *, MatrixDataType *, FemStructsType *, double *);
 }FemFunctionsType;
 
 typedef struct
