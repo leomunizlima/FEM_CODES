@@ -49,6 +49,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	tag = fscanf(InFile, "%d\t:%[^\n]\n", &(Parameters->KrylovBasisVectorsQuantity), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Solver, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Preconditioner, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Scaling, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->reordering, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->MatrixVectorProductScheme, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->StabilizationForm, label);
