@@ -12,6 +12,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	setProblem(Parameters,FemFunctions);
 	setMatrixVectorProductType(Parameters, FemFunctions);
 	setSolver(Parameters, FemOtherFunctions);
+	setScaling(Parameters, FemFunctions);
 	setPreconditioner(Parameters, FemFunctions);
 	setStabilizationForm(Parameters, FemFunctions, FemOtherFunctions);
 	
