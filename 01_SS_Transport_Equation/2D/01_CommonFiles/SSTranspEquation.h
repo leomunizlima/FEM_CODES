@@ -39,6 +39,7 @@ typedef struct
 	char ProblemTitle[300];	
 	char Solver[200];
 	char Preconditioner[200];
+	char Scaling[200];
 	char reordering[200];
 	char MatrixVectorProductScheme[200];
 	char StabilizationForm[200];
@@ -165,6 +166,8 @@ int setMatrixVectorProductType(ParametersType *, FemFunctionsType *);
 int setSolver(ParametersType *, FemOtherFunctionsType *);
 
 int setPreconditioner(ParametersType *, FemFunctionsType *);
+
+int setScaling(ParametersType *Parameters, FemFunctionsType *FemFunctions);
 
 int setStabilizationForm(ParametersType *, FemFunctionsType *, FemOtherFunctionsType *);
 
