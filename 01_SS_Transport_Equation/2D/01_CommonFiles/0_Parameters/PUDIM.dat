@@ -5,6 +5,7 @@ PUDIM	:Problem title (CARTOLA, HEMKER, PUDIM or TEST)
 30	:Number of vectors in Krylov basis
 GMRES	:Solver (GMRES or CG)
 Diag	:Preconditioner (Diag, ILUp or NOT)
+NOT :Scaling (NOT, Left, LeftRight)
 NOT	:Reordering (Spectral, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
 EDE	:Matrix vector product scheme (EBE, EDE or CSR)
 DD	:Stabilization form (DD or SUPG)
