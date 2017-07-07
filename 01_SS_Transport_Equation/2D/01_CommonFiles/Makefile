@@ -89,6 +89,7 @@ setzeros.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/scaling.c \
 ../../../00_CommonFiles/Reordering/reordering.c \
 
 OBJECTS=$(SOURCES:.c=.o)
