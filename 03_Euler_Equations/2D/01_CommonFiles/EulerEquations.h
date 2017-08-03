@@ -48,8 +48,9 @@ typedef struct
 	char StabilizationForm[200];           // type of stabilization method
 	char ShockCapture[200];            // type discontinuities capture Operator
 	char Preconditioner[200];           // preconditioners: yes - use or not - don't use
+	char Scaling[200];
 	char Experiments[200];
-	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de itera����o - NORM: para pela norma; ITERATION: para pela itera����o
+	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao
 	char reordering[200];			// Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
 	char Dimensionless[200];		// Determines whether or not a problem is dimensionless
 	char StopAtSteadyState[200];		// YES or NO if you want to stop in steady state or final time
@@ -88,6 +89,8 @@ typedef struct
 	double *invBlockDiagAux;
 	double **invDe;
 	double *invDeaux;
+	double **LUe;
+	double *LUeaux;
 	int **Id;
 	int *IdAux;
 	int **Scheme_by_Element;
@@ -149,7 +152,10 @@ typedef struct
 	void (*assembly)(ParametersType *, MatrixDataType *, FemStructsType *, int, double (*)[12]);
 	int (*mv)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
+	int (*precondR)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond_setup)(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+	int (*scaling)(ParametersType *, MatrixDataType *, FemStructsType *);
+	int (*unscaling)(ParametersType *, MatrixDataType *, FemStructsType *, double *);
 }FemFunctionsType;
 
 typedef struct
@@ -176,6 +182,8 @@ int setMatrixVectorProductType(ParametersType *, FemFunctionsType *);
 int setSolver(ParametersType *, FemOtherFunctionsType *);
 
 int setPreconditioner(ParametersType *, FemFunctionsType *);
+
+int setScaling(ParametersType *, FemFunctionsType *);
 
 int setStabilizationForm(ParametersType *,FemFunctionsType *, FemOtherFunctionsType *, int (**)(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *, FemOtherFunctionsType *));
 

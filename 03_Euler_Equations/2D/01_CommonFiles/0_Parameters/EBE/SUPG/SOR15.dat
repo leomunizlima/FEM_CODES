@@ -1,0 +1,29 @@
+Exp01       :Experiments
+EXPLOSION	  :Problem title
+1e-6		    :Solver tolerance
+1e-2		    :Correction tolerance
+1e-2		    :Time integration tolerance
+1e-8		    :Stabilization coefficient tolerance
+1000		    :Maximum number of solver iterations
+30		      :Number of vectors in krylov basis
+GMRES		    :Solver
+SOR1.5      :Preconditioner
+NOT		      :Reordering
+PREDICTOR1	:Time integration method
+NO	        :Stop at steady state
+0.5		      :Alpha
+1e-2		    :Step time
+0.25		    :Final time
+NO		      :Dimensionless
+1.0		      :Mach of reference
+5		        :Number of multicorrection
+ITERATION		:Stop multicorrection
+EBE		      :Matrix vector product scheme
+SUPG		      :Stabilization form
+YZBeta		  :Operator captures
+1.0		      :invY[0]=1/U1
+0.0		      :invY[1]=1/U2
+0.0		      :invY[2]=1/U3
+0.4		      :invY[3]=1/U4
+10201		      :Number of nodes
+20000		      :Number of elements

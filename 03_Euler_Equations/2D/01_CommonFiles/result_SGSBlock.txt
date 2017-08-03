@@ -1,0 +1,429 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 34.54      1.15     1.15      730     0.00     0.00  ebemvNDOF4
+ 18.02      1.75     0.60      760     0.00     0.00  SGSBlock_precondR_EBE
+ 15.32      2.26     0.51      760     0.00     0.00  SGSBlock_precond_EBE
+  8.11      2.53     0.27     9347     0.00     0.00  ddot
+  7.51      2.78     0.25       30     0.01     0.01  Block_scaling_EBE
+  6.91      3.01     0.23       30     0.01     0.01  Build_M_K_F_SUPG
+  3.90      3.14     0.13     8578     0.00     0.00  daxpy
+  1.50      3.19     0.05       30     0.00     0.00  BlockDiag_precond_EBE_setup
+  1.20      3.23     0.04      990     0.00     0.00  dzero
+  0.90      3.26     0.03      730     0.00     0.00  dcopy
+  0.60      3.28     0.02   491520     0.00     0.00  Delta_YZBeta
+  0.30      3.29     0.01   491520     0.00     0.00  dimensional_Ax_Ay_calculations
+  0.30      3.30     0.01   491520     0.00     0.00  ebe_assembly
+  0.30      3.31     0.01   249630     0.00     0.00  matrix_Inverse
+  0.30      3.32     0.01      761     0.00     0.00  dscal
+  0.30      3.33     0.01        1     0.01     3.33  Predictor_Old
+  0.00      3.33     0.00  1474962     0.00     0.00  mycalloc
+  0.00      3.33     0.00   508162     0.00     0.00  OBLIQUO_gamma
+  0.00      3.33     0.00    16642     0.00     0.00  OBLIQUO_cv
+  0.00      3.33     0.00     6176     0.00     0.00  OBLIQUO_v2presc
+  0.00      3.33     0.00     4096     0.00     0.00  OBLIQUO_epresc
+  0.00      3.33     0.00     4096     0.00     0.00  OBLIQUO_rhopresc
+  0.00      3.33     0.00     4096     0.00     0.00  OBLIQUO_v1presc
+  0.00      3.33     0.00       30     0.00     0.00  BlockDiag_precond
+  0.00      3.33     0.00       30     0.00     0.00  NO_unscaling
+  0.00      3.33     0.00       30     0.00     0.00  SGSBlock_precond_EBE_setup
+  0.00      3.33     0.00       30     0.00     0.00  StopByIterations
+  0.00      3.33     0.00       30     0.00     0.00  eval_U_dU
+  0.00      3.33     0.00       30     0.00     0.09  pgmres
+  0.00      3.33     0.00       30     0.00     0.00  setzeros
+  0.00      3.33     0.00       10     0.00     0.00  StopByTime
+  0.00      3.33     0.00        6     0.00     0.00  myfopen
+  0.00      3.33     0.00        1     0.00     0.00  Fill_ID
+  0.00      3.33     0.00        1     0.00     0.00  Fill_LM
+  0.00      3.33     0.00        1     0.00     0.00  OBLIQUO_InitialSolution
+  0.00      3.33     0.00        1     0.00     0.00  Paraview_Output
+  0.00      3.33     0.00        1     0.00     0.00  Paraview_Output_3D
+  0.00      3.33     0.00        1     0.00     0.00  setDimensionlessness
+  0.00      3.33     0.00        1     0.00     0.00  setMatrixVectorProductType
+  0.00      3.33     0.00        1     0.00     0.00  setPreconditioner
+  0.00      3.33     0.00        1     0.00     0.00  setProblem
+  0.00      3.33     0.00        1     0.00     0.00  setScaling
+  0.00      3.33     0.00        1     0.00     0.00  setSolver
+  0.00      3.33     0.00        1     0.00     0.00  setStabilizationForm
+  0.00      3.33     0.00        1     0.00     0.00  setStopCriteria
+  0.00      3.33     0.00        1     0.00     0.00  set_BC_no_penetrability
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.30% of 3.33 seconds
+
+index % time    self  children    called     name
+                0.01    3.32       1/1           Process [2]
+[1]    100.0    0.01    3.32       1         Predictor_Old [1]
+                0.00    2.71      30/30          pgmres [3]
+                0.25    0.06      30/30          Block_scaling_EBE [7]
+                0.23    0.04      30/30          Build_M_K_F_SUPG [8]
+                0.00    0.02      30/30          SGSBlock_precond_EBE_setup [14]
+                0.00    0.00     100/9347        ddot [9]
+                0.00    0.00      60/8578        daxpy [10]
+                0.00    0.00      30/30          NO_unscaling [28]
+                0.00    0.00      30/30          StopByIterations [29]
+                0.00    0.00      10/10          StopByTime [32]
+                0.00    0.00       7/1474962     mycalloc [20]
+                0.00    0.00       1/1           OBLIQUO_InitialSolution [36]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]    100.0    0.00    3.33                 Process [2]
+                0.01    3.32       1/1           Predictor_Old [1]
+                0.00    0.00       1/1           setProblem [42]
+                0.00    0.00       1/1           setMatrixVectorProductType [40]
+                0.00    0.00       1/1           setPreconditioner [41]
+                0.00    0.00       1/1           setSolver [44]
+                0.00    0.00       1/1           setScaling [43]
+                0.00    0.00       1/1           setStabilizationForm [45]
+                0.00    0.00       1/1           setDimensionlessness [39]
+                0.00    0.00       1/1           setStopCriteria [46]
+                0.00    0.00       1/1           set_BC_no_penetrability [47]
+-----------------------------------------------
+                0.00    2.71      30/30          Predictor_Old [1]
+[3]     81.5    0.00    2.71      30         pgmres [3]
+                1.15    0.00     730/730         ebemvNDOF4 [4]
+                0.60    0.00     760/760         SGSBlock_precondR_EBE [5]
+                0.49    0.00     730/760         SGSBlock_precond_EBE [6]
+                0.27    0.00    9247/9347        ddot [9]
+                0.13    0.00    8518/8578        daxpy [10]
+                0.04    0.00     960/990         dzero [12]
+                0.03    0.00     730/730         dcopy [13]
+                0.01    0.00     761/761         dscal [19]
+                0.00    0.00     300/1474962     mycalloc [20]
+-----------------------------------------------
+                1.15    0.00     730/730         pgmres [3]
+[4]     34.5    1.15    0.00     730         ebemvNDOF4 [4]
+-----------------------------------------------
+                0.60    0.00     760/760         pgmres [3]
+[5]     18.0    0.60    0.00     760         SGSBlock_precondR_EBE [5]
+-----------------------------------------------
+                0.02    0.00      30/760         SGSBlock_precond_EBE_setup [14]
+                0.49    0.00     730/760         pgmres [3]
+[6]     15.3    0.51    0.00     760         SGSBlock_precond_EBE [6]
+-----------------------------------------------
+                0.25    0.06      30/30          Predictor_Old [1]
+[7]      9.3    0.25    0.06      30         Block_scaling_EBE [7]
+                0.05    0.01      30/30          BlockDiag_precond_EBE_setup [11]
+-----------------------------------------------
+                0.23    0.04      30/30          Predictor_Old [1]
+[8]      8.1    0.23    0.04      30         Build_M_K_F_SUPG [8]
+                0.02    0.00  491520/491520      Delta_YZBeta [15]
+                0.01    0.00  491520/491520      dimensional_Ax_Ay_calculations [16]
+                0.01    0.00  491520/491520      ebe_assembly [17]
+                0.00    0.00      30/990         dzero [12]
+                0.00    0.00  491520/508162      OBLIQUO_gamma [21]
+                0.00    0.00      60/1474962     mycalloc [20]
+                0.00    0.00      30/30          setzeros [31]
+                0.00    0.00      30/30          eval_U_dU [30]
+-----------------------------------------------
+                0.00    0.00     100/9347        Predictor_Old [1]
+                0.27    0.00    9247/9347        pgmres [3]
+[9]      8.1    0.27    0.00    9347         ddot [9]
+-----------------------------------------------
+                0.00    0.00      60/8578        Predictor_Old [1]
+                0.13    0.00    8518/8578        pgmres [3]
+[10]     3.9    0.13    0.00    8578         daxpy [10]
+-----------------------------------------------
+                0.05    0.01      30/30          Block_scaling_EBE [7]
+[11]     1.8    0.05    0.01      30         BlockDiag_precond_EBE_setup [11]
+                0.01    0.00  249630/249630      matrix_Inverse [18]
+                0.00    0.00      30/30          BlockDiag_precond [27]
+                0.00    0.00       6/1474962     mycalloc [20]
+-----------------------------------------------
+                0.00    0.00      30/990         Build_M_K_F_SUPG [8]
+                0.04    0.00     960/990         pgmres [3]
+[12]     1.2    0.04    0.00     990         dzero [12]
+-----------------------------------------------
+                0.03    0.00     730/730         pgmres [3]
+[13]     0.9    0.03    0.00     730         dcopy [13]
+-----------------------------------------------
+                0.00    0.02      30/30          Predictor_Old [1]
+[14]     0.6    0.00    0.02      30         SGSBlock_precond_EBE_setup [14]
+                0.02    0.00      30/760         SGSBlock_precond_EBE [6]
+-----------------------------------------------
+                0.02    0.00  491520/491520      Build_M_K_F_SUPG [8]
+[15]     0.6    0.02    0.00  491520         Delta_YZBeta [15]
+                0.00    0.00 1474560/1474962     mycalloc [20]
+-----------------------------------------------
+                0.01    0.00  491520/491520      Build_M_K_F_SUPG [8]
+[16]     0.3    0.01    0.00  491520         dimensional_Ax_Ay_calculations [16]
+-----------------------------------------------
+                0.01    0.00  491520/491520      Build_M_K_F_SUPG [8]
+[17]     0.3    0.01    0.00  491520         ebe_assembly [17]
+-----------------------------------------------
+                0.01    0.00  249630/249630      BlockDiag_precond_EBE_setup [11]
+[18]     0.3    0.01    0.00  249630         matrix_Inverse [18]
+-----------------------------------------------
+                0.01    0.00     761/761         pgmres [3]
+[19]     0.3    0.01    0.00     761         dscal [19]
+-----------------------------------------------
+                0.00    0.00       6/1474962     Paraview_Output [37]
+                0.00    0.00       6/1474962     Paraview_Output_3D [38]
+                0.00    0.00       6/1474962     BlockDiag_precond_EBE_setup [11]
+                0.00    0.00       7/1474962     Predictor_Old [1]
+                0.00    0.00      17/1474962     Preprocess [125]
+                0.00    0.00      60/1474962     Build_M_K_F_SUPG [8]
+                0.00    0.00     300/1474962     pgmres [3]
+                0.00    0.00 1474560/1474962     Delta_YZBeta [15]
+[20]     0.0    0.00    0.00 1474962         mycalloc [20]
+-----------------------------------------------
+                0.00    0.00    8321/508162      Paraview_Output [37]
+                0.00    0.00    8321/508162      Paraview_Output_3D [38]
+                0.00    0.00  491520/508162      Build_M_K_F_SUPG [8]
+[21]     0.0    0.00    0.00  508162         OBLIQUO_gamma [21]
+-----------------------------------------------
+                0.00    0.00    8321/16642       Paraview_Output [37]
+                0.00    0.00    8321/16642       Paraview_Output_3D [38]
+[22]     0.0    0.00    0.00   16642         OBLIQUO_cv [22]
+-----------------------------------------------
+                0.00    0.00     193/6176        Paraview_Output [37]
+                0.00    0.00     193/6176        Paraview_Output_3D [38]
+                0.00    0.00    5790/6176        eval_U_dU [30]
+[23]     0.0    0.00    0.00    6176         OBLIQUO_v2presc [23]
+-----------------------------------------------
+                0.00    0.00     128/4096        Paraview_Output [37]
+                0.00    0.00     128/4096        Paraview_Output_3D [38]
+                0.00    0.00    3840/4096        eval_U_dU [30]
+[24]     0.0    0.00    0.00    4096         OBLIQUO_epresc [24]
+-----------------------------------------------
+                0.00    0.00     128/4096        Paraview_Output [37]
+                0.00    0.00     128/4096        Paraview_Output_3D [38]
+                0.00    0.00    3840/4096        eval_U_dU [30]
+[25]     0.0    0.00    0.00    4096         OBLIQUO_rhopresc [25]
+-----------------------------------------------
+                0.00    0.00     128/4096        Paraview_Output [37]
+                0.00    0.00     128/4096        Paraview_Output_3D [38]
+                0.00    0.00    3840/4096        eval_U_dU [30]
+[26]     0.0    0.00    0.00    4096         OBLIQUO_v1presc [26]
+-----------------------------------------------
+                0.00    0.00      30/30          BlockDiag_precond_EBE_setup [11]
+[27]     0.0    0.00    0.00      30         BlockDiag_precond [27]
+-----------------------------------------------
+                0.00    0.00      30/30          Predictor_Old [1]
+[28]     0.0    0.00    0.00      30         NO_unscaling [28]
+-----------------------------------------------
+                0.00    0.00      30/30          Predictor_Old [1]
+[29]     0.0    0.00    0.00      30         StopByIterations [29]
+-----------------------------------------------
+                0.00    0.00      30/30          Build_M_K_F_SUPG [8]
+[30]     0.0    0.00    0.00      30         eval_U_dU [30]
+                0.00    0.00    5790/6176        OBLIQUO_v2presc [23]
+                0.00    0.00    3840/4096        OBLIQUO_rhopresc [25]
+                0.00    0.00    3840/4096        OBLIQUO_v1presc [26]
+                0.00    0.00    3840/4096        OBLIQUO_epresc [24]
+-----------------------------------------------
+                0.00    0.00      30/30          Build_M_K_F_SUPG [8]
+[31]     0.0    0.00    0.00      30         setzeros [31]
+-----------------------------------------------
+                0.00    0.00      10/10          Predictor_Old [1]
+[32]     0.0    0.00    0.00      10         StopByTime [32]
+-----------------------------------------------
+                0.00    0.00       1/6           Postprocess [119]
+                0.00    0.00       1/6           Paraview_Output [37]
+                0.00    0.00       1/6           Paraview_Output_3D [38]
+                0.00    0.00       1/6           calculateTime [162]
+                0.00    0.00       2/6           Preprocess [125]
+[33]     0.0    0.00    0.00       6         myfopen [33]
+-----------------------------------------------
+                0.00    0.00       1/1           Preprocess [125]
+[34]     0.0    0.00    0.00       1         Fill_ID [34]
+-----------------------------------------------
+                0.00    0.00       1/1           Preprocess [125]
+[35]     0.0    0.00    0.00       1         Fill_LM [35]
+-----------------------------------------------
+                0.00    0.00       1/1           Predictor_Old [1]
+[36]     0.0    0.00    0.00       1         OBLIQUO_InitialSolution [36]
+-----------------------------------------------
+                0.00    0.00       1/1           Postprocess [119]
+[37]     0.0    0.00    0.00       1         Paraview_Output [37]
+                0.00    0.00    8321/16642       OBLIQUO_cv [22]
+                0.00    0.00    8321/508162      OBLIQUO_gamma [21]
+                0.00    0.00     193/6176        OBLIQUO_v2presc [23]
+                0.00    0.00     128/4096        OBLIQUO_rhopresc [25]
+                0.00    0.00     128/4096        OBLIQUO_v1presc [26]
+                0.00    0.00     128/4096        OBLIQUO_epresc [24]
+                0.00    0.00       6/1474962     mycalloc [20]
+                0.00    0.00       1/6           myfopen [33]
+-----------------------------------------------
+                0.00    0.00       1/1           Postprocess [119]
+[38]     0.0    0.00    0.00       1         Paraview_Output_3D [38]
+                0.00    0.00    8321/16642       OBLIQUO_cv [22]
+                0.00    0.00    8321/508162      OBLIQUO_gamma [21]
+                0.00    0.00     193/6176        OBLIQUO_v2presc [23]
+                0.00    0.00     128/4096        OBLIQUO_rhopresc [25]
+                0.00    0.00     128/4096        OBLIQUO_v1presc [26]
+                0.00    0.00     128/4096        OBLIQUO_epresc [24]
+                0.00    0.00       6/1474962     mycalloc [20]
+                0.00    0.00       1/6           myfopen [33]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[39]     0.0    0.00    0.00       1         setDimensionlessness [39]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[40]     0.0    0.00    0.00       1         setMatrixVectorProductType [40]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[41]     0.0    0.00    0.00       1         setPreconditioner [41]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[42]     0.0    0.00    0.00       1         setProblem [42]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[43]     0.0    0.00    0.00       1         setScaling [43]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[44]     0.0    0.00    0.00       1         setSolver [44]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[45]     0.0    0.00    0.00       1         setStabilizationForm [45]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[46]     0.0    0.00    0.00       1         setStopCriteria [46]
+-----------------------------------------------
+                0.00    0.00       1/1           Process [2]
+[47]     0.0    0.00    0.00       1         set_BC_no_penetrability [47]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [27] BlockDiag_precond      [38] Paraview_Output_3D     [18] matrix_Inverse
+  [11] BlockDiag_precond_EBE_setup [1] Predictor_Old      [20] mycalloc
+   [7] Block_scaling_EBE       [5] SGSBlock_precondR_EBE  [33] myfopen
+   [8] Build_M_K_F_SUPG        [6] SGSBlock_precond_EBE    [3] pgmres
+  [15] Delta_YZBeta           [14] SGSBlock_precond_EBE_setup [39] setDimensionlessness
+  [34] Fill_ID                [29] StopByIterations       [40] setMatrixVectorProductType
+  [35] Fill_LM                [32] StopByTime             [41] setPreconditioner
+  [28] NO_unscaling           [10] daxpy                  [42] setProblem
+  [36] OBLIQUO_InitialSolution [13] dcopy                 [43] setScaling
+  [22] OBLIQUO_cv              [9] ddot                   [44] setSolver
+  [24] OBLIQUO_epresc         [16] dimensional_Ax_Ay_calculations [45] setStabilizationForm
+  [21] OBLIQUO_gamma          [19] dscal                  [46] setStopCriteria
+  [25] OBLIQUO_rhopresc       [12] dzero                  [47] set_BC_no_penetrability
+  [26] OBLIQUO_v1presc        [17] ebe_assembly           [31] setzeros
+  [23] OBLIQUO_v2presc         [4] ebemvNDOF4
+  [37] Paraview_Output        [30] eval_U_dU

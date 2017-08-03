@@ -1,6 +1,6 @@
 CC=gcc
 #CC=tau_cc.sh
-IDIR= 
+IDIR=
 CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DSSTranspEquation2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
@@ -41,6 +41,11 @@ setzeros.c \
 ../CARTOLA/CARTOLA_Reaction.c \
 ../CARTOLA/CARTOLA_Velocity.c \
 ../CARTOLA/CARTOLA_upresc.c \
+../CONVECTION/CONVECTION_Condutivity.c \
+../CONVECTION/CONVECTION_Font.c \
+../CONVECTION/CONVECTION_Reaction.c \
+../CONVECTION/CONVECTION_Velocity.c \
+../CONVECTION/CONVECTION_upresc.c \
 ../HEMKER/HEMKER_Condutivity.c \
 ../HEMKER/HEMKER_Font.c \
 ../HEMKER/HEMKER_Reaction.c \
@@ -51,6 +56,11 @@ setzeros.c \
 ../PUDIM/PUDIM_Reaction.c \
 ../PUDIM/PUDIM_Velocity.c \
 ../PUDIM/PUDIM_upresc.c \
+../REACTION/REACTION_Condutivity.c \
+../REACTION/REACTION_Font.c \
+../REACTION/REACTION_Reaction.c \
+../REACTION/REACTION_Velocity.c \
+../REACTION/REACTION_upresc.c \
 ../TESTE/TESTE_Condutivity.c \
 ../TESTE/TESTE_Font.c \
 ../TESTE/TESTE_Reaction.c \
@@ -71,52 +81,54 @@ setzeros.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pcg.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_CSR_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_EDE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Jacobi_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Jacobi_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/Diag_precond_CSR_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Diag_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Diag_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/LU_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/LU_precond_EDE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SGS_precond_EBE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SGS_precond_EDE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSOR_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSOR_precond_EBE_setup2.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SSOR_precond_EDE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Jacobi_precond_EBE.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Jacobi_precond_EDE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SGS_precond_EBE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SGS_precond_EDE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSOR_precond_EBE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SSOR_precond_EDE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/LU_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/LU_precond_EDE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/scaling.c \
 ../../../00_CommonFiles/Reordering/reordering.c \
+../../../00_CommonFiles/Reordering/symrcm.c \
 
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=SSTranspEquation 
+EXECUTABLE=SSTranspEquation
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -g
+debug: CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -O0 -g
 debug: GCFLAGS= -DSSTransEquation2D -Ddebug -lm -lrt -Wall \
 ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath -g
+-lgfortran -lblas -llapack -lquadmath -O0 -g
 debug: all
 
-fast: CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native 
+fast: CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native
 fast: GCFLAGS= -DSSTransEquation2D -lm -lrt -Wall -Ofast -march=native \
 ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath 
+-lgfortran -lblas -llapack -lquadmath
 fast: all
 
-gprof: CFLAGS+=-pg -Ddebug 
+gprof: CFLAGS+=-pg -Ddebug
 gprof: LDFLAGS+=-pg -Ddebug
 gprof: all
- 
-$(EXECUTABLE): $(OBJECTS) 
+
+$(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(GCFLAGS) -o $@
 
 .c.o:
@@ -124,6 +136,3 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE)
-
-
-

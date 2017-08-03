@@ -39,6 +39,7 @@ typedef struct
 	char ProblemTitle[300];	
 	char Solver[200];
 	char Preconditioner[200];
+	char Scaling[200];
 	char reordering[200];
 	char MatrixVectorProductScheme[200];
 	char StabilizationForm[200];
@@ -71,8 +72,8 @@ typedef struct
 	double *invDiag;
 	double **invDe;
 	double *invDeaux;
-	double **invone;
-	double *invoneaux;
+	double **LUe;
+	double *LUeaux;
 	int **Scheme_by_Element;
 	int **order;	
 	int *JA;
@@ -119,7 +120,10 @@ typedef struct
 	void (*assembly)(ParametersType *, MatrixDataType *, FemStructsType *, int, double (*)[3]);
 	int (*mv)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
+	int (*precondR)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond_setup)(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
+	int (*scaling)(ParametersType *, MatrixDataType *, FemStructsType *);
+	int (*unscaling)(ParametersType *, MatrixDataType *, FemStructsType *, double *);
 }FemFunctionsType;
 
 typedef struct
@@ -185,6 +189,8 @@ int setMatrixVectorProductType(ParametersType *, FemFunctionsType *);
 int setSolver(ParametersType *, FemOtherFunctionsType *);
 
 int setPreconditioner(ParametersType *, FemFunctionsType *);
+
+int setScaling(ParametersType *, FemFunctionsType *);
 
 int setStabilizationForm(ParametersType *, FemFunctionsType *, FemOtherFunctionsType *, 
 			int (**)(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *, FemOtherFunctionsType *));

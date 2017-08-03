@@ -11,6 +11,9 @@ void reordering(ParametersType *Parameters, int *JA, int *IA, int *perm, int *Pe
 	else if (strcasecmp(Parameters->reordering,"Spectral")==0)
 		REORDERING_SPECTRAL (Parameters, JA,  IA, perm, PermCSR);
 
+	else if (strcasecmp(Parameters->reordering,"SYMRCM")==0)
+		REORDERING_SYMRCM (Parameters, JA,  IA, perm, PermCSR);
+
 	else if (strncmp(Parameters->reordering,"Sloan",5)==0 || strncmp(Parameters->reordering,"RCM",3)==0){
 		REORDERING_RCM_or_SLOAN (Parameters, JA,  IA, perm, PermCSR);
 	}

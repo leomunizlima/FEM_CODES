@@ -1,11 +1,11 @@
 CC=gcc
 #CC=tau_cc.sh
-IDIR= 
-CFLAGS= -DTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native 
+IDIR=
+CFLAGS= -DTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DTransEquation2D -Ddebug -lm -lrt -Wall -Ofast -march=native \
 ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath 
+-lgfortran -lblas -llapack -lquadmath
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \
@@ -30,9 +30,10 @@ h_shock_Option1.c \
 h_shock_Option2.c \
 setStabilizationForm.c \
 setSolver.c \
+setPreconditioner.c \
+setScaling.c \
 setProblem.c \
 setMatrixVectorProductType.c \
-setPreconditioner.c \
 setzeros.c \
 calculate_DaB.c \
 uB_InitialSolution.c \
@@ -70,27 +71,29 @@ uB_InitialSolution.c \
 ../../../00_CommonFiles/MatrixVector_Operations/CSR/csrmv.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pcg.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_EDE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_CSR_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Jacobi_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Jacobi_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Diag_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Diag_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/Diag_precond_CSR_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SGS_precond_EBE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SGS_precond_EDE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSOR_precond_EBE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SSOR_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/LU_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/LU_precond_EDE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Jacobi_precond_EBE.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Jacobi_precond_EDE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SGS_precond_EBE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SGS_precond_EDE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSOR_precond_EBE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/SSOR_precond_EDE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/LU_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/LU_precond_EDE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/scaling.c \
 ../../../00_CommonFiles/Reordering/reordering.c \
+../../../00_CommonFiles/Reordering/symrcm.c \
 ../../../00_CommonFiles/Time_Integration/Criteria.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_New.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old.c \
@@ -100,7 +103,7 @@ uB_InitialSolution.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_TRBDF2.c \
 
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=TranspEquation 
+EXECUTABLE=TranspEquation
 
 all: $(SOURCES) $(EXECUTABLE)
 
@@ -111,18 +114,18 @@ debug: GCFLAGS= -DTransEquation2D -Ddebug -lm -lrt -Wall \
 -lgfortran -lblas -llapack -lquadmath -g
 debug: all
 
-fast: CFLAGS= -DTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native 
+fast: CFLAGS= -DTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native
 fast: GCFLAGS= -DTransEquation2D -lm -lrt -Wall -Ofast -march=native \
 ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath 
+-lgfortran -lblas -llapack -lquadmath
 fast: all
 
-gprof: CFLAGS+=-pg -Ddebug 
+gprof: CFLAGS+=-pg -Ddebug
 gprof: LDFLAGS+=-pg -Ddebug
 gprof: all
 
-$(EXECUTABLE): $(OBJECTS) 
+$(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(GCFLAGS) -o $@
 
 .c.o:
@@ -130,6 +133,3 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE)
-
-
-

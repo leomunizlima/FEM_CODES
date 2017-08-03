@@ -2,7 +2,7 @@
 #include "../../../00_CommonFiles/IO_Operations/io.h"
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
-int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, ParametersType *Parameters, double (*rhopresc)(double, double), double (*v1presc)(double, double), 
+int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, ParametersType *Parameters, double (*rhopresc)(double, double), double (*v1presc)(double, double),
                     double (*v2presc)(double, double), double (*epresc)(double, double), double (*Gamma)(double, double), double (*CV)(double, double), double t)
 {
 	int I, eq1, eq2, eq3, eq4, nnodes, nel;
@@ -12,7 +12,7 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 
 	nnodes = Parameters->nnodes;
 	nel = Parameters->nel;
-	
+
 	rho = (double*) mycalloc("rho of 'Paraview_Output'", nnodes, sizeof(double));
 	v1 = (double*) mycalloc("v1 of 'Paraview_Output'", nnodes, sizeof(double));
 	v2 = (double*) mycalloc("v2 of 'Paraview_Output'", nnodes, sizeof(double));
@@ -25,8 +25,8 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 		eq2 = Node[I].id[1];
 		eq3 = Node[I].id[2];
 		eq4 = Node[I].id[3];
-		X = Node[I].x;	
-		Y = Node[I].y;	
+		X = Node[I].x;
+		Y = Node[I].y;
 		cv = CV(X, Y);
 		gamma = Gamma(X, Y);
 
@@ -39,7 +39,7 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 			v1[I] = U[eq2];
 		else
 			v1[I] = v1presc(X, Y);
-	   	
+
 	   	if (eq3 >= 0)
 	   		v2[I] = U[eq3];
 	   	else
@@ -54,8 +54,8 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 		temp[I] = aux/(rho[I]*cv);
 		pres[I] = (gamma - 1)*aux;
 	}
-	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d_T%lf.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
-			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel, t);
+	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d_T%lf.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
+			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel, t);
 	OutFile = myfopen(FileName,"w");
 
 	fprintf(OutFile,"<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
@@ -86,7 +86,7 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\t%.12lf\t%.12lf\n", Node[I].x,Node[I].y, 0.0);
-		
+
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 	fprintf(OutFile,"\t\t\t</Points>\n");
 	fprintf(OutFile,"\t\t\t<Cells>\n");
@@ -115,14 +115,12 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
 
 	fclose(OutFile);
 
-	free(rho); 
+	free(rho);
 	free(v1);
 	free(v2);
-	free(e); 
+	free(e);
 	free(temp);
 	free(pres);
-		
+
 	return 0;
 }
-
-

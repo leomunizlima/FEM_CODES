@@ -1,15 +1,23 @@
 PUDIM	:Problem title (CARTOLA, HEMKER, PUDIM or TEST)
-1e-12	:Solver tolerance
-1e-1	:Non linear tolerance
+1e-6	:Solver tolerance
+1e-2	:Non linear tolerance
 1000	:Maximum number of solver iterations
-30	:Number of vectors in Krylov basis
+20	:Number of vectors in Krylov basis
 GMRES	:Solver (GMRES or CG)
-Diag	:Preconditioner (Diag, ILUp or NOT)
-NOT :Scaling (NOT, Left, LeftRight)
+LU	:Preconditioner (Diag, ILUp or NOT)
+LeftRight	:Scaling (NOT, Left, LeftRight)
 NOT	:Reordering (Spectral, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
-EDE	:Matrix vector product scheme (EBE, EDE or CSR)
-DD	:Stabilization form (DD or SUPG)
+EBE	:Matrix vector product scheme (EBE, EDE or CSR)
+SUPG	:Stabilization form (DD or SUPG)
 YZBeta	:Shock capture (CAU, CAUDD or YZBeta)
 Option1	:Parameter h to shock capture (Option1, Option2 or 2sqtArea)
-1681	:Number of nodes
-3200	:Number of elements
+525313	:Number of nodes (512x512)
+1048576	:Number of elements (512x512)
+8321	:Number of nodes (64x64)
+16384	:Number of elements (64x64)
+33025	:Number of nodes (128x128)
+65536	:Number of elements (128x128)
+131585	:Number of elements (256x256)
+262144	:Number of elements (256x256)
+
+

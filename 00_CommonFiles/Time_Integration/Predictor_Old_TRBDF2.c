@@ -18,19 +18,23 @@ int Predictor_Old_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	Da = (double*) mycalloc("Da of 'Predictor_Old_TRBDF2'", neq + 1, sizeof(double));
 	auxVec = (double*) mycalloc("auxVec of 'Predictor_Old_TRBDF2'", neq + 1, sizeof(double));
 	u_old = (double*) mycalloc("u_old of 'Predictor_Old_TRBDF2'", neq + 1, sizeof(double));
-	R = (double*) mycalloc("R of 'Preditor_Old'", neq + 1, sizeof(double));
 	delta_old = (double*) mycalloc("delta_old of 'Predictor_Old_TRBDF2'", nel, sizeof(double));
 	uB_old = (double*) mycalloc("uB_old of 'Preditor_Old_TRBDF2'", nel*NDOF, sizeof(double));
 	
+	u = FemStructs->u;
+	R = FemStructs->F;
 	dt = Parameters->DeltaT;
+	Parameters->DeltaT_Build = dt;
+	alpha = Parameters->Alpha;
+	Parameters->Alpha_Build = alpha;
 	tol_correction = Parameters->NonLinearTolerance;
 	AuxBuild = (AuxBuildStructuresType*) mycalloc("AuxBuild of 'Predictor_Old_TRBDF2'",1,sizeof(AuxBuildStructuresType));
 	AuxBuild->tolerance = Parameters->StabilizationTolerance;
-	u = FemStructs->u;
 	FemStructs->du = a;
 	FemStructs->uB = uB_old;
 	FemStructs->duB = NULL;
 	FemStructs->delta_old = delta_old;
+	FemStructs->AuxBuild = AuxBuild;
 
 	//TRBDF2 parameters
 	lambda = 2.0 - sqrt(2.0);
@@ -77,10 +81,14 @@ int Predictor_Old_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 			i++;
 
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
+		
+			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
 
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
+			
+			FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
 			daxpy(neq, 1, Da, a);
 			daxpy(neq, alpha*dtTR, Da, u);
@@ -125,9 +133,13 @@ int Predictor_Old_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 
 				FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 
+				FemFunctions->scaling(Parameters, MatrixData, FemStructs);
+
 				FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
 				FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
+			
+				FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 				
 				daxpy(neq, 1, Da, a);
 				daxpy(neq, alpha*dtBDF2, Da, u);
@@ -154,7 +166,6 @@ int Predictor_Old_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	free(a);
 	free(Da);
 	free(u_old);
-	free(R);
 	free(auxVec);
 	free(uB_old);
 	free(delta_old);

@@ -106,10 +106,14 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 			i++;
 
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
+		
+			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
 
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, F);
 
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, F, Da);
+			
+			FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
 			calculate_DaB(Parameters, FemStructs, Da, DaB);
 
@@ -165,6 +169,8 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 			i++;
 
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
+			
+			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
 
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, F);
 

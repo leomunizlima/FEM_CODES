@@ -70,9 +70,47 @@ int Predictor_Old(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 			
+			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
+
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
+			//---------------------------------------------------------------------------------	
+		/*	int I, J;	
+			FILE *Out;
+			Out = fopen("Dados.m","w");
+			fprintf(Out,"Ae=[\n");
+			for (I=0; I<Parameters->nel; I++){
+				for (J=0; J<144; J++)
+					fprintf(Out,"%.15lf\t",MatrixData->A[I][J]);
+				fprintf(Out,";\n");	
+			}
+			fprintf(Out,"];\n");
+			fprintf(Out,"invDiag=[\n");
+			for (I=0; I<Parameters->nel; I++){
+				for (J=0; J<16; J++)
+					fprintf(Out,"%.15lf\t",MatrixData->invBlockDiag[I][J]);
+				fprintf(Out,";\n");
+			}	
+			fprintf(Out,"];\n");
+			fprintf(Out,"lm=[\n");
+			for (I=0; I<Parameters->nel; I++){
+				for (J=0; J<12; J++)
+					fprintf(Out,"%d\t",FemStructs->lm[I][J]+1);
+				fprintf(Out,";\n");	
+			}			
+			fprintf(Out,"];\n");
+			fprintf(Out,"F=[\n");
+			for (I=0;I<Parameters->neq; I++)
+				fprintf(Out,"%.15lf;\n",R[I]);
+			fprintf(Out,"];\n");
+			fclose(Out);	
+			exit(1);
+		*/
+			//---------------------------------------------------------------------------------	
+
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
+
+			FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
 			daxpy(neq, 1, Da, a);
 			daxpy(neq, alpha*dt, Da, u);

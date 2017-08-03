@@ -110,26 +110,26 @@ void csr_Initialization(ParametersType *Parameters, NodeType *Node, int **JA_out
 
 	reordering (Parameters,JA,IA,perm,PermCSR);
 
-	int *invPermCSR = mycalloc("invPermCSR of 'csr_Inititalization'",nnzero,sizeof(int));
-	int *invperm = mycalloc("invPermCSR of 'csr_Inititalization'",neq,sizeof(int));
+	int *invPermCSR = mycalloc("invPermCSR of 'csr_Inititalization'",nnzero+1,sizeof(int));
+	int *invperm = mycalloc("invPermCSR of 'csr_Inititalization'",neq+1,sizeof(int));
 
-	for (I=0;I<nnzero; I++){
+	for (I=0;I<nnzero; I++)
 		invPermCSR[PermCSR[I]] = I;
-	}
+	invPermCSR[nnzero] = nnzero;
 
 
 	for (I=0;I<neq;I++)
 		invperm[perm[I]]=I;
+	invperm[neq] = neq;
 
 	int aux[144];
 	for (K=0; K<nel; K++){
 		for (I=0;I<144;I++)
-			if (CSR_by_Element[K][I]<nnzero)
-				aux[I] = invPermCSR[CSR_by_Element[K][I]];
-			else
-				aux[I] = nnzero;	
+			aux[I] = invPermCSR[CSR_by_Element[K][I]];
 		for (I=0;I<144;I++)
 			CSR_by_Element[K][I] = aux[I];
+		for (I=0; I<12; I++)
+			lm[K][I] = invperm[lm[K][I]];	
 	}
 
 	for (K=0; K<nnodes; K++){

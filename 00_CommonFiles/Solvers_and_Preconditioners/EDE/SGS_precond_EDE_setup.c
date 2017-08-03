@@ -6,17 +6,17 @@ int SGS_precond_EDE_setup (ParametersType *Parameters, MatrixDataType *MatrixDat
 	int I;
 	int neq = Parameters->neq;
 	int nedge = Parameters->nedge;
-	
+
 	if (tag==1){
-		MatrixData->invoneaux = mycalloc("invDeaux of 'SGS_precond_EDE_setup'",2*nedge,sizeof(double));
-		MatrixData->invone = mycalloc("invDe of 'SGS_precond_EDE_setup'",nedge,sizeof(double*));
+		MatrixData->invDeaux = mycalloc("invDeaux of 'SGS_precond_EDE_setup'",2*nedge,sizeof(double));
+		MatrixData->invDe = mycalloc("invDe of 'SGS_precond_EDE_setup'",nedge,sizeof(double*));
 		for (I=0; I<nedge; I++)
-			MatrixData->invone[I] = &(MatrixData->invoneaux[2*I]);
+			MatrixData->invDe[I] = &(MatrixData->invDeaux[2*I]);
 	}
 
 	for (I=0; I<nedge; I++){
-		MatrixData->invone[I][0] = 1.0/(1.0 + MatrixData->A[I][0]);
-		MatrixData->invone[I][1] = 1.0/(1.0 + MatrixData->A[I][3]);
+		MatrixData->invDe[I][0] = 1.0/(1.0 + MatrixData->A[I][0]);
+		MatrixData->invDe[I][1] = 1.0/(1.0 + MatrixData->A[I][3]);
 	}
 	/* F preconditioning */
 	double *faux = calloc((neq + 1), sizeof(double));

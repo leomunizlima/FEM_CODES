@@ -73,9 +73,13 @@ int Predictor_Old_BDF(ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 		
 		FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 		
+		FemFunctions->scaling(Parameters, MatrixData, FemStructs);
+		
 		FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
 		FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
+		
+		FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
 		daxpy(neq, 1, Da, a);			//a^{i+1} = a^{i} + Da		-no mesmo passo de tempo
 		daxpy(neq, alpha*dt, Da, u);            //u^{i+1} = u^{i} + dt*Da 	-no mesmo passo de tempo
@@ -124,10 +128,14 @@ int Predictor_Old_BDF(ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 			
 			FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 			
+			FemFunctions->scaling(Parameters, MatrixData, FemStructs);
+
 			FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, tag++, R);
 
 			FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, R, Da);
 			
+			FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
+
 			daxpy(neq, 1, Da, a);          		//a^{i+1} = a^{i} + Da			-no mesmo passo de tempo
 			daxpy(neq, two_thirds*dt, Da, u);          //u^{i+1} = u^{i} + 2/3dt*Da 	-no mesmo passo de tempo
 			

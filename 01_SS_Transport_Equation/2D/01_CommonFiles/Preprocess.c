@@ -62,8 +62,8 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 
 
 	/*****************************************************************************/
-	//				Reading nodes	
-	/*****************************************************************************/		
+	//				Reading nodes
+	/*****************************************************************************/
 	sprintf(FileName,"../../../../INPUT_DATA/%s_%d_%d.dat", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
 	InFile = myfopen(FileName, "r");
 	tag =  fscanf(InFile, "%d", &nnodes);
@@ -79,20 +79,20 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	}
 	/*****************************************************************************/
 
-	
-	/************************************************************************************************************/	
+
+	/************************************************************************************************************/
 	//						Reading connection mesh
-	/************************************************************************************************************/	
+	/************************************************************************************************************/
 	tag = fscanf(InFile, "%d", &nel);
 	Element = (ElementType*) mycalloc("Element of 'Preprocess'",nel, sizeof(ElementType));
 	for (I=0; I<nel; I++)
 		tag = fscanf(InFile, "%d%d%d", &(Element[I].Vertex[0]),  &(Element[I].Vertex[1]), &(Element[I].Vertex[2]));
 	fclose(InFile);
 	/*************************************************************************************************************/
-	
+
 
 	/*****************************************************************************/
-	//                      Memory allocations and Store strategies 
+	//                      Memory allocations and Store strategies
         /*****************************************************************************/
 
 	// Some variable inicializations
@@ -107,7 +107,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	for (I=0;I<nel;I++)
 		lm[I] = &lmaux[I*size];
 
-	//Configuring equation according to variables and boundary conditions 	
+	//Configuring equation according to variables and boundary conditions
 	FemStructs->u = u;
 	FemStructs->F = F;
 	Fill_LM(neq, nel, lm, Node, Element);
@@ -116,9 +116,9 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 
 	Parameters->neq = neq;
 
-	if (strcasecmp(Parameters->MatrixVectorProductScheme,"EBE")==0){		
-		
-		double **K, *Kaux;		
+	if (strcasecmp(Parameters->MatrixVectorProductScheme,"EBE")==0){
+
+		double **K, *Kaux;
 
 		K = (double**) mycalloc("K of 'Preprocess'", nel, sizeof(double*));
 		Kaux = (double*) mycalloc("Kaux of 'Preprocess'", nel*size2,sizeof(double));
@@ -128,12 +128,12 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 		}
 		MatrixData->A = K;
 		MatrixData->Aaux = Kaux;
-		
-	} 
-	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"EDE")==0){		
+
+	}
+	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"EDE")==0){
 
 		int **order, **EDGE_by_Element;
-		double **K, *Kaux;		
+		double **K, *Kaux;
 
 		order = mycalloc("order of 'Preprocess'", nel, sizeof(int*));
 		for (I = 0; I < nel; I++)
@@ -156,8 +156,8 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 		MatrixData->order = order;
 
 	}
-	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){		
-	
+	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
+
 		int *IA, *JA, *perm, *invperm, **CSR_by_Element;
 		double *K;
 
@@ -172,7 +172,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 		MatrixData->JA = JA;
 		MatrixData->Scheme_by_Element = CSR_by_Element;
 		MatrixData->Perm = perm;
-	} 
+	}
 	else
 		printf("Matrix vector produto scheme not defined!\n\n");
 
@@ -198,5 +198,3 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 
 	return 0;
 }
-
-

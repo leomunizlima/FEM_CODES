@@ -1,6 +1,6 @@
 CC=gcc
 #CC=tau_cc.sh
-IDIR= 
+IDIR=
 CFLAGS= -DEulerEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
@@ -19,6 +19,7 @@ setSolver.c \
 setStabilizationForm.c \
 setzeros.c \
 setPreconditioner.c \
+setScaling.c \
 setDimensionlessness.c \
 ebe_assembly.c \
 ede_Initialization.c \
@@ -106,24 +107,33 @@ uB_InitialSolution.c \
 ../BAROCLINIC/BAROCLINIC_epresc.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_EDE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond_CSR_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/Diag_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/Diag_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/Diag_precond_CSR_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiag_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/NOBlockDiag2_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/NOBlockDiag2_precond_EDE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiag_precond_EDE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/BlockDiag_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/NOBlockDiag2_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/NOBlockDiag2_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EDE/BlockDiag_precond_EDE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/JacobiDOF4_precond_EBE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/JacobiBlockDOF4_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSORDOF4_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSORBlockDOF4_precond_EBE_setup.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiag_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiag2_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NOBlockDiag2_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/Diag_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/JacobiDOF4_precond_EBE.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/JacobiBlockDOF4_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSORDOF4_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SSORBlockDOF4_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SGSBlock_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/SGSBlock_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/LUBlock_precond_EBE.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/LUBlock_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/Block_scaling.c \
 ../../../00_CommonFiles/BLAS_Operations/dtrsvUP.c \
 ../../../00_CommonFiles/BLAS_Operations/daxpy.c \
 ../../../00_CommonFiles/BLAS_Operations/dcopy.c \
@@ -142,6 +152,7 @@ uB_InitialSolution.c \
 ../../../00_CommonFiles/C_Operations/memsetzero.c \
 ../../../00_CommonFiles/Allocation_Operations/mycalloc.c \
 ../../../00_CommonFiles/Reordering/reordering.c \
+../../../00_CommonFiles/Reordering/symrcm.c \
 ../../../00_CommonFiles/Time_Integration/Criteria.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_New.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old.c \
@@ -160,14 +171,14 @@ uB_InitialSolution.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/gmresBD.c \
 
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=EulerEquations2D 
+EXECUTABLE=EulerEquations2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DEulerEquations2D -g -Ddebug -c -lm -lrt -Wall
 debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
 ../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath 
+-lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath
 debug: all
 
 fast: CFLAGS= -DEulerEquations2D -c -lm -lrt -Wall -Ofast -march=native
@@ -176,14 +187,14 @@ fast: GCFLAGS= -DEulerEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reorder
 -lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
 fast: all
 
-gprof: CFLAGS+=-pg  
+gprof: CFLAGS+=-pg
 gprof: LDFLAGS+=-pg
 gprof: all
 
 
 
- 
-$(EXECUTABLE): $(OBJECTS) 
+
+$(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(GCFLAGS) -o $@
 
 .c.o:
@@ -191,6 +202,3 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE)
-
-
-

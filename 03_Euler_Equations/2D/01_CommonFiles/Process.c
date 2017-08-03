@@ -10,6 +10,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	setMatrixVectorProductType(Parameters, FemFunctions);
 	setSolver(Parameters,FemOtherFunctions);
 	setPreconditioner(Parameters, FemFunctions);
+	setScaling(Parameters, FemFunctions);
 	setStabilizationForm(Parameters, FemFunctions, FemOtherFunctions, &Predictor);
 	setDimensionlessness(Parameters, FemFunctions);
 	set_BC_no_penetrability(Parameters, FemFunctions);

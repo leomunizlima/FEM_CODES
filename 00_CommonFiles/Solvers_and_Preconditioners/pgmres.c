@@ -8,7 +8,7 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	double normb, eps, r, rho, soma, h1, h2;
 	double tol;
 	double **u, *u_aux, **h, *h_aux;
-	double *c, *s, *y, *e, *z;
+	double *c, *s, *y, *e, *z, *v;
 
 	kmax = Parameters->KrylovBasisVectorsQuantity;
 	lmax = Parameters->LinearMaxIter;
@@ -29,6 +29,7 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	c = (double*) mycalloc("c of 'gmres'",kmax,sizeof(double));
 	s = (double*) mycalloc("s of 'gmres'",kmax,sizeof(double)); 
 	y = (double*) mycalloc("y of 'gmres'",kmax,sizeof(double));
+	v = (double*) mycalloc("z of 'gmres'",neq + 1,sizeof(double));
 	z = (double*) mycalloc("z of 'gmres'",neq + 1,sizeof(double));
 
 	// Inicializa matrizes e vetores com zero
@@ -49,12 +50,16 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 		i = 0;
 		for(j = 0; j < kmax; j++)
 			dzero(neq, u[j]);
+		
+		dcopy(neq, X, v);
+				
+		FemFunctions->precondR(Parameters,MatrixData,FemStructs,v,v);
 
 		// ui = AX
-		FemFunctions->mv(Parameters, MatrixData, FemStructs, X, z);
+		FemFunctions->mv(Parameters, MatrixData, FemStructs, v, u[i]);
 
 		// Preconditioning M u = z
-		FemFunctions->precond(Parameters, MatrixData, FemStructs, z, u[i]);
+		FemFunctions->precond(Parameters, MatrixData, FemStructs, u[i], u[i]);
 
 		daxpy(neq, -1.0, B, u[i]);     // ui = ui - b
 		dscal(neq, -1.0, u[i]);          // ui = - ui = (b - ui) = (b - Ax)
@@ -72,12 +77,16 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 		do
 		{
 			cont++;
+			
+			dcopy(neq, u[i], v);
+
+			FemFunctions->precondR(Parameters,MatrixData,FemStructs,v,v);
 
 			// uj = ui+1 = A z
-			FemFunctions->mv(Parameters, MatrixData, FemStructs, u[i], z);
+			FemFunctions->mv(Parameters, MatrixData, FemStructs, v, u[i+1]);
 
 			// Preconditioning M ui+1 = z 
-			FemFunctions->precond(Parameters, MatrixData, FemStructs, z, u[i+1]);
+			FemFunctions->precond(Parameters, MatrixData, FemStructs, u[i+1], u[i+1]);
 
 			// Ortogonalizacao de Gram-Schmidt
 			for (j = 0; j <= i; j++)
@@ -163,6 +172,8 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	#endif
 	Parameters->iterations += cont;
 
+	FemFunctions->precondR (Parameters, MatrixData, FemStructs, X, X);
+
 	free(u_aux);
 	free(u);
 	free(h_aux);
@@ -171,6 +182,7 @@ int pgmres (ParametersType *Parameters,	MatrixDataType *MatrixData, FemStructsTy
 	free(c); 
 	free(s);
 	free(y);
+	free(v);
 	free(z);
 
 	return 0;

@@ -11,9 +11,11 @@
 	#include "../../05_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
 #endif
 
+#include "symrcm.h"
+
 /*----------------------------------------------------------------------------
- * ARRAY STRUCTURE
- *--------------------------------------------------------------------------*/
+ * ARRAY STRUCTURE 
+*--------------------------------------------------------------------------*/
 #ifndef ARRAY_H
 #define ARRAY_H
 
@@ -41,6 +43,7 @@ void mc60fd_(int *n, int *nsup, int *lirn, int *irn,int *icptr, int *vars,int *p
 void reordering(ParametersType *Parameters, int *JA, int *IA, int *perm, int *PermCSR);
 void REORDERING_SPECTRAL (ParametersType *Parameters, int *ja, int *ia, int *p, int *pT);
 void REORDERING_RCM_or_SLOAN (ParametersType *Parameters, int *ja, int *ia, int *p, int *pT);
+void REORDERING_SYMRCM(ParametersType *,int *ja, int *ia, int *p, int *pT);
 int COMPARE_eig (const void * a, const void * b);
 int COMPARE_array (const void * a, const void * b);
 void MATRIX_ROW_permutation (ParametersType * Parameters, int *JA, int *IA, int *p, int *pT);

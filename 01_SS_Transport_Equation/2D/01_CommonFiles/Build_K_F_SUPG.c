@@ -118,6 +118,10 @@ int Build_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemSt
 
 		/**************************** Shock capture parameter calculations***************************************/
 		Eu = FemFunctions->ShockCapture(kx, ky, Be_x, Be_y, gamma, ue1, ue2, ue3, ueb, feb, y23, y31,y12, x32,x13,x21,invArea, h_shock); 
+
+	//*CUIDADO MUDAR DEPOIS!!!!!=>*/ Eu = 0;
+		
+
 		/********************************************************************************************************/
 
 		// Shock capture correction matrix

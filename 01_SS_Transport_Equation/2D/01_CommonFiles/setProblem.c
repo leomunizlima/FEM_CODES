@@ -3,6 +3,8 @@
 #include "../CARTOLA/cartola.h"
 #include "../TESTE/teste.h"
 #include "../HEMKER/hemker.h"
+#include "../CONVECTION/convection.h"
+#include "../REACTION/reaction.h"
 
 int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {		
@@ -33,6 +35,20 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 		FemFunctions->Reaction = HEMKER_Reaction;
 		FemFunctions->Velocity = HEMKER_Velocity;
 		FemFunctions->upresc = HEMKER_upresc;
+	}
+	else if (strcasecmp(Parameters->ProblemTitle,"CONVECTION")==0){
+		FemFunctions->Condutivity = CONVECTION_Condutivity;	
+		FemFunctions->Font = CONVECTION_Font;
+		FemFunctions->Reaction = CONVECTION_Reaction;
+		FemFunctions->Velocity = CONVECTION_Velocity;
+		FemFunctions->upresc = CONVECTION_upresc;
+	}
+	else if (strcasecmp(Parameters->ProblemTitle,"REACTION")==0){
+		FemFunctions->Condutivity = REACTION_Condutivity;	
+		FemFunctions->Font = REACTION_Font;
+		FemFunctions->Reaction = REACTION_Reaction;
+		FemFunctions->Velocity = REACTION_Velocity;
+		FemFunctions->upresc = REACTION_upresc;
 	}
 	else{
 		printf("Problem not defined!\n");

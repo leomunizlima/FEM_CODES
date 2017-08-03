@@ -52,6 +52,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%d\t:%[^\n]", &(Parameters->KrylovBasisVectorsQuantity), label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Solver, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Preconditioner, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]\n", Parameters->Scaling, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->reordering, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->TimeIntegration, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopAtSteadyState, label);
@@ -113,6 +114,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	Parameters->nel = nel;
 	Parameters->nnodes = nnodes; 
 	Parameters->neqrho = neqrho;
+	Parameters->iterations = 0;
 
 	MatrixData = (MatrixDataType *) mycalloc("MatrixData of 'Preprocess'", 1, sizeof(MatrixDataType));
 	F = (double*) mycalloc("F of 'Preprocess'", neq+1, sizeof(double));

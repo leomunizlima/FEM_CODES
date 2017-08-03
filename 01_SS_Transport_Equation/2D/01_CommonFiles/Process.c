@@ -5,22 +5,23 @@
 int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
 {
 	int i, neq = Parameters->neq;
-	double NonLinearTolerance = Parameters->NonLinearTolerance; 
+	double NonLinearTolerance = Parameters->NonLinearTolerance;
 	double *u = FemStructs->u;
-	double *uold, normdiff;	
-	
+	double *uold, normu, normdiff;
+
 	setProblem(Parameters,FemFunctions);
 	setMatrixVectorProductType(Parameters, FemFunctions);
 	setSolver(Parameters, FemOtherFunctions);
 	setScaling(Parameters, FemFunctions);
 	setPreconditioner(Parameters, FemFunctions);
 	setStabilizationForm(Parameters, FemFunctions, FemOtherFunctions);
-	
-	uold = mycalloc("uold",sizeof(double),neq+1);	
+
+	uold = mycalloc("uold",sizeof(double),neq+1);
 	normdiff = NonLinearTolerance + 1;
+	normu = 1/NonLinearTolerance;
 	i = 0;
-	while (normdiff > NonLinearTolerance){
-		i++;	
+	while (normdiff > normu*NonLinearTolerance){
+		i++;
 		dcopy(neq, u, uold);
 		FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
 		FemFunctions->scaling(Parameters, MatrixData, FemStructs);
@@ -29,14 +30,14 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 		FemFunctions->unscaling(Parameters, MatrixData, FemStructs, FemStructs->u);
 		daxpy(neq, -1, u, uold);
 		normdiff = sqrt(ddot(neq,uold,uold));
+		normu = sqrt(ddot(neq,FemStructs->u,FemStructs->u));
+
 		#ifdef debug
-			printf("normdiff = %lf \n",normdiff);
+			printf("normdiff/normu = %.15lf\n",normdiff/normu);
 		#endif
 	}
-	
+
 	free(uold);
 
 	return 0;
 }
-
-

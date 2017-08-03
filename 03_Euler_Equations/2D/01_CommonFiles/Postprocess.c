@@ -8,14 +8,14 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 
 	/*************************************************************/
 	//		Paraview output to file
-	/************************************************************/	
+	/************************************************************/
 	Paraview_Output(Parameters, FemStructs, FemFunctions);
 	Paraview_Output_3D(Parameters, FemStructs, FemFunctions);
 	/*************************************************************/
 
 
 	/****************************************************************************************/
-	// 			Printing final result		
+	// 			Printing final result
 	/****************************************************************************************/
 	printf("\n\n======================= PROBLEM CHARACTERISTICS ========================\n\n");
 	printf("Problem Title: %s\n", Parameters->ProblemTitle);
@@ -32,22 +32,23 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	printf("Maximum number of correction iteration: %d\n", Parameters->NonLinearMaxIter);
 	printf("Matrix vector product scheme: %s\n", Parameters->MatrixVectorProductScheme);
 	if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
-		printf("Reordering: %s (bandwidth before: %d) (bandwidth after: %d)\n", Parameters->reordering, 
+		printf("Reordering: %s (bandwidth before: %d) (bandwidth after: %d)\n", Parameters->reordering,
 		Parameters->bandwidth_bef, Parameters->bandwidth_aft);
 	}
 	printf("Solver used: %s\n", Parameters->Solver);
 	printf("Solver tolerance used: %E\n", Parameters->SolverTolerance);
 	printf("Preconditioner used: %s\n", Parameters->Preconditioner);
+	printf("Scaling used: %s\n", Parameters->Scaling);
 	printf("Maximum number of solver iteration: %d\n", Parameters->LinearMaxIter);
 	printf("Number of restart: %d\n", Parameters->KrylovBasisVectorsQuantity);
 	printf("Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);
 	printf("Alpha: %lf\t Step time: %E\t Final Time: %lf - Stopped at Steady State? %s (Current Time: %lf)\n", Parameters->Alpha, Parameters->DeltaT,
-		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);	
+		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);
 	printf("\n========================================================================\n\n");
 
-	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
-			Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme, Parameters->nnodes, Parameters->nel);
-	
+	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
+			Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
+
 	OutFile = myfopen(FileName,"w");
 	fprintf(OutFile, "\n\n======================= PROBLEM CHARACTERISTICS ========================\n\n");
 	fprintf(OutFile, "Problem Title: %s\n", Parameters->ProblemTitle);
@@ -69,23 +70,23 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	fprintf(OutFile, "Maximum number of solver iteration: %d\n", Parameters->LinearMaxIter);
 	fprintf(OutFile, "Number of restart: %d\n", Parameters->KrylovBasisVectorsQuantity);
 	fprintf(OutFile, "Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);
-	fprintf(OutFile, "Alpha: %lf\t Step time: %E\t Final Time: %lf - Stopped at Steady State? %s (Current Time: %lf)\n", Parameters->Alpha, Parameters->DeltaT, 
-		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);	
+	fprintf(OutFile, "Alpha: %lf\t Step time: %E\t Final Time: %lf - Stopped at Steady State? %s (Current Time: %lf)\n", Parameters->Alpha, Parameters->DeltaT,
+		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);
 	fprintf(OutFile, "\n========================================================================\n\n");
 	fclose(OutFile);
 	/****************************************************************************************/
-	
-	
+
+
 	/***************************************************************************************/
-	//				Memory deallocation	
+	//				Memory deallocation
 	/**************************************************************************************/
-	if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3) == 0){		
+	if (strncmp(Parameters->MatrixVectorProductScheme,"EBE",3) == 0){
 		free(MatrixData->A);
 		free(MatrixData->Aaux);
 		free(FemStructs->lmaux);
 		free(FemStructs->lm);
 	}
-	else if (strncmp(Parameters->MatrixVectorProductScheme,"EDE",3) == 0){		
+	else if (strncmp(Parameters->MatrixVectorProductScheme,"EDE",3) == 0){
 		int I, nel;
 
 		nel = Parameters->nel;
@@ -102,7 +103,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		free(FemStructs->lm2aux);
 		free(FemStructs->lm2);
 	}
-	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR") == 0){		
+	else if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR") == 0){
 		int I, nel;
 
 		nel = Parameters->nel;
@@ -117,9 +118,13 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		free(FemStructs->lmaux);
 		free(FemStructs->lm);
 		SPARILU_clean(MatrixData->ILUp);
-		
-	}	
 
+	}
+
+	if ((strcasecmp(Parameters->Preconditioner,"Jacobi")==0)||(strncmp(Parameters->Preconditioner,"SOR",3)==0)){
+		free(MatrixData->invDe);
+		free(MatrixData->invDeaux);
+	}
 
 	free(MatrixData);
 	free(FemStructs->Node);
@@ -131,10 +136,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	free(FemFunctions);
 	free(FemOtherFunctions);
 
-	/***************************************************************************************/	
-	
+	/***************************************************************************************/
+
 	return 0;
 }
-
-
-
