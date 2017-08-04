@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+*.dat
 
 # Object files
 *.o
@@ -103,10 +104,12 @@ local.properties
 .worksheet
 
 #executable files
-
+01_SS_Transport_Equation/2D/01_CommonFiles/SSTranspEquation
+02_Transport_Equation/2D/01_CommonFiles/TranspEquation
 03_Euler_Equations/2D/01_CommonFiles/EulerEquations2D
 
 # Our files that should not be ignored
 !00_CommonFiles/Reordering/hsl_mc60/libmc60.a
 !00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a
 !00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o
+
