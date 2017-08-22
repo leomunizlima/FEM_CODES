@@ -1,17 +1,17 @@
 PUDIM	:Problem title (CARTOLA, PUDIM or CONE)
-1e-6	:Solver tolerance
+1e-5	:Solver tolerance
 1e-2	:Non linear tolerance
 1e-3	:Time integration tolerance
 1e-8	:Stabilization coefficient tolerance
-3	:Max number of non linear iterations
-1000	:Maximum number of solver iterations
+5	:Max number of non linear iterations
+100	:Maximum number of solver iterations
 NO	:Stop at steady state (YES or NO)
-20	:Number of vectors in Krylov basis
+50	:Number of vectors in Krylov basis
 GMRES	:Solver (GMRES)
 NOT	:Preconditioner (Diag, Jacobi, SGS, SORw "where w is relaxation parameter in [0,2[" , ILUp or NOT) 
-NOT	:Scaling (NOT, Left, LeftRight)
+NOT	:Scaling (Left, LeftRight or NOT)
 NOT	:Reordering (Spectral, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
-EBE	:Matrix vector product scheme (EBE, EDE or CSR)
+EBE	:Matrix vector product scheme (EBE or CSR)
 SUPG	:Stabilization form (SUPG or DD)
 YZBeta	:Shock capture (CAU, CAUDD or YZBeta)
 Option1 :Parameter h to shock capture (Option1, Option2 or 2sqrtArea)
@@ -20,13 +20,6 @@ Predictor1	:Time integration method (Predictor1 or Predictor2)
 0.01	:time step discretization
 ITERATION	:stop multicorrection(NORM or ITERATION)
 7.0	:End time	
-33025	:Number of nodes (128x128)
-65536	:Number of elements (128x128)
-131585	:Number of nodes (256x256)
-262144	:Number of elements (256x256)
-525313	:Number of nodes (512x512)
-1048576	:Number of elements (512x512)
-8321	:Number of nodes (64x64)
-16384	:Number of elements (64x64)
-
+10201	:Number of nodes
+20000	:Number of elements
 

@@ -49,6 +49,12 @@ uB_InitialSolution.c \
 ../CONE/CONE_Velocity.c \
 ../CONE/CONE_upresc.c \
 ../CONE/CONE_InitialSolution.c \
+../CONE2/CONE2_Condutivity.c \
+../CONE2/CONE2_Font.c \
+../CONE2/CONE2_Reaction.c \
+../CONE2/CONE2_Velocity.c \
+../CONE2/CONE2_upresc.c \
+../CONE2/CONE2_InitialSolution.c \
 ../PUDIM/PUDIM_Condutivity.c \
 ../PUDIM/PUDIM_Font.c \
 ../PUDIM/PUDIM_Reaction.c \

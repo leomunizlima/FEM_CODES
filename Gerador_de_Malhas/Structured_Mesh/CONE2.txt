@@ -1,0 +1,14 @@
+direita	:inclinação da malha(direita ou esquerda)
+100	:número de subintervalos na direção x
+100	:número de subintervalos na direção y
+2	:número de nós na direção x que cria o domínio
+2	:numero de nós na direção y que cria o domínio
+4	:número de nós que compoem o domínio (total do produto cartesiano da direcao x pela y)
+-5.0	-5.0	:x1 y1 
+5.0	-5.0	:x2 y2 
+5.0	5.0	:x3 y3 
+-5.0	5.0	:x4 y4 
+
+
+
+
