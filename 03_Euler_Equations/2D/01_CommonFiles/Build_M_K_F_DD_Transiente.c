@@ -767,6 +767,7 @@ int Build_M_K_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *Matrix
 		Ke[9][2]  =      Khhg23      -    invBB__t__deltat_t_KhB101 * KBh13    - invBB__t__MhB_p_deltat_t_KhB102 * KBh23 -    invBB__t__deltat_t_KhB103 * KBh33    -    invBB__t__deltat_t_KhB104 * KBh43; 
 		Ke[9][3]  =      Khhg24      -    invBB__t__deltat_t_KhB101 * KBh14    - invBB__t__MhB_p_deltat_t_KhB102 * KBh24 -    invBB__t__deltat_t_KhB103 * KBh34    -    invBB__t__deltat_t_KhB104 * KBh44; 
 		Ke[10][0] =      Khhg31      -    invBB__t__deltat_t_KhB111 * KBh11    -    invBB__t__deltat_t_KhB112 * KBh21    - invBB__t__MhB_p_deltat_t_KhB113 * KBh31 -    invBB__t__deltat_t_KhB114 * KBh41; 
+
 		Ke[10][1] =      Khhg32      -    invBB__t__deltat_t_KhB111 * KBh12    -    invBB__t__deltat_t_KhB112 * KBh22    - invBB__t__MhB_p_deltat_t_KhB113 * KBh32 -    invBB__t__deltat_t_KhB114 * KBh42; 
 		Ke[10][2] = Khhg33 + Khhdd19 -    invBB__t__deltat_t_KhB111 * KBh13    -    invBB__t__deltat_t_KhB112 * KBh23    - invBB__t__MhB_p_deltat_t_KhB113 * KBh33 -    invBB__t__deltat_t_KhB114 * KBh43; 
 		Ke[10][3] =      Khhg34      -    invBB__t__deltat_t_KhB111 * KBh14    -    invBB__t__deltat_t_KhB112 * KBh24    - invBB__t__MhB_p_deltat_t_KhB113 * KBh34 -    invBB__t__deltat_t_KhB114 * KBh44; 

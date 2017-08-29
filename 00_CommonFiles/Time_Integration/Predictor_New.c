@@ -89,7 +89,7 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 			
 			FemFunctions->unscaling(Parameters, MatrixData, FemStructs, Da);
 
-			calculate_DaB(Parameters, FemStructs, Da, DaB);
+			calculate_DaB(Parameters, FemStructs, FemFunctions, Da, DaB);
 
 			daxpy(neq, 1, Da, a);
 			daxpy(neq, alpha*dt, Da, u);

@@ -9,7 +9,7 @@ void NACA0012_BC_no_penetrability(int J1, int J2, int J3, NodeType *Node, double
 	int tag = 0;
 	double x, y, theta1, theta2, theta3, sin_theta1, sin_theta2, sin_theta3, cos_theta1, cos_theta2, cos_theta3;
 
-	if ((Node[J1].v1Type == -1 || Node[J1].v2Type == -1)&&fabs(Node[J1].x)>=1e-8){
+	if (Node[J1].v1Type < 0){
 		tag = 1;
 		x = Node[J1].x;
 		y = Node[J1].y;
@@ -23,7 +23,7 @@ void NACA0012_BC_no_penetrability(int J1, int J2, int J3, NodeType *Node, double
 		cos_theta1 = 1.0; 
 	}
 
-	if ((Node[J2].v1Type == -1 || Node[J2].v2Type == -1)&&fabs(Node[J2].x)>=1e-8){
+	if (Node[J2].v1Type < 0){
 		tag = 1;
 		x = Node[J2].x;
 		y = Node[J2].y;
@@ -37,7 +37,7 @@ void NACA0012_BC_no_penetrability(int J1, int J2, int J3, NodeType *Node, double
 		cos_theta2 = 1.0; 
 	}
 
-	if ((Node[J3].v1Type == -1 || Node[J3].v2Type == -1)&&fabs(Node[J3].x)>=1e-8){
+	if (Node[J3].v1Type < 0){
 		tag = 1;
 		x = Node[J3].x;
 		y = Node[J3].y;

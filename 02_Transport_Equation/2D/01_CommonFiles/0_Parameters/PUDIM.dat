@@ -20,6 +20,8 @@ Predictor1	:Time integration method (Predictor1 or Predictor2)
 0.01	:time step discretization
 ITERATION	:stop multicorrection(NORM or ITERATION)
 7.0	:End time	
+13406	:Number of nodes
+26410	:Number of elements
 10201	:Number of nodes
 20000	:Number of elements
 

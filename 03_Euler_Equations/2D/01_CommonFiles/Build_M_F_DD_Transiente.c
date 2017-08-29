@@ -133,7 +133,7 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 	
 		FemFunctions->Ax_Ay_calculations(gamma,Parameters->Mach,Ub, Ax, Ay);
 
-		/*-------------------------------------------------------ALTERACAO Y^(-1)-----------------------------------------------------------*/
+		/*---------------------------------------------ALTERACAO Y^-1)-------------------------------------------------------*/
 		double A0[4][4];		
 		delta = FemFunctions->ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
 
@@ -685,21 +685,7 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 		
 		// N2^{-1} = (MBB + alpha*dt*KBB)^{-1}
 		double invN2 = 1.0 / (MBB + alpha_dt*KBB);
-
-
 		
-		//Montagem da matriz Me
-		int size = NDOF*NNOEL;
-		double soma;
-		for(i = 0; i < size; i++){
-			for(j = 0; j < size; j++){
-				soma = 0.0;
-				for (k = 0; k < NDOF; k++){
-					soma += N1[i][k]*M2[k][j];
-				}
-				Me[i][j] = M1[i][j] - invN2*soma;
-			}
-		}
 		
 		// Valor de uB e duB no elemento
 		int eNDOF = e*NDOF;
@@ -783,9 +769,21 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 		
 				
 		//Adjust of matrices M1, N1, M2 and vectors R1, R2 according to boundary conditions of no penetrability
-		FemFunctions->BC_no_penetrability(J1, J2, J3, Node, alpha_dt, delta, deltaNMV, Area,
-										y23, y12, y31, x32, x21, x13, Ax, Ay, M1, N1, M2, R1, R2, Ue, dUe, uBaux, duBaux);
-				
+		FemFunctions->BC_no_penetrability(J1, J2, J3, Node, alpha_dt, delta, deltaNMV, Area, y23, y12, y31, x32, x21, x13, Ax, Ay, M1, N1, M2, R1, R2, Ue, dUe, uBaux, duBaux);
+
+		//Montagem da matriz Me
+		int size = NDOF*NNOEL;
+		double soma;
+		for(i = 0; i < size; i++){
+			for(j = 0; j < size; j++){
+				soma = 0.0;
+				for (k = 0; k < NDOF; k++){
+					soma += N1[i][k]*M2[k][j];
+				}
+				Me[i][j] = M1[i][j] - invN2*soma;
+			}
+		}
+
 		// Montagem do vetor F 
 		for (i = 0; i < 12; i++)
 			F[lm[e][i]] += R1[i]  - invN2*(N1[i][0]*R2[0]  + N1[i][1]*R2[1]  + N1[i][2]*R2[2]  + N1[i][3]*R2[3]);

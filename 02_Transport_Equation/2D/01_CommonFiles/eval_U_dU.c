@@ -14,7 +14,7 @@ void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctio
 		x = Node[I].x;
 		y = Node[I].y;
 
-		if (Node[I].id >= 0){
+		if (Node[I].Type > 0){
 			U[I] = u[Node[I].id];
 			dU[I] = du[Node[I].id];
 		}

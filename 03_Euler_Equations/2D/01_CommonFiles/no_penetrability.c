@@ -11,7 +11,7 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	double Area_over_six = Area/6.;
 	double Area_over_twelve = Area/12.;
 	double Area_3_over_twenty = 3.*Area/20.;
-	double delta_quarter_Area = 0.25*delta*Area;
+	double delta_quarter_Area = 0.25*delta/Area; //ERRO! Estava: 0.25*delta*Area
 	double R1AxR1[4][4], R1AxR2[4][4], R1AxR3[4][4];	
 	double R2AxR1[4][4], R2AxR2[4][4], R2AxR3[4][4];	
 	double R3AxR1[4][4], R3AxR2[4][4], R3AxR3[4][4];	
@@ -734,183 +734,189 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	//Bloco K11:
 	double k12, k13, k21, k22, k23, k24, k31, k32, k33, k34, k42, k43;
 	
- 	k12 = one_sixth*(y23*R1AxR1[0][1] + x32*R1AyR1[0][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[0][1];
- 	k13 = one_sixth*(y23*R1AxR1[0][2] + x32*R1AyR1[0][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[0][2];
- 	k21 = one_sixth*(y23*R1AxR1[1][0] + x32*R1AyR1[1][0]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[1][0];
- 	k22 = one_sixth*(y23*R1AxR1[1][1] + x32*R1AyR1[1][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[1][1];
- 	k23 = one_sixth*(y23*R1AxR1[1][2] + x32*R1AyR1[1][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[1][2];
- 	k24 = one_sixth*(y23*R1AxR1[1][3] + x32*R1AyR1[1][3]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[1][3];
- 	k31 = one_sixth*(y23*R1AxR1[2][0] + x32*R1AyR1[2][0]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[2][0];
- 	k32 = one_sixth*(y23*R1AxR1[2][1] + x32*R1AyR1[2][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[2][1];
- 	k33 = one_sixth*(y23*R1AxR1[2][2] + x32*R1AyR1[2][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[2][2];
- 	k34 = one_sixth*(y23*R1AxR1[2][3] + x32*R1AyR1[2][3]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[2][3];
- 	k42 = one_sixth*(y23*R1AxR1[3][1] + x32*R1AyR1[3][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[3][1];
- 	k43 = one_sixth*(y23*R1AxR1[3][2] + x32*R1AyR1[3][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[3][2];
+ 	k12 = one_sixth*(y23*AxR1[0][1] + x32*AyR1[0][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[0][1];
+ 	k13 = one_sixth*(y23*AxR1[0][2] + x32*AyR1[0][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[0][2];
+
+ 	k21 = one_sixth*(y23*AxR1[1][0] + x32*AyR1[1][0]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[1][0];
+ 	k22 = one_sixth*(y23*AxR1[1][1] + x32*AyR1[1][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[1][1];
+ 	k23 = one_sixth*(y23*AxR1[1][2] + x32*AyR1[1][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[1][2];
+ 	k24 = one_sixth*(y23*AxR1[1][3] + x32*AyR1[1][3]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[1][3];
+
+ 	k31 = one_sixth*(y23*AxR1[2][0] + x32*AyR1[2][0]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[2][0];
+ 	k32 = one_sixth*(y23*AxR1[2][1] + x32*AyR1[2][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[2][1];
+ 	k33 = one_sixth*(y23*AxR1[2][2] + x32*AyR1[2][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[2][2];
+ 	k34 = one_sixth*(y23*AxR1[2][3] + x32*AyR1[2][3]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[2][3];
+
+ 	k42 = one_sixth*(y23*AxR1[3][1] + x32*AyR1[3][1]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[3][1];
+ 	k43 = one_sixth*(y23*AxR1[3][2] + x32*AyR1[3][2]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1[3][2];
  	
 	//Bloco K12:
 	double k16, k17, k25, k26, k27, k28, k35, k36, k37, k38, k46, k47; 
-	k16 = one_sixth*(y31*R1AxR2[0][1] + x13*R1AyR2[0][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[0][1];
- 	k17 = one_sixth*(y31*R1AxR2[0][2] + x13*R1AyR2[0][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[0][2];
- 	k25 = one_sixth*(y31*R1AxR2[1][0] + x13*R1AyR2[1][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][0];
- 	k26 = one_sixth*(y31*R1AxR2[1][1] + x13*R1AyR2[1][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][1];
- 	k27 = one_sixth*(y31*R1AxR2[1][2] + x13*R1AyR2[1][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][2];
- 	k28 = one_sixth*(y31*R1AxR2[1][3] + x13*R1AyR2[1][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][3];
- 	k35 = one_sixth*(y31*R1AxR2[2][0] + x13*R1AyR2[2][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][0];
- 	k36 = one_sixth*(y31*R1AxR2[2][1] + x13*R1AyR2[2][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][1];
- 	k37 = one_sixth*(y31*R1AxR2[2][2] + x13*R1AyR2[2][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][2];
- 	k38 = one_sixth*(y31*R1AxR2[2][3] + x13*R1AyR2[2][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][3];
- 	k46 = one_sixth*(y31*R1AxR2[3][1] + x13*R1AyR2[3][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[3][1];
- 	k47 = one_sixth*(y31*R1AxR2[3][2] + x13*R1AyR2[3][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[3][2];
+	k16 = one_sixth*(y31*AxR2[0][1] + x13*AyR2[0][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[0][1];
+ 	k17 = one_sixth*(y31*AxR2[0][2] + x13*AyR2[0][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[0][2];
+
+ 	k25 = one_sixth*(y31*AxR2[1][0] + x13*AyR2[1][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[1][0];
+ 	k26 = one_sixth*(y31*AxR2[1][1] + x13*AyR2[1][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[1][1];
+ 	k27 = one_sixth*(y31*AxR2[1][2] + x13*AyR2[1][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[1][2];
+ 	k28 = one_sixth*(y31*AxR2[1][3] + x13*AyR2[1][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[1][3];
+
+ 	k35 = one_sixth*(y31*AxR2[2][0] + x13*AyR2[2][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[2][0];
+ 	k36 = one_sixth*(y31*AxR2[2][1] + x13*AyR2[2][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[2][1];
+ 	k37 = one_sixth*(y31*AxR2[2][2] + x13*AyR2[2][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[2][2];
+ 	k38 = one_sixth*(y31*AxR2[2][3] + x13*AyR2[2][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[2][3];
+
+ 	k46 = one_sixth*(y31*AxR2[3][1] + x13*AyR2[3][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[3][1];
+ 	k47 = one_sixth*(y31*AxR2[3][2] + x13*AyR2[3][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R2[3][2];
 
 	//Bloco K13
 	double k110, k1_11, k29, k210, k211, k212, k39, k310, k311, k312, k410, k411;
-	k110 = one_sixth*(y12*R1AxR3[0][1] + x21*R1AyR3[0][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[0][1];
- 	k1_11 = one_sixth*(y12*R1AxR3[0][2] + x21*R1AyR3[0][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[0][2];
- 	k29  = one_sixth*(y12*R1AxR3[1][0] + x21*R1AyR3[1][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][0];
- 	k210 = one_sixth*(y12*R1AxR3[1][1] + x21*R1AyR3[1][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][1];
- 	k211 = one_sixth*(y12*R1AxR3[1][2] + x21*R1AyR3[1][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][2];
- 	k212 = one_sixth*(y12*R1AxR3[1][3] + x21*R1AyR3[1][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][3];
- 	k39  = one_sixth*(y12*R1AxR3[2][0] + x21*R1AyR3[2][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][0];
- 	k310 = one_sixth*(y12*R1AxR3[2][1] + x21*R1AyR3[2][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][1];
- 	k311 = one_sixth*(y12*R1AxR3[2][2] + x21*R1AyR3[2][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][2];
- 	k312 = one_sixth*(y12*R1AxR3[2][3] + x21*R1AyR3[2][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][3];
- 	k410 = one_sixth*(y12*R1AxR3[3][1] + x21*R1AyR3[3][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[3][1];
- 	k411 = one_sixth*(y12*R1AxR3[3][2] + x21*R1AyR3[3][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[3][2];
+	k110 	= one_sixth*(y12*AxR3[0][1] + x21*AyR3[0][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[0][1];
+ 	k1_11 	= one_sixth*(y12*AxR3[0][2] + x21*AyR3[0][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[0][2];
+ 	k29  	= one_sixth*(y12*AxR3[1][0] + x21*AyR3[1][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[1][0];
+ 	k210 	= one_sixth*(y12*AxR3[1][1] + x21*AyR3[1][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[1][1];
+ 	k211 	= one_sixth*(y12*AxR3[1][2] + x21*AyR3[1][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[1][2];
+ 	k212 	= one_sixth*(y12*AxR3[1][3] + x21*AyR3[1][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[1][3];
+ 	k39  	= one_sixth*(y12*AxR3[2][0] + x21*AyR3[2][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[2][0];
+ 	k310 	= one_sixth*(y12*AxR3[2][1] + x21*AyR3[2][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[2][1];
+ 	k311 	= one_sixth*(y12*AxR3[2][2] + x21*AyR3[2][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[2][2];
+ 	k312 	= one_sixth*(y12*AxR3[2][3] + x21*AyR3[2][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[2][3];
+ 	k410 	= one_sixth*(y12*AxR3[3][1] + x21*AyR3[3][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[3][1];
+ 	k411 	= one_sixth*(y12*AxR3[3][2] + x21*AyR3[3][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R3[3][2];
 
- 	//Bloco K14
+ 	//Bloco K14 - NAO ALTERA
 	double k213, k214, k215, k216, k313, k314, k315, k316;
 
-	k213 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[1][0] + (x32 + 2*x13 + 2*x21)*R1Ay[1][0]);		
-	k214 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[1][1] + (x32 + 2*x13 + 2*x21)*R1Ay[1][1]);		
-	k215 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[1][2] + (x32 + 2*x13 + 2*x21)*R1Ay[1][2]);		
-	k216 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[1][3] + (x32 + 2*x13 + 2*x21)*R1Ay[1][3]);		
-	k313 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[2][0] + (x32 + 2*x13 + 2*x21)*R1Ay[2][0]);		
-	k314 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[2][1] + (x32 + 2*x13 + 2*x21)*R1Ay[2][1]);		
-	k315 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[2][2] + (x32 + 2*x13 + 2*x21)*R1Ay[2][2]);		
-	k316 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[2][3] + (x32 + 2*x13 + 2*x21)*R1Ay[2][3]);		
+	k213 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[1][0] + (x32 + 2*x13 + 2*x21)*Ay[1][0]);		
+	k214 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[1][1] + (x32 + 2*x13 + 2*x21)*Ay[1][1]);		
+	k215 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[1][2] + (x32 + 2*x13 + 2*x21)*Ay[1][2]);		
+	k216 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[1][3] + (x32 + 2*x13 + 2*x21)*Ay[1][3]);		
+	k313 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[2][0] + (x32 + 2*x13 + 2*x21)*Ay[2][0]);		
+	k314 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[2][1] + (x32 + 2*x13 + 2*x21)*Ay[2][1]);		
+	k315 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[2][2] + (x32 + 2*x13 + 2*x21)*Ay[2][2]);		
+	k316 = nine_over_forty*((y23 + 2*y31 + 2*y12)*Ax[2][3] + (x32 + 2*x13 + 2*x21)*Ay[2][3]);		
 
 	//Bloco K21
 	double k52, k53, k61, k62, k63, k64, k71, k72, k73, k74, k82, k83;
 
-	k52 = one_sixth*(y23*R2AxR1[0][1] + x32*R2AyR1[0][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[0][1];
- 	k53 = one_sixth*(y23*R2AxR1[0][2] + x32*R2AyR1[0][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[0][2];
- 	k61 = one_sixth*(y23*R2AxR1[1][0] + x32*R2AyR1[1][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][0];
- 	k62 = one_sixth*(y23*R2AxR1[1][1] + x32*R2AyR1[1][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][1];
- 	k63 = one_sixth*(y23*R2AxR1[1][2] + x32*R2AyR1[1][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][2];
- 	k64 = one_sixth*(y23*R2AxR1[1][3] + x32*R2AyR1[1][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[1][3];
- 	k71 = one_sixth*(y23*R2AxR1[2][0] + x32*R2AyR1[2][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][0];
- 	k72 = one_sixth*(y23*R2AxR1[2][1] + x32*R2AyR1[2][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][1];
- 	k73 = one_sixth*(y23*R2AxR1[2][2] + x32*R2AyR1[2][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][2];
- 	k74 = one_sixth*(y23*R2AxR1[2][3] + x32*R2AyR1[2][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[2][3];
- 	k82 = one_sixth*(y23*R2AxR1[3][1] + x32*R2AyR1[3][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[3][1];
- 	k83 = one_sixth*(y23*R2AxR1[3][2] + x32*R2AyR1[3][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1R2[3][2];
+	k52 = one_sixth*(y23*AxR1[0][1] + x32*AyR1[0][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[0][1];
+ 	k53 = one_sixth*(y23*AxR1[0][2] + x32*AyR1[0][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[0][2];
+ 	k61 = one_sixth*(y23*AxR1[1][0] + x32*AyR1[1][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[1][0];
+ 	k62 = one_sixth*(y23*AxR1[1][1] + x32*AyR1[1][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[1][1];
+ 	k63 = one_sixth*(y23*AxR1[1][2] + x32*AyR1[1][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[1][2];
+ 	k64 = one_sixth*(y23*AxR1[1][3] + x32*AyR1[1][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[1][3];
+ 	k71 = one_sixth*(y23*AxR1[2][0] + x32*AyR1[2][0]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[2][0];
+ 	k72 = one_sixth*(y23*AxR1[2][1] + x32*AyR1[2][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[2][1];
+ 	k73 = one_sixth*(y23*AxR1[2][2] + x32*AyR1[2][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[2][2];
+ 	k74 = one_sixth*(y23*AxR1[2][3] + x32*AyR1[2][3]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[2][3];
+ 	k82 = one_sixth*(y23*AxR1[3][1] + x32*AyR1[3][1]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[3][1];
+ 	k83 = one_sixth*(y23*AxR1[3][2] + x32*AyR1[3][2]) + delta_quarter_Area*(y23*y31 + x32*x13)*R1[3][2];
 
 	
 	//Bloco K22
 	double k56, k57, k65, k66, k67, k68, k75, k76, k77, k78, k86, k87;
 	
-	k56 = one_sixth*(y31*R2AxR2[0][1] + x13*R2AyR2[0][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[0][1];
- 	k57 = one_sixth*(y31*R2AxR2[0][2] + x13*R2AyR2[0][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[0][2];
- 	k65 = one_sixth*(y31*R2AxR2[1][0] + x13*R2AyR2[1][0]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[1][0];
- 	k66 = one_sixth*(y31*R2AxR2[1][1] + x13*R2AyR2[1][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[1][1];
- 	k67 = one_sixth*(y31*R2AxR2[1][2] + x13*R2AyR2[1][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[1][2];
- 	k68 = one_sixth*(y31*R2AxR2[1][3] + x13*R2AyR2[1][3]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[1][3];
- 	k75 = one_sixth*(y31*R2AxR2[2][0] + x13*R2AyR2[2][0]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[2][0];
- 	k76 = one_sixth*(y31*R2AxR2[2][1] + x13*R2AyR2[2][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[2][1];
- 	k77 = one_sixth*(y31*R2AxR2[2][2] + x13*R2AyR2[2][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[2][2];
- 	k78 = one_sixth*(y31*R2AxR2[2][3] + x13*R2AyR2[2][3]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[2][3];
- 	k86 = one_sixth*(y31*R2AxR2[3][1] + x13*R2AyR2[3][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[3][1];
- 	k87 = one_sixth*(y31*R2AxR2[3][2] + x13*R2AyR2[3][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2R2[3][2];
+	k56 = one_sixth*(y31*AxR2[0][1] + x13*AyR2[0][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[0][1];
+ 	k57 = one_sixth*(y31*AxR2[0][2] + x13*AyR2[0][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[0][2];
+ 	k65 = one_sixth*(y31*AxR2[1][0] + x13*AyR2[1][0]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[1][0];
+ 	k66 = one_sixth*(y31*AxR2[1][1] + x13*AyR2[1][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[1][1];
+ 	k67 = one_sixth*(y31*AxR2[1][2] + x13*AyR2[1][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[1][2];
+ 	k68 = one_sixth*(y31*AxR2[1][3] + x13*AyR2[1][3]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[1][3];
+ 	k75 = one_sixth*(y31*AxR2[2][0] + x13*AyR2[2][0]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[2][0];
+ 	k76 = one_sixth*(y31*AxR2[2][1] + x13*AyR2[2][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[2][1];
+ 	k77 = one_sixth*(y31*AxR2[2][2] + x13*AyR2[2][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[2][2];
+ 	k78 = one_sixth*(y31*AxR2[2][3] + x13*AyR2[2][3]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[2][3];
+ 	k86 = one_sixth*(y31*AxR2[3][1] + x13*AyR2[3][1]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[3][1];
+ 	k87 = one_sixth*(y31*AxR2[3][2] + x13*AyR2[3][2]) + delta_quarter_Area*(y31*y31 + x13*x13)*R2[3][2];
 
 	//Bloco K23:
 	double k510, k511, k69, k610, k611, k612, k79, k710, k711, k712, k810, k811;
 
-	k510 = one_sixth*(y12*R2AxR3[0][1] + x21*R2AyR3[0][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[0][1];
- 	k511 = one_sixth*(y12*R2AxR3[0][2] + x21*R2AyR3[0][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[0][2];
- 	k69  = one_sixth*(y12*R2AxR3[1][0] + x21*R2AyR3[1][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][0];
- 	k610 = one_sixth*(y12*R2AxR3[1][1] + x21*R2AyR3[1][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][1];
- 	k611 = one_sixth*(y12*R2AxR3[1][2] + x21*R2AyR3[1][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][2];
- 	k612 = one_sixth*(y12*R2AxR3[1][3] + x21*R2AyR3[1][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][3];
- 	k79  = one_sixth*(y12*R2AxR3[2][0] + x21*R2AyR3[2][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][0];
- 	k710 = one_sixth*(y12*R2AxR3[2][1] + x21*R2AyR3[2][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][1];
- 	k711 = one_sixth*(y12*R2AxR3[2][2] + x21*R2AyR3[2][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][2];
- 	k712 = one_sixth*(y12*R2AxR3[2][3] + x21*R2AyR3[2][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][3];
- 	k810 = one_sixth*(y12*R2AxR3[3][1] + x21*R2AyR3[3][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[3][1];
- 	k811 = one_sixth*(y12*R2AxR3[3][2] + x21*R2AyR3[3][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[3][2];
+	k510 = one_sixth*(y12*AxR3[0][1] + x21*AyR3[0][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[0][1];
+ 	k511 = one_sixth*(y12*AxR3[0][2] + x21*AyR3[0][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[0][2];
+ 	k69  = one_sixth*(y12*AxR3[1][0] + x21*AyR3[1][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[1][0];
+ 	k610 = one_sixth*(y12*AxR3[1][1] + x21*AyR3[1][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[1][1];
+ 	k611 = one_sixth*(y12*AxR3[1][2] + x21*AyR3[1][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[1][2];
+ 	k612 = one_sixth*(y12*AxR3[1][3] + x21*AyR3[1][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[1][3];
+ 	k79  = one_sixth*(y12*AxR3[2][0] + x21*AyR3[2][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[2][0];
+ 	k710 = one_sixth*(y12*AxR3[2][1] + x21*AyR3[2][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[2][1];
+ 	k711 = one_sixth*(y12*AxR3[2][2] + x21*AyR3[2][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[2][2];
+ 	k712 = one_sixth*(y12*AxR3[2][3] + x21*AyR3[2][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[2][3];
+ 	k810 = one_sixth*(y12*AxR3[3][1] + x21*AyR3[3][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[3][1];
+ 	k811 = one_sixth*(y12*AxR3[3][2] + x21*AyR3[3][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R3[3][2];
 
-	//Bloco K24
-	double k613, k614, k615, k616, k713, k714, k715, k716;
+	//Bloco K24 - NAO ALTERA
+	double k613, k614, k615, k713, k714, k715, k716;
 
-	k613 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[1][0] + (2*x32 + x13 + 2*x21)*R2Ay[1][0]);		
-	k614 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[1][1] + (2*x32 + x13 + 2*x21)*R2Ay[1][1]);		
-	k615 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[1][2] + (2*x32 + x13 + 2*x21)*R2Ay[1][2]);		
-	k616 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[1][3] + (2*x32 + x13 + 2*x21)*R2Ay[1][3]);		
-	k713 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[2][0] + (2*x32 + x13 + 2*x21)*R2Ay[2][0]);		
-	k714 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[2][1] + (2*x32 + x13 + 2*x21)*R2Ay[2][1]);		
-	k715 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[2][2] + (2*x32 + x13 + 2*x21)*R2Ay[2][2]);		
-	k716 = nine_over_forty*((2*y23 + y31 + 2*y12)*R2Ax[2][3] + (2*x32 + x13 + 2*x21)*R2Ay[2][3]);		
+	k613 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[1][0] + (2*x32 + x13 + 2*x21)*Ay[1][0]);		
+	k614 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[1][1] + (2*x32 + x13 + 2*x21)*Ay[1][1]);		
+	k615 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[1][2] + (2*x32 + x13 + 2*x21)*Ay[1][2]);		
+	//k616 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[1][3] + (2*x32 + x13 + 2*x21)*Ay[1][3]);		
+	k713 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[2][0] + (2*x32 + x13 + 2*x21)*Ay[2][0]);		
+	k714 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[2][1] + (2*x32 + x13 + 2*x21)*Ay[2][1]);		
+	k715 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[2][2] + (2*x32 + x13 + 2*x21)*Ay[2][2]);		
+	k716 = nine_over_forty*((2*y23 + y31 + 2*y12)*Ax[2][3] + (2*x32 + x13 + 2*x21)*Ay[2][3]);		
 
 	//Bloco K31
 	double k92, k93, k101, k102, k103, k104, k11_1, k11_2, k113, k114, k122, k123;
 	
-	k92   = one_sixth*(y23*R3AxR1[0][1] + x32*R3AyR1[0][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[0][1];
- 	k93   = one_sixth*(y23*R3AxR1[0][2] + x32*R3AyR1[0][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[0][2];
- 	k101  = one_sixth*(y23*R3AxR1[1][0] + x32*R3AyR1[1][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][0];
- 	k102  = one_sixth*(y23*R3AxR1[1][1] + x32*R3AyR1[1][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][1];
- 	k103  = one_sixth*(y23*R3AxR1[1][2] + x32*R3AyR1[1][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][2];
- 	k104  = one_sixth*(y23*R3AxR1[1][3] + x32*R3AyR1[1][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[1][3];
- 	k11_1 = one_sixth*(y23*R3AxR1[2][0] + x32*R3AyR1[2][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][0];
- 	k11_2 = one_sixth*(y23*R3AxR1[2][1] + x32*R3AyR1[2][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][1];
- 	k113  = one_sixth*(y23*R3AxR1[2][2] + x32*R3AyR1[2][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][2];
- 	k114  = one_sixth*(y23*R3AxR1[2][3] + x32*R3AyR1[2][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[2][3];
- 	k122  = one_sixth*(y23*R3AxR1[3][1] + x32*R3AyR1[3][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[3][1];
- 	k123  = one_sixth*(y23*R3AxR1[3][2] + x32*R3AyR1[3][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1R3[3][2];
+	k92   = one_sixth*(y23*AxR1[0][1] + x32*AyR1[0][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[0][1];
+ 	k93   = one_sixth*(y23*AxR1[0][2] + x32*AyR1[0][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[0][2];
+ 	k101  = one_sixth*(y23*AxR1[1][0] + x32*AyR1[1][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[1][0];
+ 	k102  = one_sixth*(y23*AxR1[1][1] + x32*AyR1[1][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[1][1];
+ 	k103  = one_sixth*(y23*AxR1[1][2] + x32*AyR1[1][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[1][2];
+ 	k104  = one_sixth*(y23*AxR1[1][3] + x32*AyR1[1][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[1][3];
+ 	k11_1 = one_sixth*(y23*AxR1[2][0] + x32*AyR1[2][0]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[2][0];
+ 	k11_2 = one_sixth*(y23*AxR1[2][1] + x32*AyR1[2][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[2][1];
+ 	k113  = one_sixth*(y23*AxR1[2][2] + x32*AyR1[2][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[2][2];
+ 	k114  = one_sixth*(y23*AxR1[2][3] + x32*AyR1[2][3]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[2][3];
+ 	k122  = one_sixth*(y23*AxR1[3][1] + x32*AyR1[3][1]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[3][1];
+ 	k123  = one_sixth*(y23*AxR1[3][2] + x32*AyR1[3][2]) + delta_quarter_Area*(y23*y12 + x32*x21)*R1[3][2];
 
 	
 	//Bloco K32
 	double k96, k97, k105, k106, k107, k108, k115, k116, k117, k118, k126, k127;
 
-	k96  = one_sixth*(y31*R3AxR2[0][1] + x13*R3AyR2[0][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[0][1];
- 	k97  = one_sixth*(y31*R3AxR2[0][2] + x13*R3AyR2[0][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[0][2];
- 	k105 = one_sixth*(y31*R3AxR2[1][0] + x13*R3AyR2[1][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][0];
- 	k106 = one_sixth*(y31*R3AxR2[1][1] + x13*R3AyR2[1][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][1];
- 	k107 = one_sixth*(y31*R3AxR2[1][2] + x13*R3AyR2[1][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][2];
- 	k108 = one_sixth*(y31*R3AxR2[1][3] + x13*R3AyR2[1][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[1][3];
- 	k115 = one_sixth*(y31*R3AxR2[2][0] + x13*R3AyR2[2][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][0];
- 	k116 = one_sixth*(y31*R3AxR2[2][1] + x13*R3AyR2[2][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][1];
- 	k117 = one_sixth*(y31*R3AxR2[2][2] + x13*R3AyR2[2][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][2];
- 	k118 = one_sixth*(y31*R3AxR2[2][3] + x13*R3AyR2[2][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[2][3];
- 	k126 = one_sixth*(y31*R3AxR2[3][1] + x13*R3AyR2[3][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[3][1];
- 	k127 = one_sixth*(y31*R3AxR2[3][2] + x13*R3AyR2[3][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2R3[3][2];
+	k96  = one_sixth*(y31*AxR2[0][1] + x13*AyR2[0][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[0][1];
+ 	k97  = one_sixth*(y31*AxR2[0][2] + x13*AyR2[0][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[0][2];
+ 	k105 = one_sixth*(y31*AxR2[1][0] + x13*AyR2[1][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[1][0];
+ 	k106 = one_sixth*(y31*AxR2[1][1] + x13*AyR2[1][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[1][1];
+ 	k107 = one_sixth*(y31*AxR2[1][2] + x13*AyR2[1][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[1][2];
+ 	k108 = one_sixth*(y31*AxR2[1][3] + x13*AyR2[1][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[1][3];
+ 	k115 = one_sixth*(y31*AxR2[2][0] + x13*AyR2[2][0]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[2][0];
+ 	k116 = one_sixth*(y31*AxR2[2][1] + x13*AyR2[2][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[2][1];
+ 	k117 = one_sixth*(y31*AxR2[2][2] + x13*AyR2[2][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[2][2];
+ 	k118 = one_sixth*(y31*AxR2[2][3] + x13*AyR2[2][3]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[2][3];
+ 	k126 = one_sixth*(y31*AxR2[3][1] + x13*AyR2[3][1]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[3][1];
+ 	k127 = one_sixth*(y31*AxR2[3][2] + x13*AyR2[3][2]) + delta_quarter_Area*(y31*y12 + x13*x21)*R2[3][2];
 
 	//Bloco K33
 	double k910, k911, k109, k1010, k1011, k1012, k119, k1110, k1111, k1112, k1210, k1211;
 	
-	k910  = one_sixth*(y12*R3AxR3[0][1] + x21*R3AyR3[0][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[0][1];
- 	k911  = one_sixth*(y12*R3AxR3[0][2] + x21*R3AyR3[0][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[0][2];
- 	k109  = one_sixth*(y12*R3AxR3[1][0] + x21*R3AyR3[1][0]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[1][0];
- 	k1010 = one_sixth*(y12*R3AxR3[1][1] + x21*R3AyR3[1][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[1][1];
- 	k1011 = one_sixth*(y12*R3AxR3[1][2] + x21*R3AyR3[1][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[1][2];
- 	k1012 = one_sixth*(y12*R3AxR3[1][3] + x21*R3AyR3[1][3]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[1][3];
- 	k119  = one_sixth*(y12*R3AxR3[2][0] + x21*R3AyR3[2][0]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[2][0];
- 	k1110 = one_sixth*(y12*R3AxR3[2][1] + x21*R3AyR3[2][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[2][1];
- 	k1111 = one_sixth*(y12*R3AxR3[2][2] + x21*R3AyR3[2][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[2][2];
- 	k1112 = one_sixth*(y12*R3AxR3[2][3] + x21*R3AyR3[2][3]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[2][3];
- 	k1210 = one_sixth*(y12*R3AxR3[3][1] + x21*R3AyR3[3][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[3][1];
- 	k1211 = one_sixth*(y12*R3AxR3[3][2] + x21*R3AyR3[3][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3R3[3][2];
+	k910  = one_sixth*(y12*AxR3[0][1] + x21*AyR3[0][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[0][1];
+ 	k911  = one_sixth*(y12*AxR3[0][2] + x21*AyR3[0][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[0][2];
+ 	k109  = one_sixth*(y12*AxR3[1][0] + x21*AyR3[1][0]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[1][0];
+ 	k1010 = one_sixth*(y12*AxR3[1][1] + x21*AyR3[1][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[1][1];
+ 	k1011 = one_sixth*(y12*AxR3[1][2] + x21*AyR3[1][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[1][2];
+ 	k1012 = one_sixth*(y12*AxR3[1][3] + x21*AyR3[1][3]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[1][3];
+ 	k119  = one_sixth*(y12*AxR3[2][0] + x21*AyR3[2][0]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[2][0];
+ 	k1110 = one_sixth*(y12*AxR3[2][1] + x21*AyR3[2][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[2][1];
+ 	k1111 = one_sixth*(y12*AxR3[2][2] + x21*AyR3[2][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[2][2];
+ 	k1112 = one_sixth*(y12*AxR3[2][3] + x21*AyR3[2][3]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[2][3];
+ 	k1210 = one_sixth*(y12*AxR3[3][1] + x21*AyR3[3][1]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[3][1];
+ 	k1211 = one_sixth*(y12*AxR3[3][2] + x21*AyR3[3][2]) + delta_quarter_Area*(y12*y12 + x21*x21)*R3[3][2];
 
 
-	//Bloco K34
+	//Bloco K34 - NAO ALTERA
 	double k1013, k1014, k1015, k1016, k1113, k1114, k1115, k1116;
 
-	k1013 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[1][0] + (2*x32 + 2*x13 + x21)*R3Ay[1][0]);		
-	k1014 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[1][1] + (2*x32 + 2*x13 + x21)*R3Ay[1][1]);		
-	k1015 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[1][2] + (2*x32 + 2*x13 + x21)*R3Ay[1][2]);		
-	k1016 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[1][3] + (2*x32 + 2*x13 + x21)*R3Ay[1][3]);		
-	k1113 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[2][0] + (2*x32 + 2*x13 + x21)*R3Ay[2][0]);		
-	k1114 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[2][1] + (2*x32 + 2*x13 + x21)*R3Ay[2][1]);		
-	k1115 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[2][2] + (2*x32 + 2*x13 + x21)*R3Ay[2][2]);		
-	k1116 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[2][3] + (2*x32 + 2*x13 + x21)*R3Ay[2][3]);		
+	k1013 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[1][0] + (2*x32 + 2*x13 + x21)*Ay[1][0]);		
+	k1014 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[1][1] + (2*x32 + 2*x13 + x21)*Ay[1][1]);		
+	k1015 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[1][2] + (2*x32 + 2*x13 + x21)*Ay[1][2]);		
+	k1016 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[1][3] + (2*x32 + 2*x13 + x21)*Ay[1][3]);		
+	k1113 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[2][0] + (2*x32 + 2*x13 + x21)*Ay[2][0]);		
+	k1114 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[2][1] + (2*x32 + 2*x13 + x21)*Ay[2][1]);		
+	k1115 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[2][2] + (2*x32 + 2*x13 + x21)*Ay[2][2]);		
+	k1116 = nine_over_forty*((2*y23 + 2*y31 + y12)*Ax[2][3] + (2*x32 + 2*x13 + x21)*Ay[2][3]);		
 
 	//Bloco K41:
 	double k132, k133, k142, k143, k152, k153, k162, k163;
@@ -951,145 +957,212 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	//Block M11;		
 	double m12, m13, m21, m22, m23, m24, m31, m32, m33, m34, m42, m43;
 
-	m12 = Area_over_six*R1R1[0][1];
-	m13 = Area_over_six*R1R1[0][2];
-	m21 = Area_over_six*R1R1[1][0];
-	m22 = Area_over_six*R1R1[1][1];
-	m23 = Area_over_six*R1R1[1][2];
-	m24 = Area_over_six*R1R1[1][3];
-	m31 = Area_over_six*R1R1[2][0];
-	m32 = Area_over_six*R1R1[2][1];
-	m33 = Area_over_six*R1R1[2][2];
-	m34 = Area_over_six*R1R1[2][3];
-	m42 = Area_over_six*R1R1[3][1];
-	m43 = Area_over_six*R1R1[3][2];
+	m12 = 0.0;//Area_over_six*R1R1[0][1];
+	m13 = 0.0;//Area_over_six*R1R1[0][2];
+	m21 = 0.0;//Area_over_six*R1R1[1][0];
+	m22 = Area_over_six*R1[1][1];
+	m23 = Area_over_six*R1[1][2];
+	m24 = 0.0;//Area_over_six*R1R1[1][3];
+	m31 = 0.0;//Area_over_six*R1R1[2][0];
+	m32 = Area_over_six*R1[2][1];
+	m33 = Area_over_six*R1[2][2];
+	m34 = 0.0;//Area_over_six*R1R1[2][3];
+	m42 = 0.0;//Area_over_six*R1R1[3][1];
+	m43 = 0.0;//Area_over_six*R1R1[3][2];
 
 	//Bloco M12
 	double m16, m17, m25, m26, m27, m28, m35, m36, m37, m38, m46, m47; 
 	
-	m16 = Area_over_twelve*R1R2[0][1];
-	m17 = Area_over_twelve*R1R2[0][2];
-	m25 = Area_over_twelve*R1R2[1][0];
-	m26 = Area_over_twelve*R1R2[1][1];
-	m27 = Area_over_twelve*R1R2[1][2];
-	m28 = Area_over_twelve*R1R2[1][3];
-	m35 = Area_over_twelve*R1R2[2][0];
-	m36 = Area_over_twelve*R1R2[2][1];
-	m37 = Area_over_twelve*R1R2[2][2];
-	m38 = Area_over_twelve*R1R2[2][3];
-	m46 = Area_over_twelve*R1R2[3][1];
-	m47 = Area_over_twelve*R1R2[3][2];
+	m16 = 0.0;//Area_over_twelve*R1R2[0][1];
+	m17 = 0.0;//Area_over_twelve*R1R2[0][2];
+	m25 = 0.0;//Area_over_twelve*R1R2[1][0];
+	m26 = Area_over_twelve*R2[1][1];
+	m27 = Area_over_twelve*R2[1][2];
+	m28 = 0.0;//Area_over_twelve*R1R2[1][3];
+	m35 = 0.0;//Area_over_twelve*R1R2[2][0];
+	m36 = Area_over_twelve*R2[2][1];
+	m37 = Area_over_twelve*R2[2][2];
+	m38 = 0.0;//Area_over_twelve*R1R2[2][3];
+	m46 = 0.0;//Area_over_twelve*R1R2[3][1];
+	m47 = 0.0;//Area_over_twelve*R1R2[3][2];
 
 	//Bloco M13
 	double m110, m111, m29, m210, m211, m212, m39, m310, m311, m312, m410, m411;
 
-	m110 = Area_over_twelve*R1R3[0][1];
-	m111 = Area_over_twelve*R1R3[0][2];
-	m29  = Area_over_twelve*R1R3[1][0];
-	m210 = Area_over_twelve*R1R3[1][1];
-	m211 = Area_over_twelve*R1R3[1][2];
-	m212 = Area_over_twelve*R1R3[1][3];
-	m39  = Area_over_twelve*R1R3[2][0];
-	m310 = Area_over_twelve*R1R3[2][1];
-	m311 = Area_over_twelve*R1R3[2][2];
-	m312 = Area_over_twelve*R1R3[2][3];
-	m410 = Area_over_twelve*R1R3[3][1];
-	m411 = Area_over_twelve*R1R3[3][2];
+	m110 = 0.0;//Area_over_twelve*R1R3[0][1];
+	m111 = 0.0;//Area_over_twelve*R1R3[0][2];
+	m29  = 0.0;//Area_over_twelve*R1R3[1][0];
+	m210 = Area_over_twelve*R3[1][1];
+	m211 = Area_over_twelve*R3[1][2];
+	m212 = 0.0;//Area_over_twelve*R1R3[1][3];
+	m39  = 0.0;//Area_over_twelve*R1R3[2][0];
+	m310 = Area_over_twelve*R3[2][1];
+	m311 = Area_over_twelve*R3[2][2];
+	m312 = 0.0;//Area_over_twelve*R1R3[2][3];
+	m410 = 0.0;//Area_over_twelve*R1R3[3][1];
+	m411 = 0.0;//Area_over_twelve*R1R3[3][2];
 
-	//Bloco M14
-	double m213, m214, m215, m216, m313, m314, m315, m316;
-
-	m213 = Area_3_over_twenty*R1[1][0];	
-	m214 = Area_3_over_twenty*R1[1][1];	
-	m215 = Area_3_over_twenty*R1[1][2];	
-	m216 = Area_3_over_twenty*R1[1][3];	
-	m313 = Area_3_over_twenty*R1[2][0];	
-	m314 = Area_3_over_twenty*R1[2][1];	
-	m315 = Area_3_over_twenty*R1[2][2];	
-	m316 = Area_3_over_twenty*R1[2][3];	
 	
+	//Bloco M14 - NAO ALTERA
+	double m214, m215, m314, m315;
+	
+	m214 = Area_3_over_twenty;	
+	m215 = 0.0; //Area_3_over_twenty;					
+	m314 = 0.0; //Area_3_over_twenty;	
+	m315 = Area_3_over_twenty;	
+		
+	//Bloco M21
+	double m52, m53, m61, m62, m63, m64, m71, m72, m73, m74, m82, m83;
+
+	m52 = 0.0;//Area_over_six*R2R2[0][1];
+	m53 = 0.0;//Area_over_six*R2R2[0][2];
+	m61 = 0.0;//Area_over_six*R2R2[1][0];
+	m62 = Area_over_twelve*R1[1][1];
+	m63 = Area_over_twelve*R1[1][2];
+	m64 = 0.0;//Area_over_six*R2R2[1][3];
+	m71 = 0.0;//Area_over_six*R2R2[2][0];
+	m72 = Area_over_twelve*R1[2][1];
+	m73 = Area_over_twelve*R1[2][2];
+	m74 = 0.0;//Area_over_six*R2R2[2][3];
+	m82 = 0.0;//Area_over_six*R2R2[3][1];
+	m83 = 0.0;//Area_over_six*R2R2[3][2];
+
 	//Bloco M22
 	double m56, m57, m65, m66, m67, m68, m75, m76, m77, m78, m86, m87;
 
-	m56 = Area_over_six*R2R2[0][1];
-	m57 = Area_over_six*R2R2[0][2];
-	m65 = Area_over_six*R2R2[1][0];
-	m66 = Area_over_six*R2R2[1][1];
-	m67 = Area_over_six*R2R2[1][2];
-	m68 = Area_over_six*R2R2[1][3];
-	m75 = Area_over_six*R2R2[2][0];
-	m76 = Area_over_six*R2R2[2][1];
-	m77 = Area_over_six*R2R2[2][2];
-	m78 = Area_over_six*R2R2[2][3];
-	m86 = Area_over_six*R2R2[3][1];
-	m87 = Area_over_six*R2R2[3][2];
+	m56 = 0.0;//Area_over_six*R2R2[0][1];
+	m57 = 0.0;//Area_over_six*R2R2[0][2];
+	m65 = 0.0;//Area_over_six*R2R2[1][0];
+	m66 = Area_over_six*R2[1][1];
+	m67 = Area_over_six*R2[1][2];
+	m68 = 0.0;//Area_over_six*R2R2[1][3];
+	m75 = 0.0;//Area_over_six*R2R2[2][0];
+	m76 = Area_over_six*R2[2][1];
+	m77 = Area_over_six*R2[2][2];
+	m78 = 0.0;//Area_over_six*R2R2[2][3];
+	m86 = 0.0;//Area_over_six*R2R2[3][1];
+	m87 = 0.0;//Area_over_six*R2R2[3][2];
 
 
 	//Bloco M23
 	double m510, m511, m69, m610, m611, m612, m79, m710, m711, m712, m810, m811;
 	
-	m510 = Area_over_twelve*R2R3[0][1];
-	m511 = Area_over_twelve*R2R3[0][2];
-	m69  = Area_over_twelve*R2R3[1][0];
-	m610 = Area_over_twelve*R2R3[1][1];
-	m611 = Area_over_twelve*R2R3[1][2];
-	m612 = Area_over_twelve*R2R3[1][3];
-	m79  = Area_over_twelve*R2R3[2][0];
-	m710 = Area_over_twelve*R2R3[2][1];
-	m711 = Area_over_twelve*R2R3[2][2];
-	m712 = Area_over_twelve*R2R3[2][3];
-	m810 = Area_over_twelve*R2R3[3][1];
-	m811 = Area_over_twelve*R2R3[3][2];
+	m510 = 0.0;//Area_over_twelve*R2R3[0][1];
+	m511 = 0.0;//Area_over_twelve*R2R3[0][2];
+	m69  = 0.0;//Area_over_twelve*R2R3[1][0];
+	m610 = Area_over_twelve*R3[1][1];
+	m611 = Area_over_twelve*R3[1][2];
+	m612 = 0.0;//Area_over_twelve*R2R3[1][3];
+	m79  = 0.0;//Area_over_twelve*R2R3[2][0];
+	m710 = Area_over_twelve*R3[2][1];
+	m711 = Area_over_twelve*R3[2][2];
+	m712 = 0.0;//Area_over_twelve*R2R3[2][3];
+	m810 = 0.0;//Area_over_twelve*R2R3[3][1];
+	m811 = 0.0;//Area_over_twelve*R2R3[3][2];
 
-	//Bloco M24
-	double m613, m614, m615, m616, m713, m714, m715, m716;
 	
-	m613 = Area_3_over_twenty*R2[1][0];	
-	m614 = Area_3_over_twenty*R2[1][1];	
-	m615 = Area_3_over_twenty*R2[1][2];	
-	m616 = Area_3_over_twenty*R2[1][3];	
-	m713 = Area_3_over_twenty*R2[2][0];	
-	m714 = Area_3_over_twenty*R2[2][1];	
-	m715 = Area_3_over_twenty*R2[2][2];	
-	m716 = Area_3_over_twenty*R2[2][3];	
+	//Bloco M24 - NAO ALTERA
+	double m614, m615, m714, m715;
+		
+	m614 = Area_3_over_twenty;	
+	m615 = 0.0; //Area_3_over_twenty;			
+	m714 = 0.0; //Area_3_over_twenty;	
+	m715 = Area_3_over_twenty;	
+		
+	//Bloco M31
+	double m92, m93, m101, m102, m103, m104, m11_1, m11_2, m11_3, m11_4, m122, m123;
 
+	m92 = 0.0;//Area_over_six*R2R2[0][1];
+	m93 = 0.0;//Area_over_six*R2R2[0][2];
+	m101 = 0.0;//Area_over_six*R2R2[1][0];
+	m102 = Area_over_twelve*R1[1][1];
+	m103 = Area_over_twelve*R1[1][2];
+	m104 = 0.0;//Area_over_six*R2R2[1][3];
+	m11_1 = 0.0;//Area_over_six*R2R2[2][0];
+	m11_2 = Area_over_twelve*R1[2][1];
+	m11_3 = Area_over_twelve*R1[2][2];
+	m11_4 = 0.0;//Area_over_six*R2R2[2][3];
+	m122 = 0.0;//Area_over_six*R2R2[3][1];
+	m123 = 0.0;//Area_over_six*R2R2[3][2];
+	
+	//Bloco M32
+	double m96, m97, m105, m106, m107, m108, m115, m116, m117, m118, m126, m127; 
+		
+	m96 = 0.0;//Area_over_twelve*R1R2[0][1];
+	m97 = 0.0;//Area_over_twelve*R1R2[0][2];
+	m105 = 0.0;//Area_over_twelve*R1R2[1][0];
+	m106 = Area_over_twelve*R2[1][1];
+	m107 = Area_over_twelve*R2[1][2];
+	m108 = 0.0;//Area_over_twelve*R1R2[1][3];
+	m115 = 0.0;//Area_over_twelve*R1R2[2][0];
+	m116 = Area_over_twelve*R2[2][1];
+	m117 = Area_over_twelve*R2[2][2];
+	m118 = 0.0;//Area_over_twelve*R1R2[2][3];
+	m126 = 0.0;//Area_over_twelve*R1R2[3][1];
+	m127 = 0.0;//Area_over_twelve*R1R2[3][2];
+		
+	
 	//Bloco M33
 	double m910, m911, m109, m1010, m1011, m1012, m119, m1110, m1111, m1112, m1210, m1211;
 	
-	m910  = Area_over_six*R3R3[0][1];
-	m911  = Area_over_six*R3R3[0][2];
-	m109  = Area_over_six*R3R3[1][0];
-	m1010 = Area_over_six*R3R3[1][1];
-	m1011 = Area_over_six*R3R3[1][2];
-	m1012 = Area_over_six*R3R3[1][3];
-	m119  = Area_over_six*R3R3[2][0];
-	m1110 = Area_over_six*R3R3[2][1];
-	m1111 = Area_over_six*R3R3[2][2];
-	m1112 = Area_over_six*R3R3[2][3];
-	m1210 = Area_over_six*R3R3[3][1];
-	m1211 = Area_over_six*R3R3[3][2];
+	m910  = 0.0;//Area_over_six*R3R3[0][1];
+	m911  = 0.0;//Area_over_six*R3R3[0][2];
+	m109  = 0.0;//Area_over_six*R3R3[1][0];
+	m1010 = Area_over_six*R3[1][1];
+	m1011 = Area_over_six*R3[1][2];
+	m1012 = 0.0;//Area_over_six*R3R3[1][3];
+	m119  = 0.0;//Area_over_six*R3R3[2][0];
+	m1110 = Area_over_six*R3[2][1];
+	m1111 = Area_over_six*R3[2][2];
+	m1112 = 0.0;//Area_over_six*R3R3[2][3];
+	m1210 = 0.0;//Area_over_six*R3R3[3][1];
+	m1211 = 0.0;//Area_over_six*R3R3[3][2];
 	
-	//Bloco M34
-	double m1013, m1014, m1015, m1016, m1113, m1114, m1115, m1116;
+	
+	//Bloco M34 - NAO ALTERA
+	double m1014, m1015, m1114, m1115;
+	
+	m1014 = Area_3_over_twenty;	
+	m1015 = 0.0; //Area_3_over_twenty*R3[1][2];			
+	m1114 = 0.0; //Area_3_over_twenty*R3[2][1];	
+	m1115 = Area_3_over_twenty;	
+			
+	//Bloco M41
+	double m142, m143, m152, m153;	
+	
+	m142 = Area_3_over_twenty*R1[1][1];	
+	m143 = Area_3_over_twenty*R1[1][2];	
+	
+	m152 = Area_3_over_twenty*R1[2][1];	
+	m153 = Area_3_over_twenty*R1[2][2];	
 
-	m1013 = Area_3_over_twenty*R3[1][0];	
-	m1014 = Area_3_over_twenty*R3[1][1];	
-	m1015 = Area_3_over_twenty*R3[1][2];	
-	m1016 = Area_3_over_twenty*R3[1][3];	
-	m1113 = Area_3_over_twenty*R3[2][0];	
-	m1114 = Area_3_over_twenty*R3[2][1];	
-	m1115 = Area_3_over_twenty*R3[2][2];	
-	m1116 = Area_3_over_twenty*R3[2][3];	
+	//Bloco M42
+	double m146, m147, m156, m157;	
+	
+	m146 = Area_3_over_twenty*R2[1][1];	
+	m147 = Area_3_over_twenty*R2[1][2];	
+	
+	m156 = Area_3_over_twenty*R2[2][1];	
+	m157 = Area_3_over_twenty*R2[2][2];	
 
+	//Bloco M43
+	double m1410, m1411, m1510, m1511;	
+	
+	m1410 = Area_3_over_twenty*R3[1][1];	
+	m1411 = Area_3_over_twenty*R3[1][2];	
+	
+	m1510 = Area_3_over_twenty*R3[2][1];	
+	m1511 = Area_3_over_twenty*R3[2][2];	
+		
 	//Reajustando a matriz M1 = Mhh + alpha*dt*Khh por blocos:
 
-	//	|								|
-	//	| M11 + alpha*dt*K11   M12 + alpha*dt*K12   M13 + alpha*dt*K13  |
-	//   	| 								|
+	//		|																|
+	//		| M11 + alpha*dt*K11   M12 + alpha*dt*K12   M13 + alpha*dt*K13  |
+	//   	| 																|
 	//  M1 =| M12 + alpha*dt*K21   M22 + alpha*dt*K22   M23 + alpha*dt*K23	|
-	//	|								|	
-	//	| M13 + alpha*dt*K31   M23 + alpha*dt*K32   M33 + alpha*dt*K33	|
-	//	|								|
+	//		|																|	
+	//		| M13 + alpha*dt*K31   M23 + alpha*dt*K32   M33 + alpha*dt*K33	|
+	//		|																|
 
 
 	
@@ -1110,14 +1183,17 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	//Bloco 12
 	M1[0][5] = m16 + alpha_dt*k16;
 	M1[0][6] = m17 + alpha_dt*k17;
+
 	M1[1][4] = m25 + alpha_dt*k25;
 	M1[1][5] = m26 + alpha_dt*k26;
 	M1[1][6] = m27 + alpha_dt*k27;
 	M1[1][7] = m28 + alpha_dt*k28;
+
 	M1[2][4] = m35 + alpha_dt*k35;
 	M1[2][5] = m36 + alpha_dt*k36;
 	M1[2][6] = m37 + alpha_dt*k37;
 	M1[2][7] = m38 + alpha_dt*k38;
+
 	M1[3][5] = m46 + alpha_dt*k46;
 	M1[3][6] = m47 + alpha_dt*k47;
 
@@ -1136,18 +1212,18 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	M1[3][10] = m411 + alpha_dt*k411;
 
 	//Bloco 21	
-	M1[4][1] = m16 + alpha_dt*k52;
-	M1[4][2] = m17 + alpha_dt*k53;
-	M1[5][0] = m25 + alpha_dt*k61;
-	M1[5][1] = m26 + alpha_dt*k62;
-	M1[5][2] = m27 + alpha_dt*k63;
-	M1[5][3] = m28 + alpha_dt*k64;
-	M1[6][0] = m35 + alpha_dt*k71;
-	M1[6][1] = m36 + alpha_dt*k72;
-	M1[6][2] = m37 + alpha_dt*k73;
-	M1[6][3] = m38 + alpha_dt*k74;
-	M1[7][1] = m46 + alpha_dt*k82;
-	M1[7][2] = m47 + alpha_dt*k83;
+	M1[4][1] = m52 + alpha_dt*k52;
+	M1[4][2] = m53 + alpha_dt*k53;
+	M1[5][0] = m61 + alpha_dt*k61;
+	M1[5][1] = m62 + alpha_dt*k62;
+	M1[5][2] = m63 + alpha_dt*k63;
+	M1[5][3] = m64 + alpha_dt*k64;
+	M1[6][0] = m71 + alpha_dt*k71;
+	M1[6][1] = m72 + alpha_dt*k72;
+	M1[6][2] = m73 + alpha_dt*k73;
+	M1[6][3] = m74 + alpha_dt*k74;
+	M1[7][1] = m82 + alpha_dt*k82;
+	M1[7][2] = m83 + alpha_dt*k83;
 
 	//Bloco 22
 	M1[4][5] = m56 + alpha_dt*k56;
@@ -1178,32 +1254,32 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	M1[7][10] = m811 + alpha_dt*k811;
 
 	//Bloco 31
-	M1[8 ][1] = m110 + alpha_dt*k92;
-	M1[8 ][2] = m111 + alpha_dt*k93;
-	M1[9 ][0] = m29  + alpha_dt*k101;
-	M1[9 ][1] = m210 + alpha_dt*k102;
-	M1[9 ][2] = m211 + alpha_dt*k103;
-	M1[9 ][3] = m212 + alpha_dt*k104;
-	M1[10][0] = m39  + alpha_dt*k11_1;
-	M1[10][1] = m310 + alpha_dt*k11_2;
-	M1[10][2] = m311 + alpha_dt*k113;
-	M1[10][3] = m312 + alpha_dt*k114;
-	M1[11][1] = m410 + alpha_dt*k122;
-	M1[11][2] = m411 + alpha_dt*k123;
+	M1[8 ][1] = m92		+ alpha_dt*k92;
+	M1[8 ][2] = m93 	+ alpha_dt*k93;
+	M1[9 ][0] = m101  	+ alpha_dt*k101;
+	M1[9 ][1] = m102 	+ alpha_dt*k102;
+	M1[9 ][2] = m103 	+ alpha_dt*k103;
+	M1[9 ][3] = m104 	+ alpha_dt*k104;
+	M1[10][0] = m11_1  	+ alpha_dt*k11_1;
+	M1[10][1] = m11_2 	+ alpha_dt*k11_2;
+	M1[10][2] = m11_3 	+ alpha_dt*k113;
+	M1[10][3] = m11_4 	+ alpha_dt*k114;
+	M1[11][1] = m122 	+ alpha_dt*k122;
+	M1[11][2] = m123 	+ alpha_dt*k123;
 
 	//Bloco 32
-	M1[8 ][5] = m510 + alpha_dt*k96;
-	M1[8 ][6] = m511 + alpha_dt*k97;
-	M1[9 ][4] = m69  + alpha_dt*k105;
-	M1[9 ][5] = m610 + alpha_dt*k106;
-	M1[9 ][6] = m611 + alpha_dt*k107;
-	M1[9 ][7] = m612 + alpha_dt*k108;
-	M1[10][4] = m79  + alpha_dt*k115;
-	M1[10][5] = m710 + alpha_dt*k116;
-	M1[10][6] = m711 + alpha_dt*k117;
-	M1[10][7] = m712 + alpha_dt*k118;
-	M1[11][5] = m810 + alpha_dt*k126;
-	M1[11][6] = m811 + alpha_dt*k127;
+	M1[8 ][5] = m96	 	+ alpha_dt*k96;
+	M1[8 ][6] = m97 	+ alpha_dt*k97;
+	M1[9 ][4] = m105  	+ alpha_dt*k105;
+	M1[9 ][5] = m106 	+ alpha_dt*k106;
+	M1[9 ][6] = m107 	+ alpha_dt*k107;
+	M1[9 ][7] = m108 	+ alpha_dt*k108;
+	M1[10][4] = m115  	+ alpha_dt*k115;
+	M1[10][5] = m116 	+ alpha_dt*k116;
+	M1[10][6] = m117 	+ alpha_dt*k117;
+	M1[10][7] = m118 	+ alpha_dt*k118;
+	M1[11][5] = m126 	+ alpha_dt*k126;
+	M1[11][6] = m127 	+ alpha_dt*k127;
 
 	//Bloco 33
 	M1[8 ][9 ] = m910  + alpha_dt*k910; 
@@ -1219,15 +1295,17 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	M1[11][9 ] = m1210 + alpha_dt*k1210;
 	M1[11][10] = m1211 + alpha_dt*k1211;
 
+	/* -.-.-.-.-.-N1 NAO SOFRE ALTERACOES-.-.-.-.-.-
+
 	//Reajustando a matriz N1 = MhB + alpha*dt*KhB por blocos
 			
-	//	|		     |
-	//	| M14 + alpha*dt*K14 |
-	//  	| 		     |
+	//		|		     		 |
+	//		| M14 + alpha*dt*K14 |
+	//  	| 		     		 |
 	// N1 =	| M24 + alpha*dt*K24 |
-	//	|		     |	
-	//	| M34 + alpha*dt*K34 |	
-	//	|		     |	
+	//		|		    		 |	
+	//		| M34 + alpha*dt*K34 |	
+	//		|		     		 |	
 
 	//Bloco 14
 	N1[1][0] = m213 + alpha_dt*k213;
@@ -1259,44 +1337,46 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	N1[10][2] = m1115 + alpha_dt*k1115;
 	N1[10][3] = m1116 + alpha_dt*k1116;
 
+	*/
+
 	//Reajustando a matriz M2 = MBh + alpha*dt*KBh por blocos
-	//  	| 		    			   			 |
+	//  	| 		    			   			 							 |
 	// M2 =	| M14 + alpha*dt*K41	M24 + alpha*dt*K42    M34 + alpha*dt*K43 |
-	//	|		    						 |	
+	//		|		    													 |	
 	
 	//Bloco 41
 	M2[0][1] = 	      alpha_dt*k132;
-	M2[1][1] = m214 + alpha_dt*k142;
-	M2[2][1] = m314 + alpha_dt*k152;
+	M2[1][1] = m142 + alpha_dt*k142;
+	M2[2][1] = m143 + alpha_dt*k152;
 	M2[3][1] = 	      alpha_dt*k162;
 	M2[0][2] = 	      alpha_dt*k133;
-	M2[1][2] = m215 + alpha_dt*k143;
-	M2[2][2] = m315 + alpha_dt*k153;
-	M2[3][2] = 	  alpha_dt*k163;
+	M2[1][2] = m152 + alpha_dt*k143;
+	M2[2][2] = m153 + alpha_dt*k153;
+	M2[3][2] = 	  	  alpha_dt*k163;
 
 	//Bloco 42
 	M2[0][5] = 	      alpha_dt*k136;
-	M2[1][5] = m614 + alpha_dt*k146;
-	M2[2][5] = m714 + alpha_dt*k156;
+	M2[1][5] = m146 + alpha_dt*k146;
+	M2[2][5] = m147 + alpha_dt*k156;
 	M2[3][5] = 	      alpha_dt*k166;
 	M2[0][6] =        alpha_dt*k137;
-	M2[1][6] = m615 + alpha_dt*k147;
-	M2[2][6] = m715 + alpha_dt*k157;
+	M2[1][6] = m156 + alpha_dt*k147;
+	M2[2][6] = m157 + alpha_dt*k157;
 	M2[3][6] = 	      alpha_dt*k167;
 	
 	//Bloco 43
-	M2[0][9]  = 	     alpha_dt*k1310;
-	M2[1][9]  = m1014 + alpha_dt*k1410;
-	M2[2][9]  = m1114 + alpha_dt*k1510;
-	M2[3][9]  = 	     alpha_dt*k1610;
+	M2[0][9]  = 	    alpha_dt*k1310;
+	M2[1][9]  = m1410 + alpha_dt*k1410;
+	M2[2][9]  = m1411 + alpha_dt*k1510;
+	M2[3][9]  = 	    alpha_dt*k1610;
 	M2[0][10] =         alpha_dt*k1311;
-	M2[1][10] = m1015 + alpha_dt*k1411;
-	M2[2][10] = m1115 + alpha_dt*k1511;
-	M2[3][10] = 	     alpha_dt*k1611;
+	M2[1][10] = m1510 + alpha_dt*k1411;
+	M2[2][10] = m1511 + alpha_dt*k1511;
+	M2[3][10] = 	    alpha_dt*k1611;
 	
 	//Calculo do Res1
 	double MhB = Area_3_over_twenty;
-
+	//Esses termos não sofrem alterações com as rotações.
 	double KhB11 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[0][0] + (x32 + 2*x13 + 2*x21)*R1Ay[0][0]);		
 	double KhB12 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[0][1] + (x32 + 2*x13 + 2*x21)*R1Ay[0][1]);		
 	double KhB13 = nine_over_forty*((y23 + 2*y31 + 2*y12)*R1Ax[0][2] + (x32 + 2*x13 + 2*x21)*R1Ay[0][2]);		
@@ -1324,21 +1404,22 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	double KhB123 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[3][0] + (2*x32 + 2*x13 + x21)*R3Ay[3][0]);		
 	double KhB124 = nine_over_forty*((2*y23 + 2*y31 + y12)*R3Ax[3][0] + (2*x32 + 2*x13 + x21)*R3Ay[3][0]);		
 
-	Res1[0]  = - MhB*dUeB[0]                   - (KhB11*UeB[0]  + KhB12*UeB[1]  + KhB13*UeB[2]  + KhB14*UeB[3]);
-	Res1[1]  = - (m214*dUeB[1] + m215*dUeB[2]) - (k213*UeB[0]   + k214*UeB[1]   + k215*UeB[2]   + k216*UeB[3] );
-	Res1[2]  = - (m314*dUeB[1] + m315*dUeB[2]) - (k313*UeB[0]   + k314*UeB[1]   + k315*UeB[2]   + k316*UeB[3] );
-	Res1[3]  = - MhB*dUeB[3]                   - (KhB41*UeB[0]  + KhB42*UeB[1]  + KhB43*UeB[2]  + KhB44*UeB[3]);
+	Res1[0]  = - MhB*dUeB[0]                   		- (KhB11*UeB[0]  + KhB12*UeB[1]  + KhB13*UeB[2]  + KhB14*UeB[3]);
+	Res1[1]  = - (m214*dUeB[1] + m215*dUeB[2]) 		- (k213*UeB[0]   + k214*UeB[1]   + k215*UeB[2]   + k216*UeB[3] );
+	Res1[2]  = - (m314*dUeB[1] + m315*dUeB[2]) 		- (k313*UeB[0]   + k314*UeB[1]   + k315*UeB[2]   + k316*UeB[3] );
+	Res1[3]  = - MhB*dUeB[3]                   		- (KhB41*UeB[0]  + KhB42*UeB[1]  + KhB43*UeB[2]  + KhB44*UeB[3]);
 
-	Res1[4]  = - MhB*dUeB[0]                   - (KhB51*UeB[0]  + KhB52*UeB[1]  + KhB53*UeB[2]  + KhB54*UeB[3]);
-	Res1[5]  = - (m614*dUeB[1] + m615*dUeB[2]) - (k613*UeB[0]   + k614*UeB[1]   + k615*UeB[2]   + k615*UeB[3] );
-	Res1[6]  = - (m714*dUeB[1] + m715*dUeB[2]) - (k713*UeB[0]   + k714*UeB[1]   + k715*UeB[2]   + k716*UeB[3] );
-	Res1[7]  = - MhB*dUeB[3]                   - (KhB81*UeB[0]  + KhB82*UeB[1]  + KhB83*UeB[2]  + KhB84*UeB[3]);
+	Res1[4]  = - MhB*dUeB[0]                   		- (KhB51*UeB[0]  + KhB52*UeB[1]  + KhB53*UeB[2]  + KhB54*UeB[3]);
+	Res1[5]  = - (m614*dUeB[1] + m615*dUeB[2]) 		- (k613*UeB[0]   + k614*UeB[1]   + k615*UeB[2]   + k615*UeB[3] );
+	Res1[6]  = - (m714*dUeB[1] + m715*dUeB[2]) 		- (k713*UeB[0]   + k714*UeB[1]   + k715*UeB[2]   + k716*UeB[3] );
+	Res1[7]  = - MhB*dUeB[3]                   		- (KhB81*UeB[0]  + KhB82*UeB[1]  + KhB83*UeB[2]  + KhB84*UeB[3]);
 
-	Res1[8]  = - MhB*dUeB[0]                     - (KhB91*UeB[0]  + KhB92*UeB[1]  + KhB93*UeB[2]  + KhB94*UeB[3] );
-	Res1[9]  = - (m1014*dUeB[1] + m1015*dUeB[2]) - (k1013*UeB[0]  + k1014*UeB[1]  + k1015*UeB[2]  + k1016*UeB[3] );
-	Res1[10] = - (m1114*dUeB[1] + m1115*dUeB[2]) - (k1113*UeB[0]  + k1114*UeB[1]  + k1115*UeB[2]  + k1116*UeB[3] );
-	Res1[11] = - MhB*dUeB[3]                     - (KhB121*UeB[0] + KhB122*UeB[1] + KhB123*UeB[2] + KhB124*UeB[3]);
-	
+	Res1[8]  = - MhB*dUeB[0]                     	- (KhB91*UeB[0]  + KhB92*UeB[1]  + KhB93*UeB[2]  + KhB94*UeB[3] );
+	Res1[9]  = - (m1014*dUeB[1] + m1015*dUeB[2]) 	- (k1013*UeB[0]  + k1014*UeB[1]  + k1015*UeB[2]  + k1016*UeB[3] );
+	Res1[10] = - (m1114*dUeB[1] + m1115*dUeB[2]) 	- (k1113*UeB[0]  + k1114*UeB[1]  + k1115*UeB[2]  + k1116*UeB[3] );
+	Res1[11] = - MhB*dUeB[3]                     	- (KhB121*UeB[0] + KhB122*UeB[1] + KhB123*UeB[2] + KhB124*UeB[3]);
+
+	//Esses termos não sofrem alterações com as rotações.
  	double k11   = one_sixth*(y23*R1AxR1[0][0] + x32*R1AyR1[0][0]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[0][0];
  	double k14   = one_sixth*(y23*R1AxR1[0][3] + x32*R1AyR1[0][3]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[0][3];
  	double k41   = one_sixth*(y23*R1AxR1[3][0] + x32*R1AyR1[3][0]) + delta_quarter_Area*(y23*y23 + x32*x32)*R1R1[3][0];
@@ -1406,23 +1487,23 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	double Mhh1 = Area_over_six;
 	double Mhh2 = Area_over_twelve;
 	
-	Res1[0]  += - (Mhh1*dUe[0] + Mhh2*dUe[4] + Mhh2*dUe[8])                                          - KhhUe[0];
-	Res1[1]  += - (m22*dUe[1]  + m23*dUe[2] + m26*dUe[5] + m27*dUe[6] + m210*dUe[9 ] + m211*dUe[10]) - KhhUe[1];
-	Res1[2]  += - (m32*dUe[1]  + m33*dUe[2] + m36*dUe[5] + m37*dUe[6] + m310*dUe[10] + m311*dUe[10]) - KhhUe[2];
-	Res1[3]  += - (Mhh1*dUe[3] + Mhh2*dUe[7] + Mhh2*dUe[11]) 					                         - KhhUe[3];
+	Res1[0]  += - (Mhh1*dUe[0] + Mhh2*dUe[4] + Mhh2*dUe[8])                                          		- KhhUe[0];
+	Res1[1]  += - (m22*dUe[1]  + m23*dUe[2] + m26*dUe[5] + m27*dUe[6] + m210*dUe[9 ] + m211*dUe[10]) 		- KhhUe[1];
+	Res1[2]  += - (m32*dUe[1]  + m33*dUe[2] + m36*dUe[5] + m37*dUe[6] + m310*dUe[9 ] + m311*dUe[10]) 		- KhhUe[2];
+	Res1[3]  += - (Mhh1*dUe[3] + Mhh2*dUe[7] + Mhh2*dUe[11]) 					                         	- KhhUe[3];
 
-	Res1[4]  += - (Mhh2*dUe[0] + Mhh1*dUe[4] + Mhh2*dUe[8])                                          - KhhUe[4];
-	Res1[5]  += - (m26*dUe[1]  + m27*dUe[2] + m66*dUe[5] + m67*dUe[6] + m610*dUe[9 ] + m611*dUe[10]) - KhhUe[5];
-	Res1[6]  += - (m36*dUe[1]  + m37*dUe[2] + m76*dUe[5] + m77*dUe[6] + m710*dUe[10] + m711*dUe[10]) - KhhUe[6];
-	Res1[7]  += - (Mhh2*dUe[3] + Mhh1*dUe[7] + Mhh2*dUe[11]) 					                         - KhhUe[7];
+	Res1[4]  += - (Mhh2*dUe[0] + Mhh1*dUe[4] + Mhh2*dUe[8])                                          		- KhhUe[4];
+	Res1[5]  += - (m62*dUe[1]  + m63*dUe[2] + m66*dUe[5] + m67*dUe[6] + m610*dUe[9 ] + m611*dUe[10]) 		- KhhUe[5];
+	Res1[6]  += - (m72*dUe[1]  + m73*dUe[2] + m76*dUe[5] + m77*dUe[6] + m710*dUe[9 ] + m711*dUe[10]) 		- KhhUe[6];
+	Res1[7]  += - (Mhh2*dUe[3] + Mhh1*dUe[7] + Mhh2*dUe[11]) 					                         	- KhhUe[7];
 
-	Res1[8]   += - (Mhh2*dUe[0]  + Mhh2*dUe[4] + Mhh1*dUe[8])                                               - KhhUe[8];
-	Res1[9]   += - (m210*dUe[1]  + m211*dUe[2] + m610*dUe[5] + m611*dUe[6] + m1010*dUe[9 ] + m1011*dUe[10]) - KhhUe[9];
-	Res1[10]  += - (m310*dUe[1]  + m311*dUe[2] + m710*dUe[5] + m711*dUe[6] + m1110*dUe[10] + m1111*dUe[10]) - KhhUe[10];
-	Res1[11]  += - (Mhh2*dUe[3]  + Mhh2*dUe[7] + Mhh1*dUe[11])                            	                 - KhhUe[11];
+	Res1[8]  += - (Mhh2*dUe[0]  + Mhh2*dUe[4] + Mhh1*dUe[8])                                               	- KhhUe[8];
+	Res1[9]  += - (m102*dUe[1]  + m103*dUe[2] + m106*dUe[5] + m107*dUe[6] + m1010*dUe[9 ] + m1011*dUe[10]) 	- KhhUe[9];
+	Res1[10] += - (m11_2*dUe[1] + m11_3*dUe[2] + m116*dUe[5] + m117*dUe[6] + m1110*dUe[9 ] + m1111*dUe[10]) - KhhUe[10];
+	Res1[11] += - (Mhh2*dUe[3]  + Mhh2*dUe[7] + Mhh1*dUe[11])                            	                - KhhUe[11];
 
 	//Calculo Res2
-	double KBB = (81.0*delta*(y23*y23 + y31*y31 + y12*y12 + y23*y31 + y23*y12 + y31*y12 + x32*x32 + x13*x13 + x21*x21 + x32*x13 + x32*x21 + x13*x21))/(40.0*Area);
+	double KBB = (81.0*deltaNMV*(y23*y23 + y31*y31 + y12*y12 + y23*y31 + y23*y12 + y31*y12 + x32*x32 + x13*x13 + x21*x21 + x32*x13 + x32*x21 + x13*x21))/(40.0*Area);
 	double MBB = (81.0 * Area) / 280.0;
 
 	Res2[0]  = - MBB*dUeB[0] - KBB*UeB[0];
@@ -1432,6 +1513,7 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	
 	double KBhUe[4];
 	
+	//Esses termos não sofrem alterações com as rotações.
 	double KBh11 = nine_over_forty*(y23*AxR1[0][0] + x32*AyR1[0][0]);
 	double KBh21 = nine_over_forty*(y23*AxR1[1][0] + x32*AyR1[1][0]);
 	double KBh31 = nine_over_forty*(y23*AxR1[2][0] + x32*AyR1[2][0]);
@@ -1465,8 +1547,8 @@ void no_penetrability(double s1, double s2, double s3, double c1, double c2, dou
 	KBhUe[3]  = KBh41*Ue[0] + k162*Ue[1] + k163*Ue[2] + KBh44*Ue[3] + KBh45*Ue[4] + k166*Ue[5] + k167*Ue[6] + KBh48*Ue[7] + KBh49*Ue[8] + k1610*Ue[9] + k1611*Ue[10] + KBh412*Ue[11];
 
 	Res2[0]  += - (MhB*dUe[0] + MhB *dUe[4]  + MhB*dUe[8])- KBhUe[0];
-	Res2[1]  += - (m214*dUe[1] + m215*dUe[2] + m614*dUe[5] + m615*dUe[6] + m1014*dUe[9] + m1015*dUe[10])  - KBhUe[1];
-	Res2[2]  += - (m314*dUe[1] + m315*dUe[2] + m714*dUe[5] + m715*dUe[6] + m1114*dUe[9] + m1115*dUe[10])  - KBhUe[2];
+	Res2[1]  += - (m142*dUe[1] + m143*dUe[2] + m146*dUe[5] + m147*dUe[6] + m1410*dUe[9] + m1411*dUe[10])  - KBhUe[1];
+	Res2[2]  += - (m152*dUe[1] + m153*dUe[2] + m156*dUe[5] + m157*dUe[6] + m1510*dUe[9] + m1511*dUe[10])  - KBhUe[2];
 	Res2[3]  += - (MhB*dUe[3] + MhB*dUe[7] + MhB*dUe[11]) - KBhUe[3];
 	
 }

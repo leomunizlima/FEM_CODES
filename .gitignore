@@ -1,6 +1,10 @@
 # Prerequisites
 *.d
 *.dat
+*.msh
+*.geo
+*.txt
+*.sh
 
 # Object files
 *.o

@@ -4,7 +4,7 @@ double NACA0012_epresc(double x, double y)
 {
 	double e;
 	
-	e = 10.5; // rho * e, para c_v = 10
+	e = 0.9464; // rho * e = 7.64286, para c_v = 7.14286
 	
 	return e;
 }

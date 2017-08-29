@@ -259,7 +259,7 @@ int Paraview_Output(ParametersType *, FemStructsType *, FemFunctionsType *);
 
 int Paraview_Output_3D(ParametersType *, FemStructsType *, FemFunctionsType *);
 
-int calculate_DaB(ParametersType *, FemStructsType *, double *, double *);
+int calculate_DaB(ParametersType *, FemStructsType *, FemFunctionsType *, double *, double *);
 
 int uB_InitialSolution(ParametersType *, FemStructsType *, FemFunctionsType *, double *, double *);
 
