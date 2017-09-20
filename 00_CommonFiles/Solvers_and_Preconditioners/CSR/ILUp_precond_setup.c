@@ -13,23 +13,23 @@ int ILUp_precond_setup(ParametersType *Parameters, MatrixDataType *MatrixData, F
 	SparILU *lu;
 	
 	p = atoi(&(Parameters->Preconditioner[3])); // In ILUp, p represent a number of fill in levels
-	A = mycalloc("ILUp allocation of A", 1, sizeof(MAT));
-	mat = mycalloc("ILUp allocation of mat", 1, sizeof(SparMAT));
-
-	A->n = Parameters->neq;
-	A->nz = Parameters->nnzero;
-	A->AA = MatrixData->AA;
-	A->JA = MatrixData->JA;
-	A->IA = MatrixData->IA;
-	A->D = MatrixData->Diag;	
-
-	/*Convert struct CSR in SPARMAT */ 
-	CSRto_SPARMAT( A, mat);
-
+	
 	if (tag==1)  {
 		int ierr;
 
 		lu = mycalloc("ILUp allocation of lu", 1, sizeof(SparILU));
+		mat = mycalloc("ILUp allocation of mat", 1, sizeof(SparMAT));
+		A = mycalloc("ILUp allocation of A", 1, sizeof(MAT));
+
+		A->n = Parameters->neq;
+		A->nz = Parameters->nnzero;
+		A->AA = MatrixData->AA;
+		A->JA = MatrixData->JA;
+		A->IA = MatrixData->IA;
+		A->D = MatrixData->Diag;	
+
+		/*Convert struct CSR in SPARMAT */ 
+		CSRto_SPARMAT_setup(A, mat);
 		
 		SPARILU_setup (lu, Parameters->neq);
 	
@@ -40,17 +40,20 @@ int ILUp_precond_setup(ParametersType *Parameters, MatrixDataType *MatrixData, F
 			exit(1);
 		}
 		MatrixData->ILUp = lu;
+		MatrixData->mat = mat;
+		MatrixData->Ailu = A;
 	}
-	else
+	else{
 		lu = MatrixData->ILUp;
+		mat = MatrixData->mat;
+		A = MatrixData->Ailu;
+		CSRto_SPARMAT (A, mat);
+	}
 
 	ILUp( mat, lu, p);
 
 	MatrixData->ILUp = lu;
 	ILUp_precond(Parameters,MatrixData,FemStructs,F,F);	
-	
-	free(A);
-	SPARMAT_clean(mat);
 	
 	return 0;
 

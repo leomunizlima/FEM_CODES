@@ -6,7 +6,7 @@ PUDIM	:Problem title (CARTOLA, PUDIM or CONE)
 5	:Max number of non linear iterations
 100	:Maximum number of solver iterations
 NO	:Stop at steady state (YES or NO)
-50	:Number of vectors in Krylov basis
+30	:Number of vectors in Krylov basis
 GMRES	:Solver (GMRES)
 NOT	:Preconditioner (Diag, Jacobi, SGS, SORw "where w is relaxation parameter in [0,2[" , ILUp or NOT) 
 NOT	:Scaling (Left, LeftRight or NOT)
@@ -20,8 +20,5 @@ Predictor1	:Time integration method (Predictor1 or Predictor2)
 0.01	:time step discretization
 ITERATION	:stop multicorrection(NORM or ITERATION)
 7.0	:End time	
-13406	:Number of nodes
-26410	:Number of elements
-10201	:Number of nodes
-20000	:Number of elements
-
+147964	:Number of nodes 
+294590	:Number of elements 

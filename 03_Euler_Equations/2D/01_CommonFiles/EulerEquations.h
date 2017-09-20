@@ -68,6 +68,7 @@ typedef struct
 	double invY[4];                        // vector that stores 1/U used in the capture operator YZBeta
 	int KrylovBasisVectorsQuantity;        // Krylov number of vectors in the basis for the restart
 	int nnodes;                            // nnodes: number of nodes
+	int nonpnodes;				//nonpnodes: number of nodes with no penetrability boundary conditions
 	int nel;                               // nel: number of element
 	int neq;                               // neq: number of equations to be solved
 	int neqrho;                            // neqrho: number of equations relating the density
@@ -101,6 +102,8 @@ typedef struct
 	int *JA;
 	int *IA;
 	SparILU *ILUp;
+	SparMAT *mat;
+	MAT *Ailu;
 	int *Perm;
 	int *invPerm;
 }MatrixDataType;
@@ -268,6 +271,8 @@ void print_rho_Residue(FILE *outFile, int neqrho, double t,double *R, double *R_
 void BC_theta_OK(int, int, int, NodeType *, double [3], double (*BC_theta)(double, double));
 
 void BC_theta_NO(int, int, int, NodeType *, double [3], double (*BC_theta)(double, double));
+
+void rotation(int tag, double theta, double M[12][12], double F[12]);
 
 #endif
 

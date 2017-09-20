@@ -13,7 +13,7 @@ int CONE2_InitialSolution(ParametersType *Parameters, NodeType* Node, double *u)
 			X = Node[I].x;
 			Y = Node[I].y;
 			R = sqrt((X+2.5)*(X+2.5)+ Y*Y);
-			if (R<=0.75)
+			if (R<=1.0)
 				u[Node[I].id] = 7.5*(1.0 + cos(R*PI));
 			else
 				u[Node[I].id] = 0.0;

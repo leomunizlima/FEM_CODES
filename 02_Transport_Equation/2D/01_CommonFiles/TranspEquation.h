@@ -79,6 +79,8 @@ typedef struct
 	int *JA;
 	int *IA;
 	SparILU *ILUp;
+	SparMAT *mat;
+	MAT *Ailu;
 	int *Perm;
 }MatrixDataType;
 
@@ -170,7 +172,7 @@ int Build_M_K_R_DD(ParametersType *, MatrixDataType *, FemStructsType *, FemFunc
 
 int Build_M_F_DD(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
-int calculate_DaB(ParametersType *, FemStructsType *, double *, double *);
+int calculate_DaB(ParametersType *, FemStructsType *, FemFunctionsType *, double *, double *);
 
 int uB_calculation(int, double *, double *, double (*)(double, double), NodeType *, ElementType *);
 

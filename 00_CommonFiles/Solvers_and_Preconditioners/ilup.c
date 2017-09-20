@@ -51,7 +51,7 @@ void SPARILU_row (SparILU* lu, int nrow)
 /*----------------------------------------------------------------------------
  * Convert CSR matrix to SparMAT struct
  *--------------------------------------------------------------------------*/
-void CSRto_SPARMAT (MAT* A, SparMAT* mat)
+void CSRto_SPARMAT_setup (MAT* A, SparMAT* mat)
 {
 	int i, j, j1, len;
 	int n = A->n;
@@ -78,6 +78,25 @@ void CSRto_SPARMAT (MAT* A, SparMAT* mat)
 			}
 			mat->ja[j] = bja;
 			mat->ma[j] = bra;
+		}
+	}    
+}
+
+/*----------------------------------------------------------------------------
+ * Convert CSR matrix to SparMAT struct
+ *--------------------------------------------------------------------------*/
+void CSRto_SPARMAT (MAT* A, SparMAT* mat)
+{
+	int i, j, j1;
+	int n = A->n;
+	
+	for (j = 0; j < n; ++j)
+	{
+		i   = 0;
+		for (j1 = A->IA[j]; j1 < A->IA[j+1]; ++j1)
+		{
+			mat->ma[j][i] = A->AA[j1];
+			i++;
 		}
 	}    
 }

@@ -9,50 +9,33 @@ void CYLINDER_BC_no_penetrability(int J1, int J2, int J3, NodeType *Node, double
 	int tag = 0;
 	double theta1, theta2, theta3, sin_theta1, sin_theta2, sin_theta3, cos_theta1, cos_theta2, cos_theta3;
 
-	if (Node[J1].v1Type == -1 || Node[J1].v2Type == -1){
+	if (Node[J1].v1Type < 0){
 		tag = 1;
-		if(fabs(Node[J1].x)>1e-10){
-			theta1 = CYLINDER_theta(Node[J1].x, Node[J1].y); 
-			sin_theta1 = sin(theta1);
-			cos_theta1 = cos(theta1);
-		}else{
-			sin_theta1 = 0.0;
-			cos_theta1 = 1.0; 
-		}
+		theta1 = CYLINDER_theta(Node[J1].x, Node[J1].y); 
+		sin_theta1 = sin(theta1);
+		cos_theta1 = cos(theta1);
 	}
 	else{
 		sin_theta1 = 0.0;
 		cos_theta1 = 1.0; 
 	}
 
-	if ((Node[J2].v1Type == -1 || Node[J2].v2Type == -1)){
+	if (Node[J2].v1Type < 0){
 		tag = 1;
-		if (fabs(Node[J2].x)>1e-10){
-			theta2 = CYLINDER_theta(Node[J2].x, Node[J2].y); 
-			sin_theta2 = sin(theta2);
-			cos_theta2 = cos(theta2);
-		}else{
-			
-			sin_theta2 = 0.0;
-			cos_theta2 = 1.0; 
-		}
+		theta2 = CYLINDER_theta(Node[J2].x, Node[J2].y); 
+		sin_theta2 = sin(theta2);
+		cos_theta2 = cos(theta2);
 	}
 	else{
 		sin_theta2 = 0.0;
 		cos_theta2 = 1.0; 
 	}
 
-	if (Node[J3].v1Type == -1 || Node[J3].v2Type == -1){
+	if (Node[J3].v1Type < 0){
 		tag = 1;
-		if (fabs(Node[J3].x)>1e-10){
-			theta3 = CYLINDER_theta(Node[J3].x, Node[J3].y); 
-			sin_theta3 = sin(theta3);
-			cos_theta3 = cos(theta3);
-		}else{
-			sin_theta3 = 0.0;
-			cos_theta3 = 1.0; 
-		}
-
+		theta3 = CYLINDER_theta(Node[J3].x, Node[J3].y); 
+		sin_theta3 = sin(theta3);
+		cos_theta3 = cos(theta3);
 	}
 	else{
 		sin_theta3 = 0.0;

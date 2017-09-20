@@ -1,5 +1,5 @@
 CC=gcc
-#CC=tau_cc.sh
+#'CC=tau_cc.sh
 IDIR=
 CFLAGS= -DEulerEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
@@ -45,6 +45,7 @@ Paraview_Output_DeltaT.c \
 Paraview_Output_3D_DeltaT.c \
 calculate_DaB.c \
 uB_InitialSolution.c \
+rotation.c \
 ../EXPLOSION/EXPLOSION_InitialSolution.c \
 ../EXPLOSION/EXPLOSION_gamma.c \
 ../EXPLOSION/EXPLOSION_cv.c \

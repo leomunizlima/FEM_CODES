@@ -113,6 +113,8 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		free(MatrixData->Scheme_by_Element);
 		if (strncmp(Parameters->Preconditioner,"ILU",3)==0){
 			SPARILU_clean(MatrixData->ILUp);
+			SPARMAT_clean(MatrixData->mat);
+			free(MatrixData->Ailu);
 		}
 	}
 

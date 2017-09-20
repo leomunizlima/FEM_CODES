@@ -73,6 +73,8 @@ typedef struct
 	int *JA;
 	int *IA;
 	SparILU *ILUp;
+	SparMAT *mat;
+	MAT *Ailu;
 	int *Perm;
 }MatrixDataType;
 

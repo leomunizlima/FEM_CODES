@@ -1,6 +1,6 @@
 #include "TranspEquation.h"
 
-int calculate_DaB(ParametersType *Parameters, FemStructsType *FemStructs, double *Da, double *DaB)
+int calculate_DaB(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *Da, double *DaB)
 {
 	int neq, nel, e, eq1, eq2, eq3;
 	double M2Da;

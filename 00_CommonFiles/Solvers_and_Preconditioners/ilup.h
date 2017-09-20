@@ -44,6 +44,7 @@ void SPARIUL_setup  (SparILU* ul, int n);
 void SPARILU_row    (SparILU* lu, int nrow);
 void SPARIUL_row    (SparILU* ul, int nrow);
 void CSRto_SPARMAT (MAT* A, SparMAT* mat);
+void CSRto_SPARMAT_setup (MAT* A, SparMAT* mat);
 void SPARILU_toCSR (SparILU* lu, MAT* L, MAT* U);
 int  LEVEL_OF_FILL_lu  (SparMAT* csmat, SparILU* lu, int p);
 int  LEVEL_OF_FILL_ul  (SparMAT* csmat, SparILU* ul, int p);

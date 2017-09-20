@@ -52,7 +52,7 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	FemStructs->duB = aB;
 
 	FemFunctions->InitialSolution(Parameters, FemStructs->Node, u);
-	//uB_InitialSolution(Parameters, FemStructs, FemFunctions, u, uB);
+	uB_InitialSolution(Parameters, FemStructs, FemFunctions, u, uB);
 	
 	t = 0.0;
 	passo = 0;

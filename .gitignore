@@ -111,6 +111,8 @@ local.properties
 01_SS_Transport_Equation/2D/01_CommonFiles/SSTranspEquation
 02_Transport_Equation/2D/01_CommonFiles/TranspEquation
 03_Euler_Equations/2D/01_CommonFiles/EulerEquations2D
+Gerador_de_Malhas/Unstructured_Mesh/gmsh2Mesh
+Gerador_de_Malhas/Structured_Mesh/geraMalha
 
 # Our files that should not be ignored
 !00_CommonFiles/Reordering/hsl_mc60/libmc60.a

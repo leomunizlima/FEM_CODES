@@ -3,6 +3,7 @@
 #include "../../../00_CommonFiles/IO_Operations/io.h"
 #include "../../../00_CommonFiles/BLAS_Operations/ourBLAS.h"
 
+
 int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
 	int e, i, j, k, neq, nel;
@@ -771,6 +772,21 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 		//Adjust of matrices M1, N1, M2 and vectors R1, R2 according to boundary conditions of no penetrability
 		FemFunctions->BC_no_penetrability(J1, J2, J3, Node, alpha_dt, delta, deltaNMV, Area, y23, y12, y31, x32, x21, x13, Ax, Ay, M1, N1, M2, R1, R2, Ue, dUe, uBaux, duBaux);
 
+	/*	double theta1, theta2, theta3;
+		if (Node[J1].v1Type == -1){
+			theta1 = FemFunctions->BC_theta(x1,y1);
+			rotation(0,theta1,M1,R1);
+		}
+		if (Node[J2].v1Type == -1){
+			theta2=FemFunctions->BC_theta(x2,y2);
+			rotation(1,theta2,M1,R1);
+		}
+		if (Node[J3].v1Type == -1){
+			theta3=FemFunctions->BC_theta(x3,y3);
+			rotation(2,theta3,M1,R1);
+		}
+
+*/
 		//Montagem da matriz Me
 		int size = NDOF*NNOEL;
 		double soma;
@@ -783,9 +799,9 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 				Me[i][j] = M1[i][j] - invN2*soma;
 			}
 		}
-
+		
 		// Montagem do vetor F 
-		for (i = 0; i < 12; i++)
+		for (i=0; i<12; i++)	
 			F[lm[e][i]] += R1[i]  - invN2*(N1[i][0]*R2[0]  + N1[i][1]*R2[1]  + N1[i][2]*R2[2]  + N1[i][3]*R2[3]);
 
 		F[neq] = 0;
@@ -800,7 +816,7 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 		int k = 0;
 		for (i=0; i<4; i++)
 			for (j=0; j<12; j++, k++)
-					M2_out[e][k] = M2[i][j];
+				M2_out[e][k] = M2[i][j];
 
 		//Assembly of matrices Me
 		FemFunctions->assembly(Parameters, MatrixData, FemStructs, e, Me);
@@ -815,5 +831,19 @@ int Build_M_F_DD_Transiente(ParametersType *Parameters, MatrixDataType *MatrixDa
 
 	return 0;
 }// end build
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

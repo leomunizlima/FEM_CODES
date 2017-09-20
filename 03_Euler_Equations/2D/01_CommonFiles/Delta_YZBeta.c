@@ -92,7 +92,13 @@ double Delta_YZBeta(double tolerance, double *delta_old, double *gradUx, double 
 	aux_Hyzbeta = Hyzbeta*0.5*Hyzbeta*0.5;
 	delta2 = norm_YZ*aux_sum_norm_YdU*aux_norm_YU*aux_Hyzbeta;
 
-	delta = 0.5*(delta1 + delta2);
+	//delta = 0.25*(delta1 + delta2);
+	
+	double aux_delta, w = 0.5;	
+	aux_delta = w*(delta1 + delta2); 
+	delta = w*(aux_delta) + (1 - w)*delta_old[e];
+	delta_old[e] = delta;
+	
 	
 	free(AxgradUx);
 	free(AygradUy);

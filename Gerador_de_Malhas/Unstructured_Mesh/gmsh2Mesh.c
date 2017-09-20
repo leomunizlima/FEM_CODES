@@ -230,6 +230,8 @@ int setmark_according_boundary(int nnodes, double **coord, int *mark, char *prob
 		for(i=0;i<nnodes;i++){
 			if (fabs(coord[i][1])<=1e-15 || (fabs(coord[i][1]-0.2)<=1e-15 && coord[i][0]>=0.6) || fabs(coord[i][1]-1.0)<=1e-15)
 				mark[i] = 2;
+			else if (fabs(coord[i][0]-0.6)<=1e-15 && fabs(coord[i][1]-0.2)<=1e-4)
+				mark[i] = 6;
 			else if (fabs(coord[i][0]-0.6)<=1e-15 && coord[i][1]<=0.2)
 				mark[i] = 4;
 			else if (fabs(coord[i][0])<=1e-15)

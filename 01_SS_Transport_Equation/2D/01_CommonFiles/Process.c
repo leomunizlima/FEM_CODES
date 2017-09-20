@@ -33,7 +33,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 		normu = sqrt(ddot(neq,FemStructs->u,FemStructs->u));
 
 		#ifdef debug
-			printf("normdiff/normu = %.15lf\n",normdiff/normu);
+			printf("normdiff/normu = %.15lf (normu=%lf)\n ",normdiff/normu, normu);
 		#endif
 	}
 

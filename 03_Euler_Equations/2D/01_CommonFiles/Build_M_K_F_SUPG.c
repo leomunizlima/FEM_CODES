@@ -1039,9 +1039,25 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 				Ae[i][j] = Me[i][j] + alpha*delta_t*Ke[i][j];
 			}
 			Re[i] = - MedUe[i] - KeUe[i];
-			R[lm[e][i]] += Re[i];
 		}
-		
+
+		double theta1, theta2, theta3;
+		if (Node[J1].v1Type == -1){
+			theta1 = FemFunctions->BC_theta(x1,y1);
+			rotation(0,theta1,Ae,Re);
+		}
+		if (Node[J2].v1Type == -1){
+			theta2=FemFunctions->BC_theta(x2,y2);
+			rotation(1,theta2,Ae,Re);
+		}
+		if (Node[J3].v1Type == -1){
+			theta3=FemFunctions->BC_theta(x3,y3);
+			rotation(2,theta3,Ae,Re);
+		}
+
+
+		for (i=0; i<12; i++)
+			R[lm[e][i]] += Re[i];
 		R[neq] = 0;
 		
 		FemFunctions->assembly(Parameters, MatrixData, FemStructs, e, Ae);
