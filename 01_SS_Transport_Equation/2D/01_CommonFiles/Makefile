@@ -1,5 +1,5 @@
 CC=gcc
-CC=tau_cc.sh
+#CC=tau_cc.sh
 IDIR=
 CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
 GCFLAGS= -DSSTranspEquation2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
