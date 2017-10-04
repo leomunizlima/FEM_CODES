@@ -54,8 +54,6 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		aux = e[I] - (v1[I]*v1[I] + v2[I]*v2[I])/(2.0*rho[I]);
 		temp[I] = aux/(rho[I]*cv);
 		pres[I] = (gamma - 1)*aux;
-		if (I==7 || I==8)
-			printf("pres[%d]=%lf\n",I,pres[I]);
 	}
 	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
 			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);

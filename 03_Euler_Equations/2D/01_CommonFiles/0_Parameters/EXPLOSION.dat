@@ -7,10 +7,10 @@ EXPLOSION	  :Problem title
 1000		    :Maximum number of solver iterations
 30		      :Number of vectors in krylov basis
 GMRES		    :Solver
-LUBlock 	:Preconditioner
-BlockScaling		:Scaling (NOT or BlockScaling)	
+BlockDiag 	:Preconditioner
+NOT		:Scaling (NOT or BlockScaling)	
 NOT	      :Reordering
-Predictor1	:Time integration method
+Predictor1_BDF	:Time integration method
 NO	        :Stop at steady state
 0.5		      :Alpha
 1e-2		    :Step time
