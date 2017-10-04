@@ -492,14 +492,14 @@ int find_starting_node (int N, const int *ridx, const int *cidx, const int *ridx
 // stored in an array. qh and qt point to queue head and tail.
    
 // Enqueue operation (adds a node "o" at the tail)
-inline void Q_enq (CMK_NodeType *Q, int N, int *qt, const CMK_NodeType *o)
+void Q_enq (CMK_NodeType *Q, int N, int *qt, const CMK_NodeType *o)
 {
 	Q[*qt] = *o;
 	*qt = (*qt + 1) % (N + 1);
 }
 
 // Dequeue operation (removes a node from the head)
-inline CMK_NodeType Q_deq (CMK_NodeType *Q, int  N, int *qh)
+CMK_NodeType Q_deq (CMK_NodeType *Q, int  N, int *qh)
 {
 	CMK_NodeType r = Q[*qh];
      	*qh = (*qh + 1) % (N + 1);
@@ -532,7 +532,7 @@ void H_insert (CMK_NodeType *H, int *h, const CMK_NodeType *o)
  
 // Heap operation remove-min. Removes the smalles element in O(1) and
 // reorganizes the heap optionally in O(log(n))
-inline CMK_NodeType H_remove_min (CMK_NodeType *H, int *h, int reorg/*=1*/)
+CMK_NodeType H_remove_min (CMK_NodeType *H, int *h, int reorg/*=1*/)
 {
 	CMK_NodeType r = H[0];
 	H[0] = H[--(*h)];

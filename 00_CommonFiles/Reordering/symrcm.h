@@ -36,10 +36,10 @@ void transform_CSR_to_CCS(int N,const int *ja, const int *ia, int *cidx,int *rid
 void transpose (int N, const int *ridx, const int *cidx, int *ridx2, int *cidx2);
 int calc_degrees(int N, const int *ridx, const int *cidx, int *D);
 int find_starting_node (int N, const int *ridx, const int *cidx, const int *ridx2, const int *cidx2, int *D, int start);
-inline void Q_enq (CMK_NodeType *Q, int N, int *qt, const CMK_NodeType *o);
-inline CMK_NodeType Q_deq (CMK_NodeType *Q, int  N, int *qh);
+void Q_enq (CMK_NodeType *Q, int N, int *qt, const CMK_NodeType *o);
+CMK_NodeType Q_deq (CMK_NodeType *Q, int  N, int *qh);
 void H_insert (CMK_NodeType *H, int *h, const CMK_NodeType *o);
-inline CMK_NodeType H_remove_min (CMK_NodeType *H, int *h, int reorg);
+CMK_NodeType H_remove_min (CMK_NodeType *H, int *h, int reorg);
 void H_heapify_min (CMK_NodeType *A, int i, int size);
 
 
