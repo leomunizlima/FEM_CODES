@@ -332,6 +332,16 @@ int setmark_according_boundary(int nnodes, double **coord, int *mark, char *prob
 				mark[i] = 0;
 		}
 
+	}else if(strcasecmp(problem,"CONVECTION") == 0){ 
+	
+		NDOF = 1;
+		for(i=0;i<nnodes;i++){
+			if (fabs(coord[i][0])<=1e-15 || fabs(coord[i][1])<=1e-15)
+				mark[i] = 15;
+			else
+				mark[i] = 0;
+		}
+
 	}else{
 		printf("Problem not defined!\n");
 		exit(1);
