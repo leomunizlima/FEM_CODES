@@ -15,13 +15,13 @@
 	int edemvNDOF4(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int ede2mvNDOF4(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 #endif
-#ifdef FrozenEulerEquations2D
-	#include "../../04_Frozen_Euler_Equations/2D/01_CommonFiles/FrozenEulerEquations.h"
-#endif
 #ifdef SSNavierStokesEquations2D
-	#include "../../05_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
+	#include "../../04_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
 #endif
-
+#ifdef NavierStokesEquations2D
+	#include "../../05_NavierStokes_Equations/2D/01_CommonFiles/NavierStokesEquations.h"
+#endif
+int ebemvNDOF3(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 int csrmv(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 
 
