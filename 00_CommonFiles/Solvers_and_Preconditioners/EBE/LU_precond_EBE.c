@@ -1,4 +1,4 @@
-#include "../preconditioners.h"
+	#include "../preconditioners.h"
 /* Define preconditioner action on matrix-vector product */
 /* p = A z
  * A = (LU)^{-1}
@@ -26,6 +26,15 @@ int LU_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, FemS
 		z1 = z[lm1];
 		z2 = z[lm2];
 
+	/*        printf("LM%d->",I);
+                int j;
+                for (j=0;j<3;j++)
+                       printf("%d ",lm[I][j]);
+                printf("\n ");
+                printf("z0=%lf z1=%lf z2=%lf\n",z0,z1,z2);
+*/
+
+
 		// L * p = w
 //		z1 = (z1 - LUe[I][3] * z0)*LUe[I][4]; // LUe[I][4] is store as 1/LUe[I][4]
 //		z2 = (z2 - LUe[I][6] * z0 - LUe[I][7] * z1)*LUe[I][8]; // LUe[I][8] is stored as 1/LUe[8]		
@@ -42,6 +51,11 @@ int LU_precond_EBE (ParametersType *Parameters, MatrixDataType *MatrixData, FemS
 		z[lm2] = z2;
 
 		z[neq] = 0.0;
+
+/*		printf("e=%d\n",I);
+		int j;
+		for (j=0;j<9;j++)
+			printf("LUe[%d]=%lf Ae[%d]=%lf\n",j, LUe[I][j], j, MatrixData->A[I][j]);*/
 	}
 	
 	return 0;

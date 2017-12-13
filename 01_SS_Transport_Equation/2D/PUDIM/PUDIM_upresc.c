@@ -7,7 +7,7 @@ inline double PUDIM_upresc(double X, double Y)
 
 	//Pudim
 	if (fabs(X)<=1e-14 && Y<=0.)
-		u = -sin(2*PI*Y);
+		u = -sin(PI*Y);
 	else
 		u = 0;
 

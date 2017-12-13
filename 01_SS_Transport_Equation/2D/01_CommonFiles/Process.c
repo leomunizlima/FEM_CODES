@@ -24,8 +24,17 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 		i++;
 		dcopy(neq, u, uold);
 		FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
+/*		printf("Before...\n");
+		for (i=0; i<neq; i++)
+			printf("F[%d]=%lf\n",i,FemStructs->F[i]);i=1;
+*/
 		FemFunctions->scaling(Parameters, MatrixData, FemStructs);
 		FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, i, FemStructs->F);
+/*		printf("After...\n");
+		for (i=0; i<neq; i++)
+			printf("F[%d]=%lf\n",i,FemStructs->F[i]);
+		exit(1);
+*/
 		FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, FemStructs->F, FemStructs->u);
 		FemFunctions->unscaling(Parameters, MatrixData, FemStructs, FemStructs->u);
 		daxpy(neq, -1, u, uold);

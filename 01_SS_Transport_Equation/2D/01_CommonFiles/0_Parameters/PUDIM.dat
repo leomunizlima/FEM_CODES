@@ -1,16 +1,22 @@
 PUDIM	:Problem title (CARTOLA, HEMKER, PUDIM or TEST)
 1e-8	:Solver tolerance
-1e2	:Non linear tolerance
+1e0	:Non linear tolerance
 1000	:Maximum number of solver iterations
 30	:Number of vectors in Krylov basis
 GMRES	:Solver (GMRES or CG)
-ILU0	:Preconditioner (SPIKEk, Diag, ILUp or NOT)
-NOT	:Scaling (Left,LeftRigh, or NOT)	
-SYMRCM	:Reordering (Spectral, SYMRCM, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
-CSR	:Matrix vector product scheme (EBE, EDE or CSR)
+LU	:Preconditioner (SPIKEk, Diag, ILUp or NOT)
+Left	:Scaling (Left,LeftRigh, or NOT)	
+NOT	:Reordering (Spectral, SYMRCM, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
+EBE	:Matrix vector product scheme (EBE, EDE or CSR)
 SUPG	:Stabilization form (DD or SUPG)
 YZBeta	:Shock capture (CAU, CAUDD or YZBeta)
 Option1	:Parameter h to shock capture (Option1, Option2 or 2sqtArea)
+49	:Number of nodes
+72	:Number of elements
+160801	:Number of nodes
+320000	:Number of elements
+3337451	:Number of nodes 
+6668548	:Number of elements
 1323735 :Number of nodes
 2643468	:NUmber of elements
 5294091	:Number of nodes
@@ -19,11 +25,6 @@ Option1	:Parameter h to shock capture (Option1, Option2 or 2sqtArea)
 422942 	:Number of elements
 53047	:Number of nodes
 105292	:Number of elements
-49	:Number of nodes
-72	:Number of elements
-160801	:Number of nodes
-320000	:Number of elements
-3337451	:Number of nodes 
-6668548	:Number of elements
-
+53167	:
+105532	:
 
