@@ -8,7 +8,10 @@
 	#include "../../03_Euler_Equations/2D/01_CommonFiles/EulerEquations.h"
 #endif
 #ifdef SSNavierStokesEquations2D
-	#include "../../05_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
+	#include "../../04_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
+#endif
+#ifdef NavierStokesEquations2D
+	#include "../../05_NavierStokes_Equations/2D/01_CommonFiles/NavierStokesEquations.h"
 #endif
 
 #include "symrcm.h"

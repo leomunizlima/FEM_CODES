@@ -7,11 +7,11 @@
 #ifdef EulerEquations2D
 	#include "../../03_Euler_Equations/2D/01_CommonFiles/EulerEquations.h"
 #endif
-#ifdef FrozenEulerEquations2D
-	#include "../../04_Frozen_Euler_Equations/2D/01_CommonFiles/FrozenEulerEquations.h"
-#endif
 #ifdef SSNavierStokesEquations2D
-	#include "../../05_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
+	#include "../../04_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
+#endif
+#ifdef NavierStokesEquations2D
+	#include "../../05_NavierStokes_Equations/2D/01_CommonFiles/NavierStokesEquations.h"
 #endif
 #include "../BLAS_Operations/ourBLAS.h"
 #include "../Allocation_Operations/allocations.h"
