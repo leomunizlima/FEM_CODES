@@ -94,6 +94,8 @@ typedef struct
 	int **Scheme_by_Element;
 	int **order;
 	SparILU *ILUp;
+	SparMAT *mat;
+	MAT *Ailu;
 	int *Perm;
 	int *invPerm;
 }MatrixDataType;
@@ -132,6 +134,7 @@ typedef struct
 	//!!!!!!!!!!!!! VERIFICAR POIS ESTA DIFERENTE !!!!!!!!!
 	int (*mv)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
+	int (*precondR)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond_setup)(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
 }FemFunctionsType;
 
@@ -190,9 +193,12 @@ void ebe_assembly(ParametersType *, MatrixDataType *, FemStructsType *, int, dou
 
 int Build_K_F_SUPG_PSPG(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *); //ok
 
+int Build_K_F_VMS_DCDD(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *); //ok
 int Paraview_Output(ParametersType *, FemStructsType *, FemFunctionsType *); //ok
 
 double eta_newton(double *, double *, double , int , int , double, double, ParametersType *); //ok
+
+void eval_U(ParametersType *,FemStructsType *, FemFunctionsType *, double *);
 
 #endif
 

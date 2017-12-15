@@ -1,6 +1,6 @@
 #include "preconditioners.h"
 
-int BlockDiagDOF3_precond(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructType *FemStructs, double *p, double *z)
+int BlockDiagDOF3_precond(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, double *p, double *z)
 {	
 	double a,b,c;
 	int nnodes = Parameters->nnodes;

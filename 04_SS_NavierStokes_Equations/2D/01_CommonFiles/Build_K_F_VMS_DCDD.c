@@ -5,14 +5,14 @@
 
 static int varglobal = 0;
 
-int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
+int Build_K_F_VMS_DCDD(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
 	int i, neq, nel;//, op;
 	int J, E, J1, J2, J3;
 	//double Uref, Lref;
 	double Re, x, y;
-	double TwoA, invArea, Area, tau, h, visc, rho, invrho, nu, unorm, auxtau, tau_l; 
-	double third=1.0/3.0, sixth = 1.0/6.0, twelfth = 1.0/12.0;
+	double TwoA, invArea, Area, tau, h, visc, rho, unorm, tau_l, normgradU; //, invrho
+	double third=1.0/3.0, sixth = 1.0/6.0,  ninefortieth = 9.0 / 40.0; //, twelfth = 1.0/12.0, ninetwentieth = 9.0/20.0;
 	double y23, y31, y12, x32, x13, x21, X[3], Y[3], Ke[9][9], Fe[9], ux1, ux2, ux3, uy1, uy2, uy3, ux, uy, duxdx, duxdy, duydx, duydy;
 	double fx1, fx2, fx3, fy1, fy2, fy3, fxB, fyB, f1, f2, fdelta1, fdelta2, fdelta3, fdelta4, fdelta5, fdelta6, fphi1, fphi2, fphi3;
 	double C1, C2, C3;
@@ -22,16 +22,20 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 	double Ks11, Ks12, Ks13, Ks14, Ks15, Ks16, Ks21, Ks22, Ks23, Ks24, Ks25, Ks26, Ks31, Ks32, Ks33, Ks34, Ks35, Ks36;
 	double Ks41, Ks42, Ks43, Ks44, Ks45, Ks46, Ks51, Ks52, Ks53, Ks54, Ks55, Ks56, Ks61, Ks62, Ks63, Ks64, Ks65, Ks66; 
 	double GT11, GT12, GT13, GT14, GT15, GT16, N11, N13, N15;
-	double Ndelta11, Ndelta13, Ndelta15, Ndelta22, Ndelta24, Ndelta26, Ndelta33, Ndelta35, Ndelta44, Ndelta46, Ndelta55, Ndelta66;
+	double Ndelta11, Ndelta12, Ndelta13, Ndelta14, Ndelta15, Ndelta16, Ndelta21, Ndelta22, Ndelta23, Ndelta24, Ndelta25, Ndelta26;
+	double Ndelta31, Ndelta32, Ndelta33, Ndelta34, Ndelta35, Ndelta36, Ndelta41, Ndelta42, Ndelta43, Ndelta44, Ndelta45, Ndelta46;
+	double Ndelta51, Ndelta52, Ndelta53, Ndelta54, Ndelta55, Ndelta56, Ndelta61, Ndelta62, Ndelta63, Ndelta64, Ndelta65, Ndelta66;
 	double Gdelta11, Gdelta12, Gdelta13, Gdelta21, Gdelta22, Gdelta23, Gdelta31, Gdelta32, Gdelta33, Gdelta41, Gdelta42, Gdelta43;
 	double Gdelta51, Gdelta52, Gdelta53, Gdelta61, Gdelta62, Gdelta63;
 	//double Mphi11, Mphi12, Mphi21, Mphi22, Mphi31, Mphi32;
-	double Gphi11, Gphi12, Gphi13, Gphi22, Gphi23, Gphi33;
-	double Np11, Np12, Np21, Np22, Np31, Np32, Np41, Np42;
-	double Npdelta11, Npdelta12, Npdelta21, Npdelta22, Npdelta31, Npdelta32, Npdelta41, Npdelta42, Npdelta51, Npdelta52, Npdelta61, Npdelta62; 
-	double Nppdelta11, Nppdelta12, Nppdelta21, Nppdelta22, Nppdelta31, Nppdelta32, Nppdelta41, Nppdelta42, Nppdelta51, Nppdelta52, Nppdelta61, Nppdelta62;
-	double Npphi11, Npphi12, Npphi21, Npphi22, Npphi31, Npphi32;
-	double p1, p2, p3, p, dpdx, dpdy, duxduy;
+	double Nphi11, Nphi12, Nphi13, Nphi14, Nphi15, Nphi16, Nphi21, Nphi22, Nphi23, Nphi24, Nphi25, Nphi26, Nphi31, Nphi32, Nphi33;
+	double Nphi34, Nphi35, Nphi36;	
+	double Gphi11, Gphi12, Gphi13, Gphi21, Gphi22, Gphi23, Gphi31, Gphi32, Gphi33;
+	//double Np11, Np12, Np21, Np22, Np31, Np32, Np41, Np42;
+	//double Npdelta11, Npdelta12, Npdelta21, Npdelta22, Npdelta31, Npdelta32, Npdelta41, Npdelta42, Npdelta51, Npdelta52, Npdelta61, Npdelta62; 
+	//double Nppdelta11, Nppdelta12, Nppdelta21, Nppdelta22, Nppdelta31, Nppdelta32, Nppdelta41, Nppdelta42, Nppdelta51, Nppdelta52, Nppdelta61, Nppdelta62;
+	//double Npphi11, Npphi12, Npphi21, Npphi22, Npphi31, Npphi32;
+	double p1, p2, p3, p, duxduy;
 	
 	double *F = FemStructs->F;
 	int **lm = FemStructs->lm;
@@ -42,7 +46,7 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
-	double *U = (double*) mycalloc("U of 'Build_K_F_SUPG_PSPG'", 3*Parameters->nnodes, sizeof(double));
+	double *U = (double*) mycalloc("U of 'Build_K_F_VMS_DCDD'", 3*Parameters->nnodes, sizeof(double));
 	eval_U(Parameters,FemStructs,FemFunctions,U);
 
 	for (J=0; J<neq+1; J++)
@@ -73,7 +77,7 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Area = 0.5*TwoA;
 		invArea = 1.0/Area;		
 				
-	 	//x Velocity  
+		//x Velocity  
 		ux1 = U[3*J1];
 		ux2 = U[3*J2];
 		ux3 = U[3*J3];
@@ -87,50 +91,46 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		p1 = U[3*J1+2];
 		p2 = U[3*J2+2];
 		p3 = U[3*J3+2];
-
+		
+		
 		//*****************u at barycentre of the element***************
-		ux = third*( ux1 + ux2 + ux3 );
-		uy = third*( uy1 + uy2 + uy3 );
+		ux = third*(ux1 + ux2 + ux3);
+		uy = third*(uy1 + uy2 + uy3);
 		
 		//*****************************Gradient of u********************
 		duxdx = 0.5*invArea*( ux1*y23 + ux2*y31 + ux3*y12 ); 
 		duxdy = 0.5*invArea*( ux1*x32 + ux2*x13 + ux3*x21 );
 		duydx = 0.5*invArea*( uy1*y23 + uy2*y31 + uy3*y12 );
 		duydy = 0.5*invArea*( uy1*x32 + uy2*x13 + uy3*x21 );
-				
+			
 		duxduy = ux1*y23 + uy1*x32 + ux2*y31 + uy2*x13 + ux3*y12 + uy3*x21;
+
 
 		//*****************p at barycentre of the element***************
 		p = third*( p1 + p2 + p3 );
 
 		//**************************Gradient of p**********************
-		dpdx = 0.5*invArea*( p1*y23 + p2*y31 + p3*y12 );
-		dpdy = 0.5*invArea*( p1*x32 + p2*x13 + p3*x21 );
+		//dpdx = 0.5*invArea*( p1*y23 + p2*y31 + p3*y12 );
+		//dpdy = 0.5*invArea*( p1*x32 + p2*x13 + p3*x21 );
 
 		//*****************Coefficients C_i******************************
 		C1 = 0.5*invArea*( ux*y23 + uy*x32 );
 		C2 = 0.5*invArea*( ux*y31 + uy*x13 );
 		C3 = 0.5*invArea*( ux*y12 + uy*x21 );
 
-		//*************Calculation of tau_SUPG=tau_PSPG=tau*********
+		//************* Dados de entrada *********
 		Re = Parameters->ReynoldsNumber;		
 		h = sqrt( 4*Area/PI );		
 		visc =1./Re;
 		rho = 1.;		
-		//visc = 1./sqrt(Re);
-		//rho = sqrt(Re);		
-
-		//visc = (*Viscosity)(); 
-		//rho = (*Rho)();
-		//Uref = (*U_ref)();
-		//Lref = (*L_ref)();
-		invrho = 1.0/rho;
-		nu = visc/rho;
+		//invrho = 1.0/rho;
+		//nu = visc/rho;
 		//h = sqrt( 4*Area/PI );		
 		unorm = sqrt( ux*ux + uy*uy );
-		auxtau = ( 2*unorm/h )*( 2*unorm/h ) + 9*( 4*nu/(h*h) )*( 4*nu/(h*h) );
-		auxtau = sqrt( auxtau);
-		tau = 1.0/auxtau;
+		
+		//auxtau = ( 2*unorm/h )*( 2*unorm/h ) + 9*( 4*nu/(h*h) )*( 4*nu/(h*h) );
+		//auxtau = sqrt( auxtau);
+		//tau = 1.0/auxtau;
 		//tau=tau_SUPG=tau_PSPG
 		
 		//*************Calculation of tau_LSIC stabilization*********
@@ -230,136 +230,11 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Ks65 = tau_l*rho*0.25*invArea*y12*x21;
 		Ks66 = tau_l*rho*0.25*invArea*x21*x21;
 		
-		//***************Matrices of the SUPG formulation****************
 
-		//*******************Matrix Mdelta=tau*N^T***********************
-		//Mdelta11 = tau*N11;
-		//Mdelta31 = tau*N13;
-		//Mdelta51 = tau*N15;
-
-		//**********************Matrix Ndelta****************************
-		Ndelta11 = rho*tau*Area*C1*C1;
-		Ndelta13 = rho*tau*Area*C1*C2;
-		Ndelta15 = rho*tau*Area*C1*C3;
-	
-		Ndelta22 = Ndelta11;
-		Ndelta24 = Ndelta13;
-		Ndelta26 = Ndelta15;
-	
-		Ndelta33 = rho*tau*Area*C2*C2;
-		Ndelta35 = rho*tau*Area*C2*C3;
-	
-		Ndelta44 = Ndelta33;
-		Ndelta46 = Ndelta35;
-	
-		Ndelta55 = rho*tau*Area*C3*C3;
-	
-		Ndelta66 = Ndelta55;
-		
-		//**********************Matrix Gdelta****************************
-		Gdelta11 = 0.5*tau*C1*y23;
-		Gdelta12 = 0.5*tau*C1*y31;
-		Gdelta13 = 0.5*tau*C1*y12;
-
-		Gdelta21 = 0.5*tau*C1*x32;
-		Gdelta22 = 0.5*tau*C1*x13;
-		Gdelta23 = 0.5*tau*C1*x21;
-
-		Gdelta31 = 0.5*tau*C2*y23;
-		Gdelta32 = 0.5*tau*C2*y31;
-		Gdelta33 = 0.5*tau*C2*y12;
-
-		Gdelta41 = 0.5*tau*C2*x32;
-		Gdelta42 = 0.5*tau*C2*x13;
-		Gdelta43 = 0.5*tau*C2*x21;
-
-		Gdelta51 = 0.5*tau*C3*y23;
-		Gdelta52 = 0.5*tau*C3*y31;
-		Gdelta53 = 0.5*tau*C3*y12;
-
-		Gdelta61 = 0.5*tau*C3*x32;
-		Gdelta62 = 0.5*tau*C3*x13;
-		Gdelta63 = 0.5*tau*C3*x21;
-
-		//***************Matrices of the PSPG formulation****************
-
-		//**********************Matrix Mphi******************************
-		//Mphi11 = tau*sixth*y23;
-		//Mphi12 = tau*sixth*x32;
-	
-		//Mphi21 = tau*sixth*y31;
-		//Mphi22 = tau*sixth*x13;
-	
-		//Mphi31 = tau*sixth*y12;
-		//Mphi32 = tau*sixth*x21;
-
-		//***************** Matrix Nphi = Gdelta^T ***********************
-
-		//**********************Matrix Gphi*******************************
-		Gphi11 = invrho*0.25*tau*invArea*( y23*y23 + x32*x32 );
-		Gphi12 = invrho*0.25*tau*invArea*( y23*y31 + x32*x13 );
-		Gphi13 = invrho*0.25*tau*invArea*( y23*y12 + x32*x21 );
-		
-		Gphi22 = invrho*0.25*tau*invArea*( y31*y31 + x13*x13 );
-		Gphi23 = invrho*0.25*tau*invArea*( y31*y12 + x13*x21 );
-		
-		Gphi33 = invrho*0.25*tau*invArea*( y12*y12 + x21*x21 );	
 		
 		//*********************Incremental matrices***********************
 		
-		//*************************Matrix Np*******************************
-		Np11 = rho*Area*sixth*duxdx;
-		Np12 = rho*Area*sixth*duxdy;
-		Np21 = rho*Area*sixth*duydx;
-		Np22 = rho*Area*sixth*duydy;
-
-		Np31 = rho*Area*twelfth*duxdx;
-		Np32 = rho*Area*twelfth*duxdy;
-		Np41 = rho*Area*twelfth*duydx;
-		Np42 = rho*Area*twelfth*duydy;
 		
-		//**********************Matrix Npdelta*******************************
-		Npdelta11 = rho*tau*Area*third*C1*duxdx;
-		Npdelta12 = rho*tau*Area*third*C1*duxdy;
-		Npdelta21 = rho*tau*Area*third*C1*duydx;
-		Npdelta22 = rho*tau*Area*third*C1*duydy;
-	
-		Npdelta31 = rho*tau*Area*third*C2*duxdx;
-		Npdelta32 = rho*tau*Area*third*C2*duxdy;
-		Npdelta41 = rho*tau*Area*third*C2*duydx;
-		Npdelta42 = rho*tau*Area*third*C2*duydy;
-	
-		Npdelta51 = rho*tau*Area*third*C3*duxdx;
-		Npdelta52 = rho*tau*Area*third*C3*duxdy;
-		Npdelta61 = rho*tau*Area*third*C3*duydx;
-		Npdelta62 = rho*tau*Area*third*C3*duydy;
-
-		//*********************Matrix Nppdelta*******************************
-		Nppdelta11 = rho*tau*sixth*y23*( duxdx*ux + duxdy*uy );
-		Nppdelta12 = rho*tau*sixth*x32*( duxdx*ux + duxdy*uy );
-		Nppdelta21 = rho*tau*sixth*y23*( duydx*ux + duydy*uy );
-		Nppdelta22 = rho*tau*sixth*x32*( duydx*ux + duydy*uy );
-
-		Nppdelta31 = rho*tau*sixth*y31*( duxdx*ux + duxdy*uy );
-		Nppdelta32 = rho*tau*sixth*x13*( duxdx*ux + duxdy*uy );
-		Nppdelta41 = rho*tau*sixth*y31*( duydx*ux + duydy*uy );
-		Nppdelta42 = rho*tau*sixth*x13*( duydx*ux + duydy*uy );
-
-		Nppdelta51 = rho*tau*sixth*y12*( duxdx*ux + duxdy*uy );
-		Nppdelta52 = rho*tau*sixth*x21*( duxdx*ux + duxdy*uy );
-		Nppdelta61 = rho*tau*sixth*y12*( duydx*ux + duydy*uy );
-		Nppdelta62 = rho*tau*sixth*x21*( duydx*ux + duydy*uy );
-
-		//************************Matrix Npphi*******************************
-		Npphi11 = tau*sixth*( duxdx*y23 + duydx*x32 );
-		Npphi12 = tau*sixth*( duxdy*y23 + duydy*x32 );
-
-		Npphi21 = tau*sixth*( duxdx*y31 + duydx*x13 );
-		Npphi22 = tau*sixth*( duxdy*y31 + duydy*x13 );
-
-		Npphi31 = tau*sixth*( duxdx*y12 + duydx*x21 );
-		Npphi32 = tau*sixth*( duxdy*y12 + duydy*x21 );
-	
 		//****************************Font***********************************
 /*		fx1 = (*Font)(X[0],Y[0],1);*/
 /*		fx2 = (*Font)(X[1],Y[1],1);*/
@@ -456,15 +331,6 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Nv[4] = rho*third*Area*( duxdx*ux + duxdy*uy );
 		Nv[5] = rho*third*Area*( duydx*ux + duydy*uy );
 
-
-		Ndeltav[0] = rho*tau*Area*C1*( duxdx*ux + duxdy*uy );
-		Ndeltav[1] = rho*tau*Area*C1*( duydx*ux + duydy*uy );
-		Ndeltav[2] = rho*tau*Area*C2*( duxdx*ux + duxdy*uy );
-		Ndeltav[3] = rho*tau*Area*C2*( duydx*ux + duydy*uy );
-		Ndeltav[4] = rho*tau*Area*C3*( duxdx*ux + duxdy*uy );
-		Ndeltav[5] = rho*tau*Area*C3*( duydx*ux + duydy*uy );
-
-
 		Kv[0] = 0.5*visc*( 2*y23*duxdx + x32*( duxdy + duydx ) );
 		Kv[1] = 0.5*visc*( 2*x32*duydy + y23*( duxdy + duydx ) );
 		Kv[2] = 0.5*visc*( 2*y31*duxdx + x13*( duxdy + duydx ) );
@@ -486,224 +352,328 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Gv[4] = 0.5*p*y12;
 		Gv[5] = 0.5*p*x21;
 
-		Gdeltav[0] = tau*Area*C1*dpdx;
-		Gdeltav[1] = tau*Area*C1*dpdy;
-		Gdeltav[2] = tau*Area*C2*dpdx;
-		Gdeltav[3] = tau*Area*C2*dpdy;
-		Gdeltav[4] = tau*Area*C3*dpdx;
-		Gdeltav[5] = tau*Area*C3*dpdy;
-		
 		GTv[0] = third*Area*( duxdx + duydy);
 		GTv[1] = third*Area*( duxdx + duydy);
 		GTv[2] = third*Area*( duxdx + duydy);
-		
-		Nphiv[0] = 0.5*tau*(( duxdx*ux + duxdy*uy )*y23 + ( duydx*ux + duydy*uy )*x32);
-		Nphiv[1] = 0.5*tau*(( duxdx*ux + duxdy*uy )*y31 + ( duydx*ux + duydy*uy )*x13);
-		Nphiv[2] = 0.5*tau*(( duxdx*ux + duxdy*uy )*y12 + ( duydx*ux + duydy*uy )*x21);
 
-		Gphiv[0] = 0.5*tau*invrho*( y23*dpdx + x32*dpdy); 
-		Gphiv[1] = 0.5*tau*invrho*( y31*dpdx + x13*dpdy);
-		Gphiv[2] = 0.5*tau*invrho*( y12*dpdx + x21*dpdy);
-
-		//Residue 
+		//*****************Residuo para o calculo do coeficiente da difusao artificial 
 		
-		Res[0] = Fe[0] - (Nv[0] + Ndeltav[0] + Kv[0] + Ksv[0] - ( Gv[0] + Gdeltav[0] ) );
-		Res[1] = Fe[1] - (Nv[1] + Ndeltav[1] + Kv[1] + Ksv[1] - ( Gv[1] + Gdeltav[1] ) );
-		Res[2] = Fe[2] - ( GTv[0] + Nphiv[0] + Gphiv[0] );
-		Res[3] = Fe[3] - (Nv[2] + Ndeltav[2] + Kv[2] + Ksv[2] - ( Gv[2] + Gdeltav[2] ) );
-		Res[4] = Fe[4] - (Nv[3] + Ndeltav[3] + Kv[3] + Ksv[3] - ( Gv[3] + Gdeltav[3] ) );
-		Res[5] = Fe[5] - ( GTv[1] + Nphiv[1] + Gphiv[1] );
-		Res[6] = Fe[6] - (Nv[4] + Ndeltav[4] + Kv[4] + Ksv[4] - ( Gv[4] + Gdeltav[4] ) );
-		Res[7] = Fe[7] - (Nv[5] + Ndeltav[5] + Kv[5] + Ksv[5] - ( Gv[5] + Gdeltav[5] ) );
-		Res[8] = Fe[8] - ( GTv[2] + Nphiv[2] + Gphiv[2] );
+		Res[0] = Fe[0] - (Nv[0] + Kv[0] - Gv[0]);
+		Res[1] = Fe[1] - (Nv[1] + Kv[1] - Gv[1]);
+		Res[2] = Fe[2] - GTv[0] ;
+		Res[3] = Fe[3] - (Nv[2] + Kv[2] - Gv[2] );
+		Res[4] = Fe[4] - (Nv[3] + Kv[3] - Gv[3] );
+		Res[5] = Fe[5] - GTv[1] ;
+		Res[6] = Fe[6] - (Nv[4] + Kv[4] - Gv[4]);
+		Res[7] = Fe[7] - (Nv[5] + Kv[5] - Gv[5]);
+		Res[8] = Fe[8] - GTv[2];
+
+		//*****************Norma euclidiana do residuo ||R(U,P)||		
+	//	normres = sqrt(Res[0]*Res[0] + Res[1]*Res[1] + Res[2]*Res[2] + Res[3]*Res[3] + Res[4]*Res[4] + Res[5]*Res[5] + Res[6]*Res[6] + Res[7]*Res[7] + Res[8]*Res[8]);
+
+		//*****************Norma do grad de U
+		normgradU = sqrt(duxdx*duxdx + duxdy*duxdy + duydx*duydx + duydy*duydy);
+		
+		//******Analogous matrices of the SUPG formulation***************
+
+		//*******************Matrix Mdelta=tau*N^T***********************
+		//Mdelta11 = tau*N11;
+		//Mdelta31 = tau*N13;
+		//Mdelta51 = tau*N15;
+
+		//*********Matrix Ndelta = NhB(KBB + KBBdelta)^{-1}NBh**********
+	
+			//*************** Matrix NBh ***************************
+		double NBh11, NBh13, NBh15;
+		NBh11 = rho*ninefortieth*(ux*y23 + uy*x32);
+		NBh13 = rho*ninefortieth*(ux*y31 + uy*x13);
+		NBh15 = rho*ninefortieth*(ux*y12 + uy*x21);
+		
+
+			//************** Matrix NhB = - NBh^T *******************		
+		double NhB11, NhB31, NhB51;
+		NhB11 = -NBh11;
+		NhB31 = -NBh13;
+		NhB51 = -NBh15;
+
+			//****** Matrix InvKBBd = (KBB + KBBdelta)^{-1}**********
+		double A, B, C, D, InvKBBd11, InvKBBd12, InvKBBd22, delta;
+		A = y23*y23 + y31*y31 + y12*y12 + y23*y31 + y23*y12 + y31*y12;
+		B = x32*x32 + x13*x13 + x21*x21 + x32*x13 + x32*x21 + x13*x21;
+		C = y23*x32 + y31*x13 + y12*x21;
+
+			//******* Parametro de difusao artificial := delta ******		
+		if(normgradU>0.0){		
+			delta = 0.0;//0.5*h*normres/(2.0*normgradU);
+			//printf( "Delta NAO nulo = %15.14f \n", delta);
+		}else{
+			delta = 0.0;
+			//printf( "Delta nulo\n");
+		}
+	
+		//******** D eh o determinande da matriz (KBB + KBBdelta) 
+		D = ((2*visc+delta)*(2*visc+delta) + (visc+delta)*(visc+delta))*A*B + (2*visc+delta)*(visc+delta)*(A*A + B*B) - visc*visc*C*C/4.0;
+		
+		InvKBBd11 = 40.0*Area/(81.0*D)*((2*visc+delta)*B + (visc+delta)*A);
+		InvKBBd12 = - 40.0*Area/(81.0*D)*(visc*C/2.0);
+		InvKBBd22 = 40.0*Area/(81.0*D)*((2*visc+delta)*A + (visc+delta)*B);
+
+		Ndelta11 = NhB11*InvKBBd11*NBh11;
+		Ndelta12 = NhB11*InvKBBd12*NBh11;
+		Ndelta13 = NhB11*InvKBBd11*NBh13;
+		Ndelta14 = NhB11*InvKBBd12*NBh13;
+		Ndelta15 = NhB11*InvKBBd11*NBh15;
+		Ndelta16 = NhB11*InvKBBd12*NBh15;
+		
+		Ndelta21 = Ndelta12;
+		Ndelta22 = NhB11*InvKBBd22*NBh11;
+		Ndelta23 = Ndelta14; 		
+		Ndelta24 = NhB11*InvKBBd22*NBh13;
+		Ndelta25 = Ndelta16; 		
+		Ndelta26 = NhB11*InvKBBd22*NBh15;
+
+		Ndelta31 = NhB31*InvKBBd11*NBh11;
+		Ndelta32 = NhB31*InvKBBd12*NBh11;
+		Ndelta33 = NhB31*InvKBBd11*NBh13;
+		Ndelta34 = NhB31*InvKBBd12*NBh13;
+		Ndelta35 = NhB31*InvKBBd11*NBh15;
+		Ndelta36 = NhB31*InvKBBd12*NBh15;
+		
+		Ndelta41 = Ndelta32;
+		Ndelta42 = NhB31*InvKBBd22*NBh11;
+		Ndelta43 = Ndelta34;
+		Ndelta44 = NhB31*InvKBBd22*NBh13;
+		Ndelta45 = Ndelta36;		
+		Ndelta46 = NhB31*InvKBBd22*NBh15;
+
+		Ndelta51 = NhB51*InvKBBd11*NBh11;
+		Ndelta52 = NhB51*InvKBBd12*NBh11;
+		Ndelta53 = NhB51*InvKBBd11*NBh13;
+		Ndelta54 = NhB51*InvKBBd12*NBh13;
+		Ndelta55 = NhB51*InvKBBd11*NBh15;
+		Ndelta56 = NhB51*InvKBBd12*NBh15;
+	
+		Ndelta61 = Ndelta52;
+		Ndelta62 = NhB51*InvKBBd22*NBh11;
+		Ndelta63 = Ndelta54;
+		Ndelta64 = NhB51*InvKBBd22*NBh13;
+		Ndelta65 = Ndelta56;
+		Ndelta66 = NhB51*InvKBBd22*NBh15;
+
+
+		//*********Matrix Gdelta = NhB(KBB + KBBdelta)^{-1}GBh**********
+			//************** Matrix GBh ****************************
+		double GBh11, GBh12, GBh13, GBh21, GBh22, GBh23;		
+		GBh11 = - ninefortieth*y23;		
+		GBh12 = - ninefortieth*y31;		
+		GBh13 = - ninefortieth*y12;		
+		GBh21 = - ninefortieth*x32;		
+		GBh22 = - ninefortieth*x13;		
+		GBh23 = - ninefortieth*x21;		
+			//*************Matrix Gdelta****************************
+		Gdelta11 = NhB11*InvKBBd11*GBh11 + NhB11*InvKBBd12*GBh21;
+		Gdelta12 = NhB11*InvKBBd11*GBh12 + NhB11*InvKBBd12*GBh22;
+		Gdelta13 = NhB11*InvKBBd11*GBh13 + NhB11*InvKBBd12*GBh23;
+		
+		Gdelta21 = NhB11*InvKBBd12*GBh11 + NhB11*InvKBBd22*GBh21;
+		Gdelta22 = NhB11*InvKBBd12*GBh12 + NhB11*InvKBBd22*GBh22;
+		Gdelta23 = NhB11*InvKBBd12*GBh13 + NhB11*InvKBBd22*GBh23;
+			
+		Gdelta31 = NhB31*InvKBBd11*GBh11 + NhB31*InvKBBd12*GBh21;
+		Gdelta32 = NhB31*InvKBBd11*GBh12 + NhB31*InvKBBd12*GBh22;
+		Gdelta33 = NhB31*InvKBBd11*GBh13 + NhB31*InvKBBd12*GBh23;
+		
+		Gdelta41 = NhB31*InvKBBd12*GBh11 + NhB31*InvKBBd22*GBh21;
+		Gdelta42 = NhB31*InvKBBd12*GBh12 + NhB31*InvKBBd22*GBh22;
+		Gdelta43 = NhB31*InvKBBd12*GBh13 + NhB31*InvKBBd22*GBh23;
+		
+		Gdelta51 = NhB51*InvKBBd11*GBh11 + NhB51*InvKBBd12*GBh21;
+		Gdelta52 = NhB51*InvKBBd11*GBh12 + NhB51*InvKBBd12*GBh22;
+		Gdelta53 = NhB51*InvKBBd11*GBh13 + NhB51*InvKBBd12*GBh23;
+		
+		Gdelta61 = NhB51*InvKBBd12*GBh11 + NhB51*InvKBBd22*GBh21;
+		Gdelta62 = NhB51*InvKBBd12*GBh12 + NhB51*InvKBBd22*GBh22;
+		Gdelta63 = NhB51*InvKBBd12*GBh13 + NhB51*InvKBBd22*GBh23;
+		
+		//*******Analogous matrices of the PSPG formulation**************
+
+		//**********************Matrix Mphi******************************
+		//Mphi11 = tau*sixth*y23;
+		//Mphi12 = tau*sixth*x32;
+	
+		//Mphi21 = tau*sixth*y31;
+		//Mphi22 = tau*sixth*x13;
+	
+		//Mphi31 = tau*sixth*y12;
+		//Mphi32 = tau*sixth*x21;
+
+		//** Matrix Nphi = GhB(KBB+KBBdelta)^{-1}NBh = - Gdelta^T*************
+		Nphi11 = - Gdelta11;		
+		Nphi12 = - Gdelta21;		
+		Nphi13 = - Gdelta31;		
+		Nphi14 = - Gdelta41;		
+		Nphi15 = - Gdelta51;		
+		Nphi16 = - Gdelta61;		
+		
+		Nphi21 = - Gdelta12;		
+		Nphi22 = - Gdelta22;		
+		Nphi23 = - Gdelta32;		
+		Nphi24 = - Gdelta42;		
+		Nphi25 = - Gdelta52;		
+		Nphi26 = - Gdelta62;		
+		
+		Nphi31 = - Gdelta13;		
+		Nphi32 = - Gdelta23;		
+		Nphi33 = - Gdelta33;		
+		Nphi34 = - Gdelta43;		
+		Nphi35 = - Gdelta53;		
+		Nphi36 = - Gdelta63;		
+		
+		//** Matrix Gphi = GhB(KBB+KBBdelta)^{-1}GBh, with GhB = GBh^T*************
+ 	
+		Gphi11 = GBh11*(GBh11*InvKBBd11 + GBh21*InvKBBd12) + GBh21*(GBh11*InvKBBd12 + GBh21*InvKBBd22);
+		Gphi12 = GBh12*(GBh11*InvKBBd11 + GBh21*InvKBBd12) + GBh22*(GBh11*InvKBBd12 + GBh21*InvKBBd22);
+		Gphi13 = GBh13*(GBh11*InvKBBd11 + GBh21*InvKBBd12) + GBh23*(GBh11*InvKBBd12 + GBh21*InvKBBd22);
+		
+		Gphi21 = GBh11*(GBh12*InvKBBd11 + GBh22*InvKBBd12) + GBh21*(GBh12*InvKBBd12 + GBh22*InvKBBd22);
+		Gphi22 = GBh12*(GBh12*InvKBBd11 + GBh22*InvKBBd12) + GBh22*(GBh12*InvKBBd12 + GBh22*InvKBBd22);
+		Gphi23 = GBh13*(GBh12*InvKBBd11 + GBh22*InvKBBd12) + GBh23*(GBh12*InvKBBd12 + GBh22*InvKBBd22);
+		
+		Gphi31 = GBh11*(GBh13*InvKBBd11 + GBh23*InvKBBd12) + GBh21*(GBh13*InvKBBd12 + GBh23*InvKBBd22);
+		Gphi32 = GBh12*(GBh13*InvKBBd11 + GBh23*InvKBBd12) + GBh22*(GBh13*InvKBBd12 + GBh23*InvKBBd22);
+		Gphi33 = GBh13*(GBh13*InvKBBd11 + GBh23*InvKBBd12) + GBh23*(GBh13*InvKBBd12 + GBh23*InvKBBd22);
+		
+		//*************Calculation of the residue continue*******************
+
+		Ndeltav[0] = Ndelta11*ux1 +  Ndelta12*uy1 +  Ndelta13*ux2 +  Ndelta14*uy2 +  Ndelta15*ux3 +  Ndelta16*uy3;
+		Ndeltav[1] = Ndelta21*ux1 +  Ndelta22*uy1 +  Ndelta23*ux2 +  Ndelta24*uy2 +  Ndelta25*ux3 +  Ndelta26*uy3;
+		Ndeltav[2] = Ndelta31*ux1 +  Ndelta32*uy1 +  Ndelta33*ux2 +  Ndelta34*uy2 +  Ndelta35*ux3 +  Ndelta36*uy3;
+		Ndeltav[3] = Ndelta41*ux1 +  Ndelta42*uy1 +  Ndelta43*ux2 +  Ndelta44*uy2 +  Ndelta45*ux3 +  Ndelta46*uy3;
+		Ndeltav[4] = Ndelta51*ux1 +  Ndelta52*uy1 +  Ndelta53*ux2 +  Ndelta54*uy2 +  Ndelta55*ux3 +  Ndelta56*uy3;
+		Ndeltav[5] = Ndelta61*ux1 +  Ndelta62*uy1 +  Ndelta63*ux2 +  Ndelta64*uy2 +  Ndelta65*ux3 +  Ndelta66*uy3;
+
+		Gdeltav[0] = Gdelta11*p1 + Gdelta12*p2 + Gdelta13*p3;
+		Gdeltav[1] = Gdelta21*p1 + Gdelta22*p2 + Gdelta23*p3;
+		Gdeltav[2] = Gdelta31*p1 + Gdelta32*p2 + Gdelta33*p3;
+		Gdeltav[3] = Gdelta41*p1 + Gdelta42*p2 + Gdelta43*p3;
+		Gdeltav[4] = Gdelta51*p1 + Gdelta52*p2 + Gdelta53*p3;
+		Gdeltav[5] = Gdelta61*p1 + Gdelta62*p2 + Gdelta63*p3;
+
+		Nphiv[0] = Nphi11*ux1 + Nphi12*uy1 + Nphi13*ux2 + Nphi14*uy2 + Nphi15*ux3 + Nphi16*uy3;
+		Nphiv[1] = Nphi21*ux1 + Nphi22*uy1 + Nphi23*ux2 + Nphi24*uy2 + Nphi25*ux3 + Nphi26*uy3;
+		Nphiv[2] = Nphi31*ux1 + Nphi32*uy1 + Nphi33*ux2 + Nphi34*uy2 + Nphi35*ux3 + Nphi36*uy3;
+
+		Gphiv[0] = Gphi11*p1 + Gphi12*p2 + Gphi13*p3; 
+		Gphiv[1] = Gphi21*p1 + Gphi22*p2 + Gphi23*p3;
+		Gphiv[2] = Gphi31*p1 + Gphi32*p2 + Gphi33*p3;
+
+		//*****************Residuo do metodo de Newton*****************
+		
+		Res[0] = Fe[0] - (Nv[0] - Ndeltav[0] + Kv[0] + Ksv[0] - ( Gv[0] - Gdeltav[0] ) );
+		Res[1] = Fe[1] - (Nv[1] - Ndeltav[1] + Kv[1] + Ksv[1] - ( Gv[1] - Gdeltav[1] ) );
+		Res[2] = Fe[2] - ( GTv[0] - Nphiv[0] + Gphiv[0] );
+		Res[3] = Fe[3] - (Nv[2] - Ndeltav[2] + Kv[2] + Ksv[2] - ( Gv[2] - Gdeltav[2] ) );
+		Res[4] = Fe[4] - (Nv[3] - Ndeltav[3] + Kv[3] + Ksv[3] - ( Gv[3] - Gdeltav[3] ) );
+		Res[5] = Fe[5] - ( GTv[1] - Nphiv[1] + Gphiv[1] );
+		Res[6] = Fe[6] - (Nv[4] - Ndeltav[4] + Kv[4] + Ksv[4] - ( Gv[4] - Gdeltav[4] ) );
+		Res[7] = Fe[7] - (Nv[5] - Ndeltav[5] + Kv[5] + Ksv[5] - ( Gv[5] - Gdeltav[5] ) );
+		Res[8] = Fe[8] - ( GTv[2] - Nphiv[2] + Gphiv[2] );
 				
 		//**********************Tangent matrix*******************************
 				
-		if(varglobal < 50000){ //varglobal (<5 ISI, Ponto Fixo) (>=5 NI. Met. de Newton)
+		//if(varglobal < 50000){ //varglobal (<5 ISI, Ponto Fixo) (>=5 NI. Met. de Newton)
 
-		Ke[0][0] = N11 + Ndelta11 + K11 + Ks11;
+		Ke[0][0] = N11 - Ndelta11 + K11 + Ks11;
 		Ke[0][1] =       K12 + Ks12;
-		Ke[0][2] = -( GT11 + Gdelta11 );
-		Ke[0][3] = N13 + Ndelta13 + K13 + Ks13;
+		Ke[0][2] = -( GT11 - Gdelta11 );
+		Ke[0][3] = N13 - Ndelta13 + K13 + Ks13;
 		Ke[0][4] =		  K14 + Ks14;
-		Ke[0][5] = -( GT11 + Gdelta12 );
-		Ke[0][6] = N15 + Ndelta15 + K15 + Ks15;
+		Ke[0][5] = -( GT11 - Gdelta12 );
+		Ke[0][6] = N15 - Ndelta15 + K15 + Ks15;
 		Ke[0][7] = 		  K16 + Ks16;
-		Ke[0][8] = -( GT11 + Gdelta13 );
+		Ke[0][8] = -( GT11 - Gdelta13 );
 	
 		Ke[1][0] = 		  K12 + Ks21;
-		Ke[1][1] = N11 + Ndelta22 + K22 + Ks22;
-		Ke[1][2] = -( GT12 + Gdelta21 );
+		Ke[1][1] = N11 - Ndelta22 + K22 + Ks22;
+		Ke[1][2] = -( GT12 - Gdelta21 );
 		Ke[1][3] = 		  K23 + Ks23;
-		Ke[1][4] = N13 + Ndelta24 + K24 + Ks24;
-		Ke[1][5] = -( GT12 + Gdelta22 );
+		Ke[1][4] = N13 - Ndelta24 + K24 + Ks24;
+		Ke[1][5] = -( GT12 - Gdelta22 );
 		Ke[1][6] = 		  K25 + Ks25;
-		Ke[1][7] = N15 + Ndelta26 + K26 + Ks26;
-		Ke[1][8] = -( GT12 + Gdelta23 );
+		Ke[1][7] = N15 - Ndelta26 + K26 + Ks26;
+		Ke[1][8] = -( GT12 - Gdelta23 );
 		
-		Ke[2][0] = GT11 + Gdelta11;
-		Ke[2][1] = GT12 + Gdelta21;
+		Ke[2][0] = GT11 - Gdelta11;
+		Ke[2][1] = GT12 - Gdelta21;
 		Ke[2][2] = Gphi11;
-		Ke[2][3] = GT13 + Gdelta31;
-		Ke[2][4] = GT14 + Gdelta41;
+		Ke[2][3] = GT13 - Gdelta31;
+		Ke[2][4] = GT14 - Gdelta41;
 		Ke[2][5] = Gphi12;
-		Ke[2][6] = GT15 + Gdelta51;
-		Ke[2][7] = GT16 + Gdelta61;
+		Ke[2][6] = GT15 - Gdelta51;
+		Ke[2][7] = GT16 - Gdelta61;
 		Ke[2][8] = Gphi13;
 
-		Ke[3][0] = N11 + Ndelta13 + K13 + Ks31;
+		Ke[3][0] = N11 - Ndelta13 + K13 + Ks31;
 		Ke[3][1] =        K23 + Ks32;
-		Ke[3][2] = -( GT13 + Gdelta31 );
-		Ke[3][3] = N13 + Ndelta33 + K33 + Ks33;
-		Ke[3][4] =		   K34 + Ks34;
-		Ke[3][5] = -( GT13 + Gdelta32 );
-		Ke[3][6] = N15 + Ndelta35 + K35 + Ks35;
-		Ke[3][7] = 		   K36 + Ks36;
-		Ke[3][8] = -( GT13 + Gdelta33 );
+		Ke[3][2] = -( GT13 - Gdelta31 );
+		Ke[3][3] = N13 - Ndelta33 + K33 + Ks33;
+		Ke[3][4] =	  K34 + Ks34;
+		Ke[3][5] = -( GT13 - Gdelta32 );
+		Ke[3][6] = N15 - Ndelta35 + K35 + Ks35;
+		Ke[3][7] = 	  K36 + Ks36;
+		Ke[3][8] = -( GT13 - Gdelta33 );
 
-		Ke[4][0] = 		  K14 + Ks41;
-		Ke[4][1] = N11 + Ndelta24 + K24 + Ks42;
-		Ke[4][2] = -( GT14 + Gdelta41 );
-		Ke[4][3] = 		  K34 + Ks43;
-		Ke[4][4] = N13 + Ndelta44 + K44 + Ks44;
-		Ke[4][5] = -( GT14 + Gdelta42 );
-		Ke[4][6] = 		  K45 + Ks45;
-		Ke[4][7] = N15 + Ndelta46 + K46 + Ks46;
-		Ke[4][8] = -( GT14 + Gdelta43 );
+		Ke[4][0] = 	 K14 + Ks41;
+		Ke[4][1] = N11 - Ndelta24 + K24 + Ks42;
+		Ke[4][2] = -( GT14 - Gdelta41 );
+		Ke[4][3] = 	 K34 + Ks43;
+		Ke[4][4] = N13 - Ndelta44 + K44 + Ks44;
+		Ke[4][5] = -( GT14 - Gdelta42 );
+		Ke[4][6] = 	 K45 + Ks45;
+		Ke[4][7] = N15 - Ndelta46 + K46 + Ks46;
+		Ke[4][8] = -( GT14 - Gdelta43 );
 
-		Ke[5][0] = GT11 + Gdelta12;
-		Ke[5][1] = GT12 + Gdelta22;
+		Ke[5][0] = GT11 - Gdelta12;
+		Ke[5][1] = GT12 - Gdelta22;
 		Ke[5][2] = Gphi12;
-		Ke[5][3] = GT13 + Gdelta32;
-		Ke[5][4] = GT14 + Gdelta42;
+		Ke[5][3] = GT13 - Gdelta32;
+		Ke[5][4] = GT14 - Gdelta42;
 		Ke[5][5] = Gphi22;
-		Ke[5][6] = GT15 + Gdelta52;
-		Ke[5][7] = GT16 + Gdelta62;
+		Ke[5][6] = GT15 - Gdelta52;
+		Ke[5][7] = GT16 - Gdelta62;
 		Ke[5][8] = Gphi23;
 
-		Ke[6][0] = N11 + Ndelta15 + K15 + Ks51;
+		Ke[6][0] = N11 - Ndelta15 + K15 + Ks51;
 		Ke[6][1] =       K25 + Ks52;
-		Ke[6][2] = -( GT15 + Gdelta51 );
+		Ke[6][2] = -( GT15 - Gdelta51 );
 		Ke[6][3] = N13 + Ndelta35 + K35 + Ks53;
-		Ke[6][4] =		 K45 + Ks54;
-		Ke[6][5] = -( GT15 + Gdelta52 );
-		Ke[6][6] = N15 + Ndelta55 + K55 + Ks55;
-		Ke[6][7] = 		  K56 + Ks56;
-		Ke[6][8] = -( GT15 + Gdelta53 );
+		Ke[6][4] =	 K45 + Ks54;
+		Ke[6][5] = -( GT15 - Gdelta52 );
+		Ke[6][6] = N15 - Ndelta55 + K55 + Ks55;
+		Ke[6][7] = 	 K56 + Ks56;
+		Ke[6][8] = -( GT15 - Gdelta53 );
 
-		Ke[7][0] = 		  K16 + Ks61;
-		Ke[7][1] = N11 + Ndelta26 + K26 + Ks62;
-		Ke[7][2] = -( GT16 + Gdelta61 );
-		Ke[7][3] = 		  K36 + Ks63;
-		Ke[7][4] = N13 + Ndelta46 + K46 + Ks64;
-		Ke[7][5] = -( GT16 + Gdelta62 );
-		Ke[7][6] = 		  K56 + Ks65;
-		Ke[7][7] = N15 + Ndelta66 + K66 + Ks66;
-		Ke[7][8] = -( GT16 + Gdelta63 );
+		Ke[7][0] = 	 K16 + Ks61;
+		Ke[7][1] = N11 - Ndelta26 + K26 + Ks62;
+		Ke[7][2] = -( GT16 - Gdelta61 );
+		Ke[7][3] = 	 K36 + Ks63;
+		Ke[7][4] = N13 - Ndelta46 + K46 + Ks64;
+		Ke[7][5] = -( GT16 - Gdelta62 );
+		Ke[7][6] = 	 K56 + Ks65;
+		Ke[7][7] = N15 - Ndelta66 + K66 + Ks66;
+		Ke[7][8] = -( GT16 - Gdelta63 );
 
-		Ke[8][0] = GT11 + Gdelta13;
-		Ke[8][1] = GT12 + Gdelta23;
+		Ke[8][0] = GT11 - Gdelta13;
+		Ke[8][1] = GT12 - Gdelta23;
 		Ke[8][2] = Gphi13;
-		Ke[8][3] = GT13 + Gdelta33;
-		Ke[8][4] = GT14 + Gdelta43;
+		Ke[8][3] = GT13 - Gdelta33;
+		Ke[8][4] = GT14 - Gdelta43;
 		Ke[8][5] = Gphi23;
-		Ke[8][6] = GT15 + Gdelta53;
-		Ke[8][7] = GT16 + Gdelta63;
+		Ke[8][6] = GT15 - Gdelta53;
+		Ke[8][7] = GT16 - Gdelta63;
 		Ke[8][8] = Gphi33;
 		
-		}else{
-
-		Ke[0][0] = N11 + Np11 + Ndelta11 + Npdelta11 + Nppdelta11 + K11  + Ks11;
-		Ke[0][1] =       Np12 			 + Npdelta12 + Nppdelta12 + K12 + Ks12;
-		Ke[0][2] = -( GT11 + Gdelta11 );
-		Ke[0][3] = N13 + Np31 + Ndelta13 + Npdelta11 + Nppdelta11 + K13 + Ks13;
-		Ke[0][4] =		 Np32 	 		 + Npdelta12 + Nppdelta12 + K14 + Ks14;
-		Ke[0][5] = -( GT11 + Gdelta12 );
-		Ke[0][6] = N15 + Np31 + Ndelta15 + Npdelta11 + Nppdelta11 + K15 + Ks15;
-		Ke[0][7] = 		 Np32 	 		 + Npdelta12 + Nppdelta12 + K16 + Ks16;
-		Ke[0][8] = -( GT11 + Gdelta13 );
-	
-		Ke[1][0] = 		 Np21            + Npdelta21 + Nppdelta21 + K12 + Ks21;
-		Ke[1][1] = N11 + Np22 + Ndelta22 + Npdelta22 + Nppdelta22 + K22 + Ks22;
-		Ke[1][2] = -( GT12 + Gdelta21 );
-		Ke[1][3] = 		 Np41			 + Npdelta21 + Nppdelta21 + K23 + Ks23;
-		Ke[1][4] = N13 + Np42 + Ndelta24 + Npdelta22 + Nppdelta22 + K24 + Ks24;
-		Ke[1][5] = -( GT12 + Gdelta22 );
-		Ke[1][6] = 		 Np41 			 + Npdelta21 + Nppdelta21 + K25 + Ks25;
-		Ke[1][7] = N15 + Np42 + Ndelta26 + Npdelta22 + Nppdelta22 + K26 + Ks26;
-		Ke[1][8] = -( GT12 + Gdelta23 );
-		
-		Ke[2][0] = GT11 + Gdelta11 + Npphi11;
-		Ke[2][1] = GT12 + Gdelta21 + Npphi12;
-		Ke[2][2] = Gphi11;
-		Ke[2][3] = GT13 + Gdelta31 + Npphi11;
-		Ke[2][4] = GT14 + Gdelta41 + Npphi12;
-		Ke[2][5] = Gphi12;
-		Ke[2][6] = GT15 + Gdelta51 + Npphi11;
-		Ke[2][7] = GT16 + Gdelta61 + Npphi12;
-		Ke[2][8] = Gphi13;
-
-		Ke[3][0] = N11 + Np31 + Ndelta13 + Npdelta31 + Nppdelta31 + K13 + Ks31;
-		Ke[3][1] =       Np32 			 + Npdelta32 + Nppdelta32 + K23 + Ks32;
-		Ke[3][2] = -( GT13 + Gdelta31 );
-		Ke[3][3] = N13 + Np11 + Ndelta33 + Npdelta31 + Nppdelta31 + K33 + Ks33;
-		Ke[3][4] =		 Np12 	 		 + Npdelta32 + Nppdelta32 + K34 + Ks34;
-		Ke[3][5] = -( GT13 + Gdelta32 );
-		Ke[3][6] = N15 + Np31 + Ndelta35 + Npdelta31 + Nppdelta31 + K35 + Ks35;
-		Ke[3][7] = 		 Np32 	 		 + Npdelta32 + Nppdelta32 + K36 + Ks36;
-		Ke[3][8] = -( GT13 + Gdelta33 );
-
-
-		Ke[4][0] = 		 Np41            + Npdelta41 + Nppdelta41 + K14 + Ks41;
-		Ke[4][1] = N11 + Np42 + Ndelta24 + Npdelta42 + Nppdelta42 + K24 + Ks42;
-		Ke[4][2] = -( GT14 + Gdelta41 );
-		Ke[4][3] = 		 Np21			 + Npdelta41 + Nppdelta41 + K34 + Ks43;
-		Ke[4][4] = N13 + Np22 + Ndelta44 + Npdelta42 + Nppdelta42 + K44 + Ks44;
-		Ke[4][5] = -( GT14 + Gdelta42 );
-		Ke[4][6] = 		 Np41 			 + Npdelta41 + Nppdelta41 + K45 + Ks45;
-		Ke[4][7] = N15 + Np42 + Ndelta46 + Npdelta42 + Nppdelta42 + K46 + Ks46;
-		Ke[4][8] = -( GT14 + Gdelta43 );
-
-		Ke[5][0] = GT11 + Gdelta12 + Npphi21;
-		Ke[5][1] = GT12 + Gdelta22 + Npphi22;
-		Ke[5][2] = Gphi12;
-		Ke[5][3] = GT13 + Gdelta32 + Npphi21;
-		Ke[5][4] = GT14 + Gdelta42 + Npphi22;
-		Ke[5][5] = Gphi22;
-		Ke[5][6] = GT15 + Gdelta52 + Npphi21;
-		Ke[5][7] = GT16 + Gdelta62 + Npphi22;
-		Ke[5][8] = Gphi23;
-
-		Ke[6][0] = N11 + Np31 + Ndelta15 + Npdelta51 + Nppdelta51 + K15 + Ks51;
-		Ke[6][1] =       Np32 			 + Npdelta52 + Nppdelta52 + K25 + Ks52;
-		Ke[6][2] = -( GT15 + Gdelta51 );
-		Ke[6][3] = N13 + Np31 + Ndelta35 + Npdelta51 + Nppdelta51 + K35 + Ks53;
-		Ke[6][4] =		 Np32 	 		 + Npdelta52 + Nppdelta52 + K45 + Ks54;
-		Ke[6][5] = -( GT15 + Gdelta52 );
-		Ke[6][6] = N15 + Np11 + Ndelta55 + Npdelta51 + Nppdelta51 + K55 + Ks55;
-		Ke[6][7] = 		 Np12 	 		 + Npdelta52 + Nppdelta52 + K56 + Ks56;
-		Ke[6][8] = -( GT15 + Gdelta53 );
-
-		Ke[7][0] = 		 Np41            + Npdelta61 + Nppdelta61 + K16 + Ks61;
-		Ke[7][1] = N11 + Np42 + Ndelta26 + Npdelta62 + Nppdelta62 + K26 + Ks62;
-		Ke[7][2] = -( GT16 + Gdelta61 );
-		Ke[7][3] = 		 Np41			 + Npdelta61 + Nppdelta61 + K36 + Ks63;
-		Ke[7][4] = N13 + Np42 + Ndelta46 + Npdelta62 + Nppdelta62 + K46 + Ks64;
-		Ke[7][5] = -( GT16 + Gdelta62 );
-		Ke[7][6] = 		 Np21 			 + Npdelta61 + Nppdelta61 + K56 + Ks65;
-		Ke[7][7] = N15 + Np22 + Ndelta66 + Npdelta62 + Nppdelta62 + K66 + Ks66;
-		Ke[7][8] = -( GT16 + Gdelta63 );
-
-		Ke[8][0] = GT11 + Gdelta13 + Npphi31;
-		Ke[8][1] = GT12 + Gdelta23 + Npphi32;
-		Ke[8][2] = Gphi13;
-		Ke[8][3] = GT13 + Gdelta33 + Npphi31;
-		Ke[8][4] = GT14 + Gdelta43 + Npphi32;
-		Ke[8][5] = Gphi23;
-		Ke[8][6] = GT15 + Gdelta53 + Npphi31;
-		Ke[8][7] = GT16 + Gdelta63 + Npphi32;
-		Ke[8][8] = Gphi33;
-		}
+		//}
 
 
 

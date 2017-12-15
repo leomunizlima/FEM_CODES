@@ -5,6 +5,9 @@
 *.geo
 *.txt
 *.sh
+*.vtu
+*.vts
+*.m
 
 # Object files
 *.o

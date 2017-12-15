@@ -67,7 +67,7 @@
 #ifdef SSNavierStokesEquations2D
 	#include "../../04_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
 	int BlockDiagDOF3_precond_EBE_setup(ParametersType *, MatrixDataType *, FemStructsType *, int, double *);
-	int BlockDiagDOF3_precond(ParametersType *, MatrixDataType *, FemStructType *, double *, double *);
+	int BlockDiagDOF3_precond(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 #endif
 #ifdef NavierStokesEquations2D
 	#include "../../05_NavierStokes_Equations/2D/01_CommonFiles/NavierStokesEquations.h"

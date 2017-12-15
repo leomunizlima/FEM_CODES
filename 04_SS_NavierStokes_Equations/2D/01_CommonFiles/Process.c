@@ -5,9 +5,9 @@
 
 int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
 {
-	int i, it, itmax;
+	int i, it, itmax, neq;
 	int iter, iterold, pricek;	
-	double neq, delta1, delta2, epsilon, tol, norms, normu, etaold, eta0;	
+	double delta1, delta2, epsilon, tol, norms, normu, etaold, eta0;	
 	double *s, *Fold, *u, *F;
 
 	
@@ -33,14 +33,11 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 
 	//====== Constroi matriz e vetor força (Residuo) ======	
 	FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
+	//====== Precondiona sistema ======
+	it = 1;
+	FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, it, F);
 	delta1 = sqrt(ddot(neq, F, F));
 	printf("\n Norma de F_0. |F_0| = %3.2E \n", delta1);
-	it = 1;
-	//====== Precondiona sistema ======
-	FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, it, F);
-	//precond_setup(Parameters, MatrixData, Node, Element, it, F, lm);
-
-	delta1 = sqrt(ddot(neq, F, F));	
 	delta2 = 1;	
 	tol = 1e-3;	
 	epsilon = tol*delta1;	
@@ -49,16 +46,33 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	iter = 0;
 	//Parameters->SolverTolerance = eta_0 (0.1, 0.5, 0.9) 
 	eta0 = Parameters->SolverTolerance;
+	pricek = 1;
+
+
 	
-	while((delta1 > epsilon || delta2 > tol) && it < itmax){
-		printf("===================================================");	
-		printf("\n\n Eta: %3.2E, Iteracao Newton: %d, Pricek: %d \n\n", Parameters->SolverTolerance, it, pricek);
+	int I, J;
+
+	while((delta2 > tol) && it < itmax){
 		it++;		
 		iterold = iter;		
 		dcopy(neq, F, Fold);   //Fould = F	
-				
+	
+
+		FILE *Out;
+
+		Out = fopen("octave_solution.m","w");
+		fprintf(Out,"A=sparse(%d,%d);\n",neq,neq);
+		for (I=0;I<neq;I++)
+			for (J=MatrixData->IA[I]; J<MatrixData->IA[I+1]; J++)
+				fprintf(Out,"A(%d,%d)=%.15lf;\n",I+1,MatrixData->JA[I]+1,MatrixData->AA[J]);
+		for (I=0;I<neq;I++)
+			fprintf(Out,"F(%d)=%.15lf;\n",I+1,F[I]);
+		
+		fclose(Out);		
+
+		break;
+		
 		//====== Resolve sitema linear ======		
-		//Parameters->SolverTolerance = 1e-6;
 		FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, F, s);
 		
 		iter = Parameters->iterations;
@@ -67,24 +81,30 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 				
 		//====== Constroi matriz e vetor força ======		
 		FemOtherFunctions->Build(Parameters, MatrixData, FemStructs, FemFunctions);
-		//Build_K_F_SUPG_PSPG(Parameters, MatrixData, Node, Element, F, u, lm, assembly, end_assembly, ppresc, v1presc, v2presc);
+	
 		
 		//====== Precondiona sistema ======
 		FemFunctions->precond_setup(Parameters, MatrixData, FemStructs, it, F);
-		//precond_setup(Parameters, MatrixData, Node, Element, it, F, lm);
 
 		//====== Atualiza eta ======
-		etaold = Parameters->SolverTolerance;
-		Parameters->SolverTolerance = eta_newton(Fold, F, etaold, pricek, it, epsilon, eta0, Parameters);
+	//	etaold = Parameters->SolverTolerance;
+	//	Parameters->SolverTolerance = eta_newton(Fold, F, etaold, pricek, it, epsilon, eta0, Parameters);
 		
 		//====== Condicoes de saida ======		
+
 		delta1 = sqrt(ddot(neq, F, F));	
 		norms = sqrt(ddot(neq, s, s));
 		normu = sqrt(ddot(neq, u, u));
 		delta2 = norms/normu;	
+		printf("===================================================");	
+		printf("\n\n Eta: %3.2E, Iteracao Newton: %d, Pricek: %d \n\n", Parameters->SolverTolerance, it, pricek);
 		printf("\n Norma de F. |F| = %3.2E  \n", delta1);		
 		printf("\n         |s|/|u| = %3.2E  \n\n", delta2);
-				
+
+		for (I=0;I<neq;I++)
+			printf("s[%d]=%.15lf\n",I,s[I]);
+
+					
 	}
 
 	printf("===================================================\n");

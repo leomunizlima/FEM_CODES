@@ -103,7 +103,11 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		free(MatrixData->order);
 		free(FemStructs->lmaux);
 		free(FemStructs->lm);
-		SPARILU_clean(MatrixData->ILUp);
+		if ((strncmp(Parameters->Preconditioner,"ILU",3)==0)){
+			SPARILU_clean(MatrixData->ILUp);
+			SPARMAT_clean(MatrixData->mat);
+			free(MatrixData->Ailu);
+		}
 	}
 	
 	
