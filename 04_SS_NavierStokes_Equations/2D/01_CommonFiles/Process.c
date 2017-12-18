@@ -64,17 +64,19 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 		fprintf(Out,"A=sparse(%d,%d);\n",neq,neq);
 		for (I=0;I<neq;I++)
 			for (J=MatrixData->IA[I]; J<MatrixData->IA[I+1]; J++)
-				fprintf(Out,"A(%d,%d)=%.15lf;\n",I+1,MatrixData->JA[I]+1,MatrixData->AA[J]);
+				fprintf(Out,"A(%d,%d)=%.15lf;\n",I+1,MatrixData->JA[J]+1,MatrixData->AA[J]);
 		for (I=0;I<neq;I++)
 			fprintf(Out,"F(%d)=%.15lf;\n",I+1,F[I]);
 		
-		fclose(Out);		
 
-		break;
 		
 		//====== Resolve sitema linear ======		
 		FemOtherFunctions->solver(Parameters, MatrixData, FemStructs, FemFunctions, F, s);
 		
+		for (I=0;I<neq;I++)
+			fprintf(Out,"s(%d)=%.15lf;\n",I+1,s[I]);
+		fclose(Out);		
+		break;
 		iter = Parameters->iterations;
 		pricek = iter - iterold + 1; // tenho duvidas!!!!!
 		daxpy(neq, 1, s, u);		//u = uold + s
