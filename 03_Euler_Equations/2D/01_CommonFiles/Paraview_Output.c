@@ -13,7 +13,9 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	double *U = FemStructs->u;
 	nnodes = Parameters->nnodes;
 	nel = Parameters->nel;
+	double theta;	//my alteration
 
+	
 	rho = (double*) mycalloc("rho of 'Paraview_Output'", nnodes, sizeof(double));
 	v1 = (double*) mycalloc("v1 of 'Paraview_Output'", nnodes, sizeof(double));
 	v2 = (double*) mycalloc("v2 of 'Paraview_Output'", nnodes, sizeof(double));
@@ -26,8 +28,8 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		eq2 = Node[I].id[1];
 		eq3 = Node[I].id[2];
 		eq4 = Node[I].id[3];
-		X = Node[I].x;
-		Y = Node[I].y;
+		X = Node[I].x;	
+		Y = Node[I].y;	
 		cv = FemFunctions->cv(X, Y);
 		gamma = FemFunctions->gamma(X, Y);
 
@@ -37,12 +39,21 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 			rho[I] = FemFunctions->rhopresc(X, Y);
 
 		if (eq2 >= 0)
-			v1[I] = U[eq2];
+			if(Node[I].v1Type < 0){				//my alteration
+				theta = FemFunctions->BC_theta(X,Y);
+				v1[I] = cos( theta ) * U[eq2];	//projection Us -> v1 = cos(theta) * Us	
+			}
+			else
+				v1[I] = U[eq2];
 		else
 			v1[I] = FemFunctions->v1presc(X, Y);
-
+	   	
 	   	if (eq3 >= 0)
 	   		v2[I] = U[eq3];
+		else if(Node[I].v1Type < 0){				//my alteration
+			theta = FemFunctions->BC_theta(X,Y);
+			v2[I] =  sin( theta ) * U[eq2];		//projection Us -> v2 = sin(theta) * Us	
+		}
 	   	else
 			v2[I] = FemFunctions->v2presc(X, Y);
 
@@ -55,39 +66,43 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		temp[I] = aux/(rho[I]*cv);
 		pres[I] = (gamma - 1)*aux;
 	}
-	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
-			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 
 	fprintf(OutFile,"<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
 	fprintf(OutFile,"\t<UnstructuredGrid>\n");
 	fprintf(OutFile,"\t\t<Piece NumberOfPoints=\"%d\" NumberOfCells=\"%d\">\n", nnodes, nel);
-	fprintf(OutFile,"\t\t\t<PointData Scalars=\"scalars\">\n");
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Density\" Format=\"ascii\">\n");
+	fprintf(OutFile,"\t\t\t<PointData Scalars=\"scalars\" Vectors = \"Velocity\">\n");	
+//	fprintf(OutFile,"\t\t\t<PointData Scalars=\"scalars\">\n");
 
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Density\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", rho[I]);
-
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
+	
 	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Temperature\" Format=\"ascii\">\n");
-
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", temp[I]);
-
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Pressure\" Format=\"ascii\">\n");
 
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Pressure\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\n", pres[I]);
-
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
+
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" Name=\"Velocity\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
+	for (I = 0; I < nnodes; I++)
+		fprintf(OutFile,"\t\t\t\t   %.12lf\t%.12lf\t%.12lf\n", v1[I], v2[I], 0.0);
+	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
+
 	fprintf(OutFile,"\t\t\t</PointData>\n");
 	fprintf(OutFile,"\t\t\t<Points>\n");
-	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
 
+	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\t%.12lf\t%.12lf\n", Node[I].x,Node[I].y, 0.0);
-
+		
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 	fprintf(OutFile,"\t\t\t</Points>\n");
 	fprintf(OutFile,"\t\t\t<Cells>\n");
@@ -116,12 +131,14 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 
 	fclose(OutFile);
 
-	free(rho);
+	free(rho); 
 	free(v1);
 	free(v2);
-	free(e);
+	free(e); 
 	free(temp);
 	free(pres);
-
+		
 	return 0;
 }
+
+

@@ -10,17 +10,20 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 	int i, neq, nel;//, op;
 	int J, E, J1, J2, J3;
 	//double Uref, Lref;
-	double Re, x, y;
-	double TwoA, invArea, Area, tau, h, visc, rho, invrho, nu, unorm, auxtau, tau_l; 
+	double Re;
+	double normres, normgradU;
+	double GNUx, GNUy, NGNU, r1, r2, hRGN;
+	double twoArea, invArea, Area, tau, h, visc, rho, invrho, nu, unorm, auxtau, tau_l, delta_aux, delta; 
 	double third=1.0/3.0, sixth = 1.0/6.0, twelfth = 1.0/12.0;
 	double y23, y31, y12, x32, x13, x21, X[3], Y[3], Ke[9][9], Fe[9], ux1, ux2, ux3, uy1, uy2, uy3, ux, uy, duxdx, duxdy, duydx, duydy;
 	double fx1, fx2, fx3, fy1, fy2, fy3, fxB, fyB, f1, f2, fdelta1, fdelta2, fdelta3, fdelta4, fdelta5, fdelta6, fphi1, fphi2, fphi3;
 	double C1, C2, C3;
-	double Nv[6], Ndeltav[6], Kv[6], Ksv[6], Gv[6], Gdeltav[6], GTv[3], Nphiv[3], Gphiv[3], Res[9];
+	double Nv[6], Ndeltav[6], Kv[6], Ksv[6], Kddv[6], Gv[6], Gdeltav[6], GTv[3], Nphiv[3], Gphiv[3], Res[9];
 	//double M11, M13, Mdelta11, Mdelta31, Mdelta51;
 	double K11, K12, K13, K14, K15, K16, K22, K23, K24, K25, K26, K33, K34, K35, K36, K44, K45, K46, K55, K56, K66; 
 	double Ks11, Ks12, Ks13, Ks14, Ks15, Ks16, Ks21, Ks22, Ks23, Ks24, Ks25, Ks26, Ks31, Ks32, Ks33, Ks34, Ks35, Ks36;
-	double Ks41, Ks42, Ks43, Ks44, Ks45, Ks46, Ks51, Ks52, Ks53, Ks54, Ks55, Ks56, Ks61, Ks62, Ks63, Ks64, Ks65, Ks66; 
+	double Ks41, Ks42, Ks43, Ks44, Ks45, Ks46, Ks51, Ks52, Ks53, Ks54, Ks55, Ks56, Ks61, Ks62, Ks63, Ks64, Ks65, Ks66;
+	double Kdd11, Kdd12, Kdd13, Kdd22, Kdd23, Kdd33; 
 	double GT11, GT12, GT13, GT14, GT15, GT16, N11, N13, N15;
 	double Ndelta11, Ndelta13, Ndelta15, Ndelta22, Ndelta24, Ndelta26, Ndelta33, Ndelta35, Ndelta44, Ndelta46, Ndelta55, Ndelta66;
 	double Gdelta11, Gdelta12, Gdelta13, Gdelta21, Gdelta22, Gdelta23, Gdelta31, Gdelta32, Gdelta33, Gdelta41, Gdelta42, Gdelta43;
@@ -33,6 +36,7 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 	double Npphi11, Npphi12, Npphi21, Npphi22, Npphi31, Npphi32;
 	double p1, p2, p3, p, dpdx, dpdy, duxduy;
 	
+	double *delta_old = FemStructs->delta_old;
 	double *F = FemStructs->F;
 	int **lm = FemStructs->lm;
 	
@@ -44,6 +48,8 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 	
 	double *U = (double*) mycalloc("U of 'Build_K_F_SUPG_PSPG'", 3*Parameters->nnodes, sizeof(double));
 	eval_U(Parameters,FemStructs,FemFunctions,U);
+
+	setzeros(Parameters,MatrixData);
 
 	for (J=0; J<neq+1; J++)
 		F[J] = 0;
@@ -69,8 +75,8 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		x13 = X[0] - X[2];
 		x21 = X[1] - X[0];
 
-		TwoA =  fabs(x21*y31 - x13*y12);
-		Area = 0.5*TwoA;
+		twoArea =  fabs(x21*y31 - x13*y12);
+		Area = 0.5*twoArea;
 		invArea = 1.0/Area;		
 				
 	 	//x Velocity  
@@ -114,7 +120,8 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 
 		//*************Calculation of tau_SUPG=tau_PSPG=tau*********
 		Re = Parameters->ReynoldsNumber;		
-		h = sqrt( 4*Area/PI );		
+		//h = sqrt( 4*Area/PI );		
+		h=sqrt(twoArea);		
 		visc =1./Re;
 		rho = 1.;		
 		//visc = 1./sqrt(Re);
@@ -135,7 +142,7 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		
 		//*************Calculation of tau_LSIC stabilization*********
 		tau_l = 0.5*h*unorm ;
-		
+		tau_l = 0.0;
 	
 		//************Matrices of the Galerkin formulation*************
 
@@ -360,69 +367,27 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Npphi31 = tau*sixth*( duxdx*y12 + duydx*x21 );
 		Npphi32 = tau*sixth*( duxdy*y12 + duydy*x21 );
 	
-		//****************************Font***********************************
-/*		fx1 = (*Font)(X[0],Y[0],1);*/
-/*		fx2 = (*Font)(X[1],Y[1],1);*/
-/*		fx3 = (*Font)(X[2],Y[2],1);*/
-/*		*/
-/*		fy1 = (*Font)(X[0],Y[0],2);*/
-/*		fy2 = (*Font)(X[1],Y[1],2);*/
-/*		fy3 = (*Font)(X[2],Y[2],2);*/
+		//*********************Fonte ********************
+		
+		fx1 = FemFunctions->f1ext(X[0],Y[0]);
+		fy1 = FemFunctions->f2ext(X[0],Y[0]);
 
-		fx1 = 0.0;
-		fx2 = 0.0;
-		fx3 = 0.0;
-		
-		fy1 = 0.0;
-		fy2 = 0.0;
-		fy3 = 0.0;
+		fx2 = FemFunctions->f1ext(X[1],Y[1]);
+		fy2 = FemFunctions->f2ext(X[1],Y[1]);
 
-
-		//*********************Fonte Sol Exata Conhecida********************
-		x = X[0];
-		y = Y[0];
+		fx3 = FemFunctions->f1ext(X[2],Y[2]);
+		fy3 = FemFunctions->f2ext(X[2],Y[2]);
 		
-		fx1 = 2*x + pow(x,4)*(1.2 - 2.4*y) + pow(x,3)*(-2.4 + 4.8*y) + 
- y*(-0.4 + 1.2*y - 0.8*pow(y,2)) + 8*pow((-1 + x),3)*pow(x,3)*(-1 + 2*x)*pow(y,2)*pow((1 - 3*y + 2*pow(y,2)),2) + x*y*(2.4 - 7.2*y + 4.8*pow(y,2)) - 
- 4*pow((-1 + x),2)*pow(x,3)*(1 - 3*x + 2*pow(x,2))*pow((-1 + y),2)*pow(y,2)*(1 - 6*y + 6*pow(y,2)) + pow(x,2)*(1.2 - 4.8*y + 7.2*pow(y,2) - 4.8*pow(y,3));
-		
-		fy1 =	-2*y - 1.2*pow((1 - y),2)*pow(y,2) + 
- 8*pow(x,2)*pow((1 - 3*x + 2*pow(x,2)),2)*pow((-1 + y),3)*pow(y,3)*(-1 + 2*y) + 
- pow(x,2)*(-1.2 + 7.2*y - 7.2*pow(y,2)) - 
- 4*pow((-1 + x),2)*pow(x,2)*(1 - 6*x + 6*pow(x,2))*pow((-1 + y),2)*pow(y,3)*(1 - 3*y + 2*pow(y,2)) + pow(x,3)*(0.8 - 4.8*y + 4.8*pow(y,2)) + x*(0.4 - 2.4*y + 4.8*pow(y,2) - 4.8*pow(y,3) + 2.4*pow(y,4));	
-
-		x = X[1];
-		y = Y[1];
-		
-		fx2 = 2*x + pow(x,4)*(1.2 - 2.4*y) + pow(x,3)*(-2.4 + 4.8*y) + 
- y*(-0.4 + 1.2*y - 0.8*pow(y,2)) + 8*pow((-1 + x),3)*pow(x,3)*(-1 + 2*x)*pow(y,2)*pow((1 - 3*y + 2*pow(y,2)),2) + x*y*(2.4 - 7.2*y + 4.8*pow(y,2)) - 
- 4*pow((-1 + x),2)*pow(x,3)*(1 - 3*x + 2*pow(x,2))*pow((-1 + y),2)*pow(y,2)*(1 - 6*y + 6*pow(y,2)) + pow(x,2)*(1.2 - 4.8*y + 7.2*pow(y,2) - 4.8*pow(y,3));
-		
-		fy2 =	-2*y - 1.2*pow((1 - y),2)*pow(y,2) + 
- 8*pow(x,2)*pow((1 - 3*x + 2*pow(x,2)),2)*pow((-1 + y),3)*pow(y,3)*(-1 + 2*y) + 
- pow(x,2)*(-1.2 + 7.2*y - 7.2*pow(y,2)) - 
- 4*pow((-1 + x),2)*pow(x,2)*(1 - 6*x + 6*pow(x,2))*pow((-1 + y),2)*pow(y,3)*(1 - 3*y + 2*pow(y,2)) + pow(x,3)*(0.8 - 4.8*y + 4.8*pow(y,2)) + x*(0.4 - 2.4*y + 4.8*pow(y,2) - 4.8*pow(y,3) + 2.4*pow(y,4));
-		
-		x = X[2];
-		y = Y[2];
-		
-		fx3 = 2*x + pow(x,4)*(1.2 - 2.4*y) + pow(x,3)*(-2.4 + 4.8*y) + 
- y*(-0.4 + 1.2*y - 0.8*pow(y,2)) + 8*pow((-1 + x),3)*pow(x,3)*(-1 + 2*x)*pow(y,2)*pow((1 - 3*y + 2*pow(y,2)),2) + x*y*(2.4 - 7.2*y + 4.8*pow(y,2)) - 
- 4*pow((-1 + x),2)*pow(x,3)*(1 - 3*x + 2*pow(x,2))*pow((-1 + y),2)*pow(y,2)*(1 - 6*y + 6*pow(y,2)) + pow(x,2)*(1.2 - 4.8*y + 7.2*pow(y,2) - 4.8*pow(y,3));
-		
-		fy3 =	-2*y - 1.2*pow((1 - y),2)*pow(y,2) + 
- 8*pow(x,2)*pow((1 - 3*x + 2*pow(x,2)),2)*pow((-1 + y),3)*pow(y,3)*(-1 + 2*y) + 
- pow(x,2)*(-1.2 + 7.2*y - 7.2*pow(y,2)) - 
- 4*pow((-1 + x),2)*pow(x,2)*(1 - 6*x + 6*pow(x,2))*pow((-1 + y),2)*pow(y,3)*(1 - 3*y + 2*pow(y,2)) + pow(x,3)*(0.8 - 4.8*y + 4.8*pow(y,2)) + x*(0.4 - 2.4*y + 4.8*pow(y,2) - 4.8*pow(y,3) + 2.4*pow(y,4));
-
 		fxB = third*( fx1 + fx2 + fx3 );
 		fyB = third*( fy1 + fy2 + fy3 );
 		
 		//***************Font of the Galerkin formulation********************
 		f1 = rho*third*Area*fxB;
 		f2 = rho*third*Area*fyB;
+		
+                //printf(" f1 = %f, f2 = %f\n", f1, f2);
 
-		f1 = f2 = fxB = fyB = 0.0;
+		//f1 = f2 = fxB = fyB = 0.0;
 		
 		//*****************Font of the SUPG formulation**********************
 		fdelta1 = rho*tau*Area*C1*fxB;
@@ -486,16 +451,100 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Gv[4] = 0.5*p*y12;
 		Gv[5] = 0.5*p*x21;
 
+		GTv[0] = third*Area*( duxdx + duydy);
+		GTv[1] = third*Area*( duxdx + duydy);
+		GTv[2] = third*Area*( duxdx + duydy);
+
+		//*****************Residuo para o calculo do coeficiente da difusao artificial 
+		/*
+		Res[0] = Fe[0] - (Nv[0] + Kv[0] - Gv[0]);
+		Res[1] = Fe[1] - (Nv[1] + Kv[1] - Gv[1]);
+		Res[2] = Fe[2] - GTv[0] ;
+		Res[3] = Fe[3] - (Nv[2] + Kv[2] - Gv[2] );
+		Res[4] = Fe[4] - (Nv[3] + Kv[3] - Gv[3] );
+		Res[5] = Fe[5] - GTv[1] ;
+		Res[6] = Fe[6] - (Nv[4] + Kv[4] - Gv[4]);
+		Res[7] = Fe[7] - (Nv[5] + Kv[5] - Gv[5]);
+		Res[8] = Fe[8] - GTv[2];
+
+		// *****************Norma euclidiana do residuo ||R(U,P)||		
+		normres = sqrt(Res[0]*Res[0] + Res[1]*Res[1] + Res[2]*Res[2] + Res[3]*Res[3] + Res[4]*Res[4] + Res[5]*Res[5] + Res[6]*Res[6] + Res[7]*Res[7] + Res[8]*Res[8]);
+		*/
+
+		//*****************Norma euclidiana do residuo ||R(U,P)||		
+		double ne1, ne2, cont;
+			
+		ne1 = ux*duxdx + uy*duydx + dpdx - f1;
+		ne2 = ux*duxdy + uy*duydy + dpdy - f2;
+		cont = duxdx + duydy;
+
+		normres = sqrt(ne1*ne1 + ne2*ne2 + cont*cont);
+
+
+		//*****************Norma do grad de U
+		normgradU = sqrt(duxdx*duxdx + duxdy*duxdy + duydx*duydx + duydy*duydy + dpdx*dpdx + dpdy*dpdy);
+		
+		//		if(varglobal == 5 || varglobal == 90)
+//			printf("Norma do resíduo = %f,      Norma do GRAD = %f  \n", normres, normgradU); 
+
+		//*** Vetor: Grad da Norma de U = < GNUx, GNUy >*(unorm)********
+		GNUx = ux*duxdx + uy*duydx;
+		GNUy = ux*duxdy + uy*duydy;
+		
+		//*** Escalar: Norma do Grad da Norma de U = (somente Velocidade) ***********
+		NGNU = sqrt(GNUx*GNUx + GNUy*GNUy);
+
+		//*** Vetor r: Grad da Norma de U(Velocidade) normalizado Ref. Tezduyar DCDD 2001**********
+		r1 = GNUx/NGNU;
+		r2 = GNUy/NGNU;
+
+		//******* Parametro de malha h_RGN Ref. Tezduyar DCDD 2001*************
+		if(r1>0.0 || r2>0.0){
+			hRGN = 4*Area/(fabs(r1*y23 + r2*x32) + fabs(r1*y31 + r2*x13) + fabs(r1*y12 + r2*x21));
+			//printf("DENTRO Parametro hRGN = %f \n", hRGN);
+		}else{
+			hRGN = sqrt(twoArea);
+			//printf("FORA Parametro hRGN = %f \n", hRGN);
+		}
+		//******* Parametro de difusao artificial := delta ******
+		
+		double w = 0.5;
+		if(normgradU > 0.0){
+			delta_aux = 0.5*hRGN*normres/normgradU;			
+			//printf( "Delta NAO nulo = %15.14f \n", delta);
+		}else{
+			delta_aux = 0.0;
+			//printf( "Delta nulo\n");
+		}
+		delta = w*delta_aux + (1-w)*delta_old[E];
+		delta_old[E] = delta;
+		
+		delta = 0.0;
+
+		// *** Matriz Difusao Dinamica Macro - DD  
+		double delta4area = delta / (4.0 * Area);
+		
+		Kdd11 = delta4area * (y23*y23 + x32*x32);
+		Kdd12 = delta4area * (y23*y31 + x32*x13);
+		Kdd13 = delta4area * (y23*y12 + x32*x21);
+		Kdd22 = delta4area * (y31*y31 + x13*x13);
+		Kdd23 = delta4area * (y31*y12 + x13*x21);
+		Kdd33 = delta4area * (y12*y12 + x21*x21);
+
+		//*************Calculation of the residue continue*******************
+		Kddv[0] = 0.5*delta*(y23*duxdx + x32*duxdy);
+		Kddv[1] = 0.5*delta*(y23*duydx + x32*duydy);
+		Kddv[2] = 0.5*delta*(y31*duxdx + x13*duxdy);
+		Kddv[3] = 0.5*delta*(y31*duydx + x13*duydy);
+		Kddv[4] = 0.5*delta*(y12*duxdx + x21*duxdy);
+		Kddv[5] = 0.5*delta*(y12*duydx + x21*duydy);
+
 		Gdeltav[0] = tau*Area*C1*dpdx;
 		Gdeltav[1] = tau*Area*C1*dpdy;
 		Gdeltav[2] = tau*Area*C2*dpdx;
 		Gdeltav[3] = tau*Area*C2*dpdy;
 		Gdeltav[4] = tau*Area*C3*dpdx;
 		Gdeltav[5] = tau*Area*C3*dpdy;
-		
-		GTv[0] = third*Area*( duxdx + duydy);
-		GTv[1] = third*Area*( duxdx + duydy);
-		GTv[2] = third*Area*( duxdx + duydy);
 		
 		Nphiv[0] = 0.5*tau*(( duxdx*ux + duxdy*uy )*y23 + ( duydx*ux + duydy*uy )*x32);
 		Nphiv[1] = 0.5*tau*(( duxdx*ux + duxdy*uy )*y31 + ( duydx*ux + duydy*uy )*x13);
@@ -507,38 +556,38 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 
 		//Residue 
 		
-		Res[0] = Fe[0] - (Nv[0] + Ndeltav[0] + Kv[0] + Ksv[0] - ( Gv[0] + Gdeltav[0] ) );
-		Res[1] = Fe[1] - (Nv[1] + Ndeltav[1] + Kv[1] + Ksv[1] - ( Gv[1] + Gdeltav[1] ) );
+		Res[0] = Fe[0] - (Nv[0] + Ndeltav[0] + Kv[0] + Ksv[0] + Kddv[0] - ( Gv[0] + Gdeltav[0] ) );
+		Res[1] = Fe[1] - (Nv[1] + Ndeltav[1] + Kv[1] + Ksv[1] + Kddv[1] - ( Gv[1] + Gdeltav[1] ) );
 		Res[2] = Fe[2] - ( GTv[0] + Nphiv[0] + Gphiv[0] );
-		Res[3] = Fe[3] - (Nv[2] + Ndeltav[2] + Kv[2] + Ksv[2] - ( Gv[2] + Gdeltav[2] ) );
-		Res[4] = Fe[4] - (Nv[3] + Ndeltav[3] + Kv[3] + Ksv[3] - ( Gv[3] + Gdeltav[3] ) );
+		Res[3] = Fe[3] - (Nv[2] + Ndeltav[2] + Kv[2] + Ksv[2] + Kddv[2] - ( Gv[2] + Gdeltav[2] ) );
+		Res[4] = Fe[4] - (Nv[3] + Ndeltav[3] + Kv[3] + Ksv[3] + Kddv[3] - ( Gv[3] + Gdeltav[3] ) );
 		Res[5] = Fe[5] - ( GTv[1] + Nphiv[1] + Gphiv[1] );
-		Res[6] = Fe[6] - (Nv[4] + Ndeltav[4] + Kv[4] + Ksv[4] - ( Gv[4] + Gdeltav[4] ) );
-		Res[7] = Fe[7] - (Nv[5] + Ndeltav[5] + Kv[5] + Ksv[5] - ( Gv[5] + Gdeltav[5] ) );
+		Res[6] = Fe[6] - (Nv[4] + Ndeltav[4] + Kv[4] + Ksv[4] + Kddv[4] - ( Gv[4] + Gdeltav[4] ) );
+		Res[7] = Fe[7] - (Nv[5] + Ndeltav[5] + Kv[5] + Ksv[5] + Kddv[5] - ( Gv[5] + Gdeltav[5] ) );
 		Res[8] = Fe[8] - ( GTv[2] + Nphiv[2] + Gphiv[2] );
 				
 		//**********************Tangent matrix*******************************
 				
 		if(varglobal < 50000){ //varglobal (<5 ISI, Ponto Fixo) (>=5 NI. Met. de Newton)
 
-		Ke[0][0] = N11 + Ndelta11 + K11 + Ks11;
+		Ke[0][0] = N11 + Ndelta11 + K11 + Ks11 + Kdd11;
 		Ke[0][1] =       K12 + Ks12;
 		Ke[0][2] = -( GT11 + Gdelta11 );
-		Ke[0][3] = N13 + Ndelta13 + K13 + Ks13;
+		Ke[0][3] = N13 + Ndelta13 + K13 + Ks13 + Kdd12;
 		Ke[0][4] =		  K14 + Ks14;
 		Ke[0][5] = -( GT11 + Gdelta12 );
-		Ke[0][6] = N15 + Ndelta15 + K15 + Ks15;
+		Ke[0][6] = N15 + Ndelta15 + K15 + Ks15 + Kdd13;
 		Ke[0][7] = 		  K16 + Ks16;
 		Ke[0][8] = -( GT11 + Gdelta13 );
 	
 		Ke[1][0] = 		  K12 + Ks21;
-		Ke[1][1] = N11 + Ndelta22 + K22 + Ks22;
+		Ke[1][1] = N11 + Ndelta22 + K22 + Ks22 + Kdd11;
 		Ke[1][2] = -( GT12 + Gdelta21 );
 		Ke[1][3] = 		  K23 + Ks23;
-		Ke[1][4] = N13 + Ndelta24 + K24 + Ks24;
+		Ke[1][4] = N13 + Ndelta24 + K24 + Ks24 + Kdd12;
 		Ke[1][5] = -( GT12 + Gdelta22 );
 		Ke[1][6] = 		  K25 + Ks25;
-		Ke[1][7] = N15 + Ndelta26 + K26 + Ks26;
+		Ke[1][7] = N15 + Ndelta26 + K26 + Ks26 + Kdd13;
 		Ke[1][8] = -( GT12 + Gdelta23 );
 		
 		Ke[2][0] = GT11 + Gdelta11;
@@ -551,24 +600,24 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Ke[2][7] = GT16 + Gdelta61;
 		Ke[2][8] = Gphi13;
 
-		Ke[3][0] = N11 + Ndelta13 + K13 + Ks31;
+		Ke[3][0] = N11 + Ndelta13 + K13 + Ks31 + Kdd12;
 		Ke[3][1] =        K23 + Ks32;
 		Ke[3][2] = -( GT13 + Gdelta31 );
-		Ke[3][3] = N13 + Ndelta33 + K33 + Ks33;
+		Ke[3][3] = N13 + Ndelta33 + K33 + Ks33 + Kdd22;
 		Ke[3][4] =		   K34 + Ks34;
 		Ke[3][5] = -( GT13 + Gdelta32 );
-		Ke[3][6] = N15 + Ndelta35 + K35 + Ks35;
+		Ke[3][6] = N15 + Ndelta35 + K35 + Ks35 + Kdd23;
 		Ke[3][7] = 		   K36 + Ks36;
 		Ke[3][8] = -( GT13 + Gdelta33 );
 
 		Ke[4][0] = 		  K14 + Ks41;
-		Ke[4][1] = N11 + Ndelta24 + K24 + Ks42;
+		Ke[4][1] = N11 + Ndelta24 + K24 + Ks42 + Kdd12;
 		Ke[4][2] = -( GT14 + Gdelta41 );
 		Ke[4][3] = 		  K34 + Ks43;
-		Ke[4][4] = N13 + Ndelta44 + K44 + Ks44;
+		Ke[4][4] = N13 + Ndelta44 + K44 + Ks44 + Kdd22;
 		Ke[4][5] = -( GT14 + Gdelta42 );
 		Ke[4][6] = 		  K45 + Ks45;
-		Ke[4][7] = N15 + Ndelta46 + K46 + Ks46;
+		Ke[4][7] = N15 + Ndelta46 + K46 + Ks46 + Kdd23;
 		Ke[4][8] = -( GT14 + Gdelta43 );
 
 		Ke[5][0] = GT11 + Gdelta12;
@@ -581,24 +630,24 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Ke[5][7] = GT16 + Gdelta62;
 		Ke[5][8] = Gphi23;
 
-		Ke[6][0] = N11 + Ndelta15 + K15 + Ks51;
+		Ke[6][0] = N11 + Ndelta15 + K15 + Ks51 + Kdd13;
 		Ke[6][1] =       K25 + Ks52;
 		Ke[6][2] = -( GT15 + Gdelta51 );
-		Ke[6][3] = N13 + Ndelta35 + K35 + Ks53;
+		Ke[6][3] = N13 + Ndelta35 + K35 + Ks53 + Kdd23;
 		Ke[6][4] =		 K45 + Ks54;
 		Ke[6][5] = -( GT15 + Gdelta52 );
-		Ke[6][6] = N15 + Ndelta55 + K55 + Ks55;
+		Ke[6][6] = N15 + Ndelta55 + K55 + Ks55 + Kdd33;
 		Ke[6][7] = 		  K56 + Ks56;
 		Ke[6][8] = -( GT15 + Gdelta53 );
 
 		Ke[7][0] = 		  K16 + Ks61;
-		Ke[7][1] = N11 + Ndelta26 + K26 + Ks62;
+		Ke[7][1] = N11 + Ndelta26 + K26 + Ks62 + Kdd13;
 		Ke[7][2] = -( GT16 + Gdelta61 );
 		Ke[7][3] = 		  K36 + Ks63;
-		Ke[7][4] = N13 + Ndelta46 + K46 + Ks64;
+		Ke[7][4] = N13 + Ndelta46 + K46 + Ks64 + Kdd23;
 		Ke[7][5] = -( GT16 + Gdelta62 );
 		Ke[7][6] = 		  K56 + Ks65;
-		Ke[7][7] = N15 + Ndelta66 + K66 + Ks66;
+		Ke[7][7] = N15 + Ndelta66 + K66 + Ks66 + Kdd33;
 		Ke[7][8] = -( GT16 + Gdelta63 );
 
 		Ke[8][0] = GT11 + Gdelta13;
@@ -613,24 +662,24 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		
 		}else{
 
-		Ke[0][0] = N11 + Np11 + Ndelta11 + Npdelta11 + Nppdelta11 + K11  + Ks11;
+		Ke[0][0] = N11 + Np11 + Ndelta11 + Npdelta11 + Nppdelta11 + K11  + Ks11 + Kdd11;
 		Ke[0][1] =       Np12 			 + Npdelta12 + Nppdelta12 + K12 + Ks12;
 		Ke[0][2] = -( GT11 + Gdelta11 );
 		Ke[0][3] = N13 + Np31 + Ndelta13 + Npdelta11 + Nppdelta11 + K13 + Ks13;
-		Ke[0][4] =		 Np32 	 		 + Npdelta12 + Nppdelta12 + K14 + Ks14;
+		Ke[0][4] =		 Np32 	 		 + Npdelta12 + Nppdelta12 + K14 + Ks14 + Kdd12;
 		Ke[0][5] = -( GT11 + Gdelta12 );
 		Ke[0][6] = N15 + Np31 + Ndelta15 + Npdelta11 + Nppdelta11 + K15 + Ks15;
-		Ke[0][7] = 		 Np32 	 		 + Npdelta12 + Nppdelta12 + K16 + Ks16;
+		Ke[0][7] = 		 Np32 	 		 + Npdelta12 + Nppdelta12 + K16 + Ks16 + Kdd13;
 		Ke[0][8] = -( GT11 + Gdelta13 );
 	
 		Ke[1][0] = 		 Np21            + Npdelta21 + Nppdelta21 + K12 + Ks21;
-		Ke[1][1] = N11 + Np22 + Ndelta22 + Npdelta22 + Nppdelta22 + K22 + Ks22;
+		Ke[1][1] = N11 + Np22 + Ndelta22 + Npdelta22 + Nppdelta22 + K22 + Ks22 + Kdd11;
 		Ke[1][2] = -( GT12 + Gdelta21 );
 		Ke[1][3] = 		 Np41			 + Npdelta21 + Nppdelta21 + K23 + Ks23;
-		Ke[1][4] = N13 + Np42 + Ndelta24 + Npdelta22 + Nppdelta22 + K24 + Ks24;
+		Ke[1][4] = N13 + Np42 + Ndelta24 + Npdelta22 + Nppdelta22 + K24 + Ks24 + Kdd12;
 		Ke[1][5] = -( GT12 + Gdelta22 );
 		Ke[1][6] = 		 Np41 			 + Npdelta21 + Nppdelta21 + K25 + Ks25;
-		Ke[1][7] = N15 + Np42 + Ndelta26 + Npdelta22 + Nppdelta22 + K26 + Ks26;
+		Ke[1][7] = N15 + Np42 + Ndelta26 + Npdelta22 + Nppdelta22 + K26 + Ks26 + Kdd13 + Kdd13;
 		Ke[1][8] = -( GT12 + Gdelta23 );
 		
 		Ke[2][0] = GT11 + Gdelta11 + Npphi11;
@@ -643,25 +692,25 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Ke[2][7] = GT16 + Gdelta61 + Npphi12;
 		Ke[2][8] = Gphi13;
 
-		Ke[3][0] = N11 + Np31 + Ndelta13 + Npdelta31 + Nppdelta31 + K13 + Ks31;
+		Ke[3][0] = N11 + Np31 + Ndelta13 + Npdelta31 + Nppdelta31 + K13 + Ks31 + Kdd12;
 		Ke[3][1] =       Np32 			 + Npdelta32 + Nppdelta32 + K23 + Ks32;
 		Ke[3][2] = -( GT13 + Gdelta31 );
-		Ke[3][3] = N13 + Np11 + Ndelta33 + Npdelta31 + Nppdelta31 + K33 + Ks33;
+		Ke[3][3] = N13 + Np11 + Ndelta33 + Npdelta31 + Nppdelta31 + K33 + Ks33 + Kdd22;
 		Ke[3][4] =		 Np12 	 		 + Npdelta32 + Nppdelta32 + K34 + Ks34;
 		Ke[3][5] = -( GT13 + Gdelta32 );
-		Ke[3][6] = N15 + Np31 + Ndelta35 + Npdelta31 + Nppdelta31 + K35 + Ks35;
+		Ke[3][6] = N15 + Np31 + Ndelta35 + Npdelta31 + Nppdelta31 + K35 + Ks35 + Kdd23;
 		Ke[3][7] = 		 Np32 	 		 + Npdelta32 + Nppdelta32 + K36 + Ks36;
 		Ke[3][8] = -( GT13 + Gdelta33 );
 
 
 		Ke[4][0] = 		 Np41            + Npdelta41 + Nppdelta41 + K14 + Ks41;
-		Ke[4][1] = N11 + Np42 + Ndelta24 + Npdelta42 + Nppdelta42 + K24 + Ks42;
+		Ke[4][1] = N11 + Np42 + Ndelta24 + Npdelta42 + Nppdelta42 + K24 + Ks42 + Kdd12;
 		Ke[4][2] = -( GT14 + Gdelta41 );
 		Ke[4][3] = 		 Np21			 + Npdelta41 + Nppdelta41 + K34 + Ks43;
-		Ke[4][4] = N13 + Np22 + Ndelta44 + Npdelta42 + Nppdelta42 + K44 + Ks44;
+		Ke[4][4] = N13 + Np22 + Ndelta44 + Npdelta42 + Nppdelta42 + K44 + Ks44 + Kdd22;
 		Ke[4][5] = -( GT14 + Gdelta42 );
 		Ke[4][6] = 		 Np41 			 + Npdelta41 + Nppdelta41 + K45 + Ks45;
-		Ke[4][7] = N15 + Np42 + Ndelta46 + Npdelta42 + Nppdelta42 + K46 + Ks46;
+		Ke[4][7] = N15 + Np42 + Ndelta46 + Npdelta42 + Nppdelta42 + K46 + Ks46 + Kdd23;
 		Ke[4][8] = -( GT14 + Gdelta43 );
 
 		Ke[5][0] = GT11 + Gdelta12 + Npphi21;
@@ -674,24 +723,24 @@ int Build_K_F_SUPG_PSPG(ParametersType *Parameters, MatrixDataType *MatrixData, 
 		Ke[5][7] = GT16 + Gdelta62 + Npphi22;
 		Ke[5][8] = Gphi23;
 
-		Ke[6][0] = N11 + Np31 + Ndelta15 + Npdelta51 + Nppdelta51 + K15 + Ks51;
+		Ke[6][0] = N11 + Np31 + Ndelta15 + Npdelta51 + Nppdelta51 + K15 + Ks51 + Kdd13;
 		Ke[6][1] =       Np32 			 + Npdelta52 + Nppdelta52 + K25 + Ks52;
 		Ke[6][2] = -( GT15 + Gdelta51 );
-		Ke[6][3] = N13 + Np31 + Ndelta35 + Npdelta51 + Nppdelta51 + K35 + Ks53;
+		Ke[6][3] = N13 + Np31 + Ndelta35 + Npdelta51 + Nppdelta51 + K35 + Ks53 + Kdd23;
 		Ke[6][4] =		 Np32 	 		 + Npdelta52 + Nppdelta52 + K45 + Ks54;
 		Ke[6][5] = -( GT15 + Gdelta52 );
-		Ke[6][6] = N15 + Np11 + Ndelta55 + Npdelta51 + Nppdelta51 + K55 + Ks55;
+		Ke[6][6] = N15 + Np11 + Ndelta55 + Npdelta51 + Nppdelta51 + K55 + Ks55 + Kdd33;
 		Ke[6][7] = 		 Np12 	 		 + Npdelta52 + Nppdelta52 + K56 + Ks56;
 		Ke[6][8] = -( GT15 + Gdelta53 );
 
 		Ke[7][0] = 		 Np41            + Npdelta61 + Nppdelta61 + K16 + Ks61;
-		Ke[7][1] = N11 + Np42 + Ndelta26 + Npdelta62 + Nppdelta62 + K26 + Ks62;
+		Ke[7][1] = N11 + Np42 + Ndelta26 + Npdelta62 + Nppdelta62 + K26 + Ks62 + Kdd13;
 		Ke[7][2] = -( GT16 + Gdelta61 );
 		Ke[7][3] = 		 Np41			 + Npdelta61 + Nppdelta61 + K36 + Ks63;
-		Ke[7][4] = N13 + Np42 + Ndelta46 + Npdelta62 + Nppdelta62 + K46 + Ks64;
+		Ke[7][4] = N13 + Np42 + Ndelta46 + Npdelta62 + Nppdelta62 + K46 + Ks64 + Kdd23;
 		Ke[7][5] = -( GT16 + Gdelta62 );
 		Ke[7][6] = 		 Np21 			 + Npdelta61 + Nppdelta61 + K56 + Ks65;
-		Ke[7][7] = N15 + Np22 + Ndelta66 + Npdelta62 + Nppdelta62 + K66 + Ks66;
+		Ke[7][7] = N15 + Np22 + Ndelta66 + Npdelta62 + Nppdelta62 + K66 + Ks66 + Kdd23;
 		Ke[7][8] = -( GT16 + Gdelta63 );
 
 		Ke[8][0] = GT11 + Gdelta13 + Npphi31;

@@ -55,8 +55,7 @@ typedef struct
 	double ReynoldsNumber;		       // Reynolds Number
 	char reordering[200];		       // Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
 	double SolverTolerance;                // tolerance for the solution method
-	int SolverToleranceCase;               // Case tolerance for the solution method 1(etapp), 2(etaewk), 3(etaewc), 4(etaglt)
-	double CorrectionTolerance;            // tolerance for the loop of correction
+	double NonLinearTolerance;            // tolerance for the loop of correction
 	double TimeIntegrationTolerance;       // tolerance for the loop of time integration
 	double CoefficientTolerance;           // tolerance for coefficient used in the stabilization form
 	double Alpha;                          // parameter determining the stability control and accuracy time integration method
@@ -71,7 +70,7 @@ typedef struct
 	int nnzero;
 	int iterations;                        // iterations: total number of iteration 
 	int LinearMaxIter;                           // itermax: maximum number of iteration
-	int NumberCorrection;                  // NumberCorrection: number of multicorrection
+	int NonLinearMaxIter;                           // itermax: maximum number of iteration
 	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
 }ParametersType;
 
@@ -128,10 +127,9 @@ typedef struct
 	double (*v1presc)(double, double);
 	double (*v2presc)(double, double);
 	double (*ppresc)(double, double);
-	
-
+	double (*f1ext)(double, double);
+	double (*f2ext)(double, double);
 	void (*assembly)(ParametersType *, MatrixDataType *, FemStructsType *, int, double (*)[9]);
-	//!!!!!!!!!!!!! VERIFICAR POIS ESTA DIFERENTE !!!!!!!!!
 	int (*mv)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precond)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
 	int (*precondR)(ParametersType *, MatrixDataType *, FemStructsType *, double *, double *);
@@ -165,22 +163,6 @@ int setPreconditioner(ParametersType *, FemFunctionsType *); //ok
 
 int setStabilizationForm(ParametersType *,FemFunctionsType *, FemOtherFunctionsType *); //ok
 
-/* SUBSTITUIDO PELAS FORMAS COMPACTA
-void ebe_assembly(ParametersType *, int , int, double (*)[9], MatrixDataType *, int **);
-
-void ebe_end_assembly(ParametersType *, int, MatrixDataType *);
-
-void csr_assembly(ParametersType *, int, int, double (*)[9], MatrixDataType *, int **lm);
-
-void csr_end_assembly(ParametersType *, int, MatrixDataType *);
-
-void csr_Initialization(ParametersType *, NodeType *, int **, int **, int **, int  **,	int ***, int **, int ***);
-
-void csr_List_insertA(NodeListType **, int, int, int *);
-
-int csr_search(int, int, NodeListType *);
-*/
-
 void csr_assembly(ParametersType *, MatrixDataType *, FemStructsType *, int, double (*)[9]); //ok
 
 void csr_Initialization(ParametersType *, NodeType *, int **, int **, int **, int  **, int ***, int **, int ***); //ok
@@ -194,11 +176,12 @@ void ebe_assembly(ParametersType *, MatrixDataType *, FemStructsType *, int, dou
 int Build_K_F_SUPG_PSPG(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *); //ok
 
 int Build_K_F_VMS_DCDD(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *); //ok
+
 int Paraview_Output(ParametersType *, FemStructsType *, FemFunctionsType *); //ok
 
-double eta_newton(double *, double *, double , int , int , double, double, ParametersType *); //ok
-
 void eval_U(ParametersType *,FemStructsType *, FemFunctionsType *, double *);
+
+int setzeros(ParametersType *, MatrixDataType *);
 
 #endif
 
