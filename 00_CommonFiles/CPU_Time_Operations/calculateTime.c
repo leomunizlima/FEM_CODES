@@ -15,22 +15,22 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 	s = Total_Time - (3600*h + 60*m);
 
 	#ifdef SSTranspEquation2D
-		sprintf(FileName, "../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture, Parameters->h_Shock, 
+		sprintf(FileName, "../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture, Parameters->h_Shock, 
 		Parameters->MatrixVectorProductScheme,Parameters->Solver,Parameters->Preconditioner, Parameters->nnodes,Parameters->nel); 	
 	#endif
 
 	#ifdef TranspEquation2D
-		sprintf(FileName, "../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->TimeIntegration,Parameters->StabilizationForm,Parameters->ShockCapture,
+		sprintf(FileName, "../03_output/%s_%s_%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->TimeIntegration,Parameters->StabilizationForm,Parameters->ShockCapture,
 	        Parameters->h_Shock, Parameters->MatrixVectorProductScheme,Parameters->Solver,Parameters->Preconditioner,Parameters->nnodes,Parameters->nel); 	
 	#endif
 
 	#ifdef EulerEquations2D
-		sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
+		sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
 		Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
 	#endif
 	
 	#ifdef SSNavierStokesEquations2D
-		sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
+		sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture,
 		Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
 	#endif
 	

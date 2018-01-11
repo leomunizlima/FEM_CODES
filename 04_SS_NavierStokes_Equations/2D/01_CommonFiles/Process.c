@@ -50,7 +50,6 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	printf("\n Newton iterations = %d  \n", i);
 		
 
-	//SPARILU_clean(MatrixData->ILUp);	
 	free(s);
 	free(delta_old);
 	
