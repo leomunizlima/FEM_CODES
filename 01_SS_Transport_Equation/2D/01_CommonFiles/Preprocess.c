@@ -26,7 +26,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	/* **************************************************************************************************************************** */
 	if (narg!=2)
 	{
-		printf("Use ./EulerEquations2D <Parameters file according README>\n");
+		printf("Use ./SSTranspEquation2D <Parameters file according README>\n");
 		exit(1);
 	}
 	/* **************************************************************************************************************************** */
