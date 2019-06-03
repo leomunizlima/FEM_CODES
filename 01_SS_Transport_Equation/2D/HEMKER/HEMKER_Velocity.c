@@ -1,6 +1,6 @@
 #include "hemker.h" 
 
-inline void HEMKER_Velocity(double X, double Y, double Beta[2])
+void HEMKER_Velocity(double X, double Y, double Beta[2])
 {
 	double Be_x, Be_y;
 

@@ -1,6 +1,6 @@
 #include "convection.h" 
 
-inline double CONVECTION_Condutivity(void)
+double CONVECTION_Condutivity(void)
 {
 	double k;
 

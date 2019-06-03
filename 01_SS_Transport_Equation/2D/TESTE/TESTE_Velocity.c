@@ -1,6 +1,6 @@
 #include "teste.h" 
 
-inline void TESTE_Velocity(double X, double Y, double Beta[2])
+void TESTE_Velocity(double X, double Y, double Beta[2])
 {
 	double Be_x, Be_y;
 

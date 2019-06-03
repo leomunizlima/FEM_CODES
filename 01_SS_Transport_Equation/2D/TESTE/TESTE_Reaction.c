@@ -1,6 +1,6 @@
 #include "teste.h" 
 
-inline double TESTE_Reaction(void)
+double TESTE_Reaction(void)
 {
 	double gamma;
 

@@ -1,6 +1,6 @@
 #include "pudim.h" 
 
-inline double PUDIM_Condutivity(void)
+double PUDIM_Condutivity(void)
 {
 	double k;
 

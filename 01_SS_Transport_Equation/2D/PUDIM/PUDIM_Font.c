@@ -1,6 +1,6 @@
 #include "pudim.h" 
 
-inline double PUDIM_Font(double X, double Y, double k, double gamma, double Be_x, double Be_y)
+double PUDIM_Font(double X, double Y, double k, double gamma, double Be_x, double Be_y)
 {
 	double f;
 

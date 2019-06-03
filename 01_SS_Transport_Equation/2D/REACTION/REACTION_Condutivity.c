@@ -1,6 +1,6 @@
 #include "reaction.h" 
 
-inline double REACTION_Condutivity(void)
+double REACTION_Condutivity(void)
 {
 	double k;
 

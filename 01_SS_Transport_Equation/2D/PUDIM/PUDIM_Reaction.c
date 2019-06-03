@@ -1,6 +1,6 @@
 #include "pudim.h" 
 
-inline double PUDIM_Reaction(void)
+double PUDIM_Reaction(void)
 {
 	double gamma;
 

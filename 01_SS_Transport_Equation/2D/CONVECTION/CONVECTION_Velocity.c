@@ -1,7 +1,7 @@
 #include "convection.h" 
 #include <math.h>
 
-inline void CONVECTION_Velocity(double X, double Y, double Beta[2])
+void CONVECTION_Velocity(double X, double Y, double Beta[2])
 {
 
 	Beta[0] = 0.707;//sqrt(2.0)/2.0;

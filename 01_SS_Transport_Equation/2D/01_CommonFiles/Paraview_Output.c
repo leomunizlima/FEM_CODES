@@ -5,7 +5,7 @@
 int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
 	int I, nel, nnodes;
-	char FileName[300];
+	char FileName[2000];
 	FILE *OutFile;
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;

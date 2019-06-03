@@ -1,7 +1,7 @@
 #include "../01_CommonFiles/SSTranspEquation.h"
 #include "convection.h" 
 
-inline double CONVECTION_upresc(double X, double Y)
+double CONVECTION_upresc(double X, double Y)
 {
 	double u;
 

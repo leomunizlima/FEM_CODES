@@ -5,7 +5,7 @@
 int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
 {
 	int I, nel, neq;
-	char FileName[200];
+	char FileName[2000];
 	FILE *OutFile;
 
 	nel = Parameters->nel;

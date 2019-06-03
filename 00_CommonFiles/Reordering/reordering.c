@@ -320,7 +320,7 @@ int MATRIX_bandwidth (ParametersType *Parameters, int *JA, int *IA)
 	{
 		if (fabs(i - JA[IA[i]]) > bandl)
 			bandl= i - JA[IA[i]];
-		if (fabs(JA[IA[i+1]-1]-i) > bandr);	
+		if (fabs(JA[IA[i+1]-1]-i) > bandr)	
 			bandr = JA[IA[i+1]-1]-i; 
 	}
 	if (bandl>bandr)

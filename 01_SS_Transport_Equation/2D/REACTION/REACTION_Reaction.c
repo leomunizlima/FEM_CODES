@@ -1,6 +1,6 @@
 #include "reaction.h" 
 
-inline double REACTION_Reaction(void)
+double REACTION_Reaction(void)
 {
 	double gamma;
 

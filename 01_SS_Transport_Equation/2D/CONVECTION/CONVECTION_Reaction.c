@@ -1,6 +1,6 @@
 #include "convection.h" 
 
-inline double CONVECTION_Reaction(void)
+double CONVECTION_Reaction(void)
 {
 	double gamma;
 

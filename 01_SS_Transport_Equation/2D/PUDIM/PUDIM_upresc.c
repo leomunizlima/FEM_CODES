@@ -1,7 +1,7 @@
 #include "../01_CommonFiles/SSTranspEquation.h"
 #include "pudim.h" 
 
-inline double PUDIM_upresc(double X, double Y)
+double PUDIM_upresc(double X, double Y)
 {
 	double u;
 

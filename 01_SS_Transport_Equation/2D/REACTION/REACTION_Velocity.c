@@ -1,6 +1,6 @@
 #include "reaction.h" 
 
-inline void REACTION_Velocity(double X, double Y, double Beta[2])
+void REACTION_Velocity(double X, double Y, double Beta[2])
 {
 	double Be_x, Be_y;
 

@@ -5,7 +5,7 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 	int h, m;
 	double s, Total_Time;
 	FILE *OutFile;
-	char FileName[300];
+	char FileName[2000];
 
 	Total_Time = Preprocess_Time + Process_Time + Postprocess_Time;
 	h = (int) Total_Time;

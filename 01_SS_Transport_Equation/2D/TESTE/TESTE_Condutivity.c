@@ -1,6 +1,6 @@
 #include "teste.h" 
 
-inline double TESTE_Condutivity(void)
+double TESTE_Condutivity(void)
 {
 	double k;
 

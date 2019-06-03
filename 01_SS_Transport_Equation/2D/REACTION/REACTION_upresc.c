@@ -2,7 +2,7 @@
 #include "reaction.h" 
 #include "math.h"
 
-inline double REACTION_upresc(double X, double Y)
+double REACTION_upresc(double X, double Y)
 {
 	double u;
 

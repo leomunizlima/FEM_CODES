@@ -1,7 +1,7 @@
 #include "../01_CommonFiles/SSTranspEquation.h"
 #include "teste.h" 
 
-inline double TESTE_upresc(double X, double Y)
+double TESTE_upresc(double X, double Y)
 {
 	double u;
 

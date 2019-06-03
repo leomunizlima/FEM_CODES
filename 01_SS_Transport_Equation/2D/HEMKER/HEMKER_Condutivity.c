@@ -1,6 +1,6 @@
 #include "hemker.h" 
 
-inline double HEMKER_Condutivity(void)
+double HEMKER_Condutivity(void)
 {
 	double k;
 
