@@ -2,10 +2,7 @@ CC=gcc
 #CC=tau_cc.sh
 IDIR=
 CFLAGS= -DTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DTransEquation2D -Ddebug -lm -lrt -Wall -Ofast -march=native \
-../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath
+GCFLAGS= -DTransEquation2D -Ddebug -lm -lrt -Wall -Ofast -march=native
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \
@@ -109,23 +106,13 @@ uB_InitialSolution.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_TRBDF2.c \
 
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=TranspEquation
+EXECUTABLE=TranspEquation2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DTranspEquation2D -Ddebug -c -lm -lrt -Wall -g
-debug: GCFLAGS= -DTransEquation2D -Ddebug -lm -lrt -Wall \
-../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath -g
+debug: GCFLAGS= -DTransEquation2D -Ddebug -lm -lrt -Wall -g
 debug: all
-
-fast: CFLAGS= -DTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DTransEquation2D -lm -lrt -Wall -Ofast -march=native \
-../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath
-fast: all
 
 gprof: CFLAGS+=-pg -Ddebug
 gprof: LDFLAGS+=-pg -Ddebug

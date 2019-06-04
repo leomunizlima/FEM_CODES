@@ -4,7 +4,7 @@
 int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
 {
 	FILE *OutFile;
-	char FileName[300];
+	char FileName[2000];
 
 	/*************************************************************/
 	//		Paraview output to file

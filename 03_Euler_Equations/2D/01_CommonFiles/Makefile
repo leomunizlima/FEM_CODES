@@ -2,9 +2,7 @@ CC=gcc
 #'CC=tau_cc.sh
 IDIR=
 CFLAGS= -DEulerEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
+GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall -Ofast -march=native
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \
@@ -177,22 +175,12 @@ EXECUTABLE=EulerEquations2D
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DEulerEquations2D -g -Ddebug -c -lm -lrt -Wall
-debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath
+debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o 
 debug: all
-
-fast: CFLAGS= -DEulerEquations2D -c -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DEulerEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
-fast: all
 
 gprof: CFLAGS+=-pg
 gprof: LDFLAGS+=-pg
 gprof: all
-
-
 
 
 $(EXECUTABLE): $(OBJECTS)

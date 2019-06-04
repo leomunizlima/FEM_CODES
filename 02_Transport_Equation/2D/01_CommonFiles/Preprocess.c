@@ -11,7 +11,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	int size = NDOF*NNOEL;
 	int size2 = size*size;
 	double *F, *u, *Diag, *invDiag;
-	char FileName[300], label[300];
+	char FileName[2000], label[2000];
 	FILE *InFile;
 	NodeType *Node;
 	ElementType *Element;
@@ -26,7 +26,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	/* **************************************************************************************************************************** */
 	if (narg!=2)
 	{
-		printf("Use ./EulerEquations2D <Parameters file according README>\n");
+		printf("Use ./TranspEquation2D <Parameters file according README>\n");
 		exit(1);
 	}
 

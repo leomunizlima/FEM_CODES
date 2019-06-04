@@ -1,9 +1,7 @@
 CC=gcc
 IDIR= 
 CFLAGS= -DNavierStokesEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DNavierEquations2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
+GCFLAGS= -DNavierEquations2D -Ddebug -lm -lrt -Wall -Ofast -march=native
 LDFLAGS= 
 SOURCES= main.c \
 Preprocess.c \
@@ -45,10 +43,10 @@ Paraview_Output.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/pgmres.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond.c \
 ../../../00_CommonFiles/Solvers_and_Preconditioners/NO_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiagDOF3_precond_EBE_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond_setup.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/BlockDiagDOF3_precond.c \
-../../../00_CommonFiles/Solvers_and_Preconditioners/ILUp_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/BlockDiagDOF3_precond_EBE_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/EBE/BlockDiagDOF3_precond.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond_setup.c \
+../../../00_CommonFiles/Solvers_and_Preconditioners/CSR/ILUp_precond.c \
 ../../../00_CommonFiles/BLAS_Operations/dtrsvUP.c \
 ../../../00_CommonFiles/BLAS_Operations/daxpy.c \
 ../../../00_CommonFiles/BLAS_Operations/dcopy.c \
@@ -83,23 +81,12 @@ EXECUTABLE=NavierStokesEquations2D
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DNavierStokesEquations2D -g -Ddebug -c -lm -lrt -Wall
-debug: GCFLAGS= -DNavierStokesEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath 
+debug: GCFLAGS= -DNavierStokesEquations2D -g -Ddebug -lm -lrt -Wall
 debug: all
-
-fast: CFLAGS= -DNavierStokesEquations2D -c -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DNavierStokesEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
-fast: all
 
 gprof: CFLAGS+=-pg  
 gprof: LDFLAGS+=-pg
 gprof: all
-
-
-
  
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) $(GCFLAGS) -o $@

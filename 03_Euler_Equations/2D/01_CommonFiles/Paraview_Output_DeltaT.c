@@ -6,7 +6,7 @@ int Paraview_Output_DeltaT(double *U, NodeType *Node, ElementType *Element, Para
                     double (*v2presc)(double, double), double (*epresc)(double, double), double (*Gamma)(double, double), double (*CV)(double, double), double t)
 {
 	int I, eq1, eq2, eq3, eq4, nnodes, nel;
-	char FileName[300];
+	char FileName[2000];
 	FILE *OutFile;
 	double *rho, *v1, *v2, *e, *temp, *pres, aux, cv, gamma, X, Y;
 

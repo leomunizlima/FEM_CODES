@@ -11,7 +11,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	int size = NDOF*NNOEL;
 	int size2 = size*size;
 	double *F, *u;
-	char FileName[300], label[300];
+	char FileName[2000], label[2000];
 	FILE *InFile;
 	NodeType *Node;
 	ElementType *Element;

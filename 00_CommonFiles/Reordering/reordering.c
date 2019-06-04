@@ -8,15 +8,15 @@ void reordering(ParametersType *Parameters, int *JA, int *IA, int *perm, int *Pe
 	if (strcasecmp(Parameters->reordering,"NOT")==0){
 		return;
 	}
-	else if (strcasecmp(Parameters->reordering,"Spectral")==0)
+/*	else if (strcasecmp(Parameters->reordering,"Spectral")==0)
 		REORDERING_SPECTRAL (Parameters, JA,  IA, perm, PermCSR);
-
+*/
 	else if (strcasecmp(Parameters->reordering,"SYMRCM")==0)
 		REORDERING_SYMRCM (Parameters, JA,  IA, perm, PermCSR);
 
-	else if (strncmp(Parameters->reordering,"Sloan",5)==0 || strncmp(Parameters->reordering,"RCM",3)==0){
+/*	else if (strncmp(Parameters->reordering,"Sloan",5)==0 || strncmp(Parameters->reordering,"RCM",3)==0){
 		REORDERING_RCM_or_SLOAN (Parameters, JA,  IA, perm, PermCSR);
-	}
+	}*/
 	else{
 		printf("Reordering scheme not defined!\n");
 		exit(1);
@@ -27,7 +27,7 @@ void reordering(ParametersType *Parameters, int *JA, int *IA, int *perm, int *Pe
 /*----------------------------------------------------------------------------
  * SPECTRAL reordering
  *--------------------------------------------------------------------------*/
-void REORDERING_SPECTRAL (ParametersType *Parameters, int *ja, int *ia, int *p, int *pT)
+/*void REORDERING_SPECTRAL (ParametersType *Parameters, int *ja, int *ia, int *p, int *pT)
 {
 	int i;
 	int n = Parameters->neq;
@@ -37,11 +37,11 @@ void REORDERING_SPECTRAL (ParametersType *Parameters, int *ja, int *ia, int *p, 
 	int    *info    = calloc (10,sizeof(int));
 	int   lirn = Parameters->nnzero;
 	int    nnz = Parameters->nnzero;
-	
+*/	
 	/* -------------------------------------------------------------------- */    
 	/* Convert matrix from 0-based C-notation to Fortran 1-based notation   */
 	/* -------------------------------------------------------------------- */
-	for (i = 0; i < nnz; i++) {
+/*	for (i = 0; i < nnz; i++) {
 		ja[i] += 1;
 	}
 	for (i = 0; i < n + 1; i++) {
@@ -49,11 +49,11 @@ void REORDERING_SPECTRAL (ParametersType *Parameters, int *ja, int *ia, int *p, 
 	}
 
 	mc73_fiedler(&n,&lirn,ja,ia,list,fvector,info,NULL);
-	
+*/	
 	/* -------------------------------------------------------------------- */    
 	/* Convert matrix back to 0-based C-notation.                           */
 	/* -------------------------------------------------------------------- */
-	for (i = 0; i < nnz; i++) {
+/*	for (i = 0; i < nnz; i++) {
 		ja[i] -= 1;
 	}
 	for (i = 0; i < n + 1; i++) {
@@ -83,11 +83,11 @@ void REORDERING_SPECTRAL (ParametersType *Parameters, int *ja, int *ia, int *p, 
 	
 	return;
 }
-
+*/
 /*----------------------------------------------------------------------------
  * RCM reordering
  *--------------------------------------------------------------------------*/
-void REORDERING_RCM_or_SLOAN (ParametersType *Parameters, int *ja, int *ia, int *p, int *pT)
+/*void REORDERING_RCM_or_SLOAN (ParametersType *Parameters, int *ja, int *ia, int *p, int *pT)
 {
 	int 	i;
 	int 	n = Parameters->neq;
@@ -104,11 +104,11 @@ void REORDERING_RCM_or_SLOAN (ParametersType *Parameters, int *ja, int *ia, int 
 	int 	control;
 	double  weight[2];		
 	double 	*rinfo    = calloc (4,sizeof(double));
-
+*/
 	/* -------------------------------------------------------------------- */    
 	/* Convert matrix from 0-based C-notation to Fortran 1-based notation   */
 	/* -------------------------------------------------------------------- */
-	for (i = 0; i < nnz; i++) {
+/*	for (i = 0; i < nnz; i++) {
 		ja[i] += 1;
 	}
 	for (i = 0; i < n + 1; i++) {
@@ -172,11 +172,11 @@ void REORDERING_RCM_or_SLOAN (ParametersType *Parameters, int *ja, int *ia, int 
 
 
 //	mc60dd_(&n,&nsup,svar,vars,permsv,p,possv);
-
+*/
 	/* -------------------------------------------------------------------- */    
 	/* Convert matrix back to 0-based C-notation.                           */
 	/* -------------------------------------------------------------------- */
-	for (i = 0; i < nnz; i++) {
+/*	for (i = 0; i < nnz; i++) {
 		ja[i] -= 1;
 	}
 	for (i = 0; i < n + 1; i++) {
@@ -212,7 +212,7 @@ void REORDERING_RCM_or_SLOAN (ParametersType *Parameters, int *ja, int *ia, int 
 
 	return;
 }
-
+*/
 int COMPARE_eig (const void * a, const void * b)
 {
 	if (((ARRAY2*)a)->arr1 > ((ARRAY2*)b)->arr1) return  1;

@@ -6,7 +6,7 @@
 int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
 	int I, eq1, eq2, eq3, nnodes, nel;
-	char FileName[300];
+	char FileName[2000];
 	FILE *OutFile;
 	double *v1, *v2, *pres, X, Y, normu, normv, normp;
 	//double v1e, v2e, prese, *errov1, *errov2, *erropres, ev1, ev2, epres;

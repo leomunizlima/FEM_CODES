@@ -5,7 +5,7 @@
 int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions)
 {
 	int I, eq1, eq2, eq3, eq4, nnodes, nel;
-	char FileName[300];
+	char FileName[2000];
 	FILE *OutFile;
 	double *rho, *v1, *v2, *e, *temp, *pres, aux, cv, gamma, X, Y;
 	NodeType *Node = FemStructs->Node;

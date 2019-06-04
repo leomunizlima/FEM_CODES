@@ -1,9 +1,7 @@
 CC=gcc
 IDIR= 
 CFLAGS= -DSSNavierStokesEquations2D -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
+GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall -Ofast -march=native
 LDFLAGS= 
 SOURCES= main.c \
 Preprocess.c \
@@ -67,16 +65,8 @@ EXECUTABLE=SSNavierStokesEquations2D
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -c -lm -lrt -Wall
-debug: GCFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath 
+debug: GCFLAGS= -DSSNavierStokesEquations2D -g -Ddebug -lm -lrt -Wall
 debug: all
-
-fast: CFLAGS= -DSSNavierStokesEquations2D -c -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DSSNavierStokesEquations2D -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
-fast: all
 
 gprof: CFLAGS+=-pg  
 gprof: LDFLAGS+=-pg

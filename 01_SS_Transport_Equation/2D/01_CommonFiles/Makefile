@@ -2,9 +2,7 @@ CC=gcc
 #CC=tau_cc.sh
 IDIR=
 CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DSSTranspEquation2D -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lrt -lm -lgfortran -Wall -lblas -llapack -lquadmath -Ofast -march=native
+GCFLAGS= -DSSTranspEquation2D -Ddebug -lm -lrt -Wall -lrt -lm -Wall -Ofast -march=native
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \
@@ -106,22 +104,16 @@ setzeros.c \
 ../../../00_CommonFiles/Reordering/symrcm.c \
 
 OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=SSTranspEquation
+EXECUTABLE=SSTranspEquation2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
 debug: CFLAGS= -DSSTranspEquation2D -Ddebug -c -lm -lrt -Wall -O0 -g
-debug: GCFLAGS= -DSSTransEquation2D -Ddebug -lm -lrt -Wall \
-../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath -O0 -g
+debug: GCFLAGS= -DSSTransEquation2D -Ddebug -lm -lrt -Wall -g
 debug: all
 
 fast: CFLAGS= -DSSTranspEquation2D -c -lm -lrt -Wall -Ofast -march=native
-fast: GCFLAGS= -DSSTransEquation2D -lm -lrt -Wall -Ofast -march=native \
-../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o \
-../../../00_CommonFiles/Reordering/hsl_mc73/libhsl_mc73.a ../../../00_CommonFiles/Reordering/hsl_mc60/libmc60.a \
--lgfortran -lblas -llapack -lquadmath
+fast: GCFLAGS= -DSSTransEquation2D -lm -lrt -Wall -Ofast -march=native
 fast: all
 
 gprof: CFLAGS+=-pg -Ddebug
