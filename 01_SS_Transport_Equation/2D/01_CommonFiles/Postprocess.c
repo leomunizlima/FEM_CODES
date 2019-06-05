@@ -22,7 +22,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	/****************************************************************************************/
 		// 			Printing final result
 	/****************************************************************************************/
-	sprintf(FileName, "../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture,
+	sprintf(FileName, "../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d.dat",Parameters->ProblemTitle,Parameters->StabilizationForm,Parameters->ShockCapture,
 	        Parameters->h_Shock, Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes,Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 	fprintf(OutFile, "\n\n======================= PROBLEM CHARACTERISTICS ========================\n\n");
