@@ -71,7 +71,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out,  Mat
 	/*****************************************************************************/
 	//				Reading nodes	
 	/*****************************************************************************/		
-	sprintf(FileName,"../../../../INPUT_DATA/%s_%d_%d.dat", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../02_mesh/%s_%d_%d.dat", Parameters->ProblemTitle, Parameters->nnodes, Parameters->nel);
 	InFile = myfopen(FileName, "r");
 	tag =  fscanf(InFile, "%d", &nnodes);
 	Node = (NodeType*) mycalloc("Node of 'Preprocess'",nnodes, sizeof(NodeType));

@@ -14,7 +14,7 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	nel = Parameters->nel;
 	nnodes = Parameters->nnodes;
 
-	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->h_Shock,
+	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->h_Shock,
 			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 
