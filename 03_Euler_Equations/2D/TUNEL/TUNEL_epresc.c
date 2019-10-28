@@ -1,6 +1,6 @@
 #include "tunel.h"
 
-double TUNEL_epresc(double x, double y)
+double TUNEL_epresc(ParametersType *Parameters, double x, double y)
 {
 	double e;
 	

@@ -31,29 +31,30 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 			exit(1);
 		}
 	}
-	else if (strcasecmp(Parameters->StabilizationForm,"DD")==0){
+	else if (strcasecmp(Parameters->StabilizationForm,"NMV1")==0||
+		strcasecmp(Parameters->StabilizationForm,"NMV2")==0){
 		if (strcasecmp(Parameters->TimeIntegration,"Predictor1")==0){		
-			FemOtherFunctions->Build = Build_M_K_F_DD_Transiente;
+			FemOtherFunctions->Build = Build_M_K_F_NMV_Transiente;
 			*Predictor = Predictor_Old;
 		}
 		else if (strcasecmp(Parameters->TimeIntegration,"Predictor1_BDF")==0){		
-			FemOtherFunctions->Build = Build_M_K_F_DD_Transiente;
+			FemOtherFunctions->Build = Build_M_K_F_NMV_Transiente;
 			*Predictor = Predictor_Old_BDF;
 		}
 		else if (strcasecmp(Parameters->TimeIntegration,"Predictor1_TRBDF2")==0){		
-			FemOtherFunctions->Build = Build_M_K_F_DD_Transiente;
+			FemOtherFunctions->Build = Build_M_K_F_NMV_Transiente;
 			*Predictor = Predictor_Old_TRBDF2;
 		}
 		else if (strcasecmp(Parameters->TimeIntegration,"Predictor2")==0){		
-			FemOtherFunctions->Build = Build_M_F_DD_Transiente;
+			FemOtherFunctions->Build = Build_M_F_NMV_Transiente;
 			*Predictor = Predictor_New;
 		}
 		else if (strcasecmp(Parameters->TimeIntegration,"Predictor2_BDF")==0){		
-			FemOtherFunctions->Build = Build_M_F_DD_Transiente;
+			FemOtherFunctions->Build = Build_M_F_NMV_Transiente;
 			*Predictor = Predictor_New_BDF;
 		}
 		else if (strcasecmp(Parameters->TimeIntegration,"Predictor2_TRBDF2")==0){		
-			FemOtherFunctions->Build = Build_M_F_DD_Transiente;
+			FemOtherFunctions->Build = Build_M_F_NMV_Transiente;
 			*Predictor = Predictor_New_TRBDF2;
 		}
 		else{
@@ -61,11 +62,32 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 			exit(1);
 		}
 		
-		if (strcasecmp(Parameters->ShockCapture,"CAUDD")==0){
-			FemFunctions->ShockCapture = Delta_DD;
+		if (strcasecmp(Parameters->ShockCapture,"CAUNMV")==0){
+
+			if (strcasecmp(Parameters->StabilizationForm,"NMV1")==0)
+			{
+				FemFunctions->ShockCapture = Delta_CAU_NMV;
+				FemFunctions->ShockCapture_Micro = Delta_CAU_NMV;
+			}
+			else if (strcasecmp(Parameters->StabilizationForm,"NMV2")==0)
+			{
+				FemFunctions->ShockCapture = Delta_CAU_NMV;
+				FemFunctions->ShockCapture_Micro = Delta_CAU_NMV;
+			}
 		}
 		else if (strcasecmp(Parameters->ShockCapture,"YZBeta")==0){
-			FemFunctions->ShockCapture = Delta_YZBeta;
+		
+			if (strcasecmp(Parameters->StabilizationForm,"NMV1")==0)
+			{
+				FemFunctions->ShockCapture = Delta_YZBeta;
+				FemFunctions->ShockCapture_Micro = Delta_YZBeta;
+			}
+			else if (strcasecmp(Parameters->StabilizationForm,"NMV2")==0)
+			{
+				FemFunctions->ShockCapture = Delta_YZBeta;
+				FemFunctions->ShockCapture_Micro = Delta_YZBetaNMV;
+			}
+
 		}	
 		else{
 			printf("Shock capture is not defined correctly!\n");

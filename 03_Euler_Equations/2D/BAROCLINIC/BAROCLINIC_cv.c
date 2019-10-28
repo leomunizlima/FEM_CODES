@@ -1,6 +1,6 @@
 #include "baroclinic.h"
 
-double BAROCLINIC_cv(double x, double y)
+double BAROCLINIC_cv(ParametersType *Parameters,  double x, double y)
 {
 	// calor específico
 	double cv;

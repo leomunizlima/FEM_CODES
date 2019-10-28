@@ -1,60 +1,97 @@
 #include "EulerEquations.h"
 
-void rotation(int tag, double theta, double M[12][12], double F[12])
+void rotation(int tag, double theta, double M[12][12], double K[12][12])
 {
-	int I, J, K;
-	double cs = cos(theta);
-	double sn = sin(theta);
-	double b,c,e,f,g,h,i,j,k,l,n,o;
-
-	for (K=0; K<3; K++){
-		I=tag*NDOF;
-		J=K*NDOF;
-		b = M[I][J+1];
-		c = M[I][J+2];
-		e = M[I+1][J];
-		f = M[I+1][J+1];
-		g = M[I+1][J+2];
-		h = M[I+1][J+3];
-		i = M[I+2][J];
-		j = M[I+2][J+1];
-		k = M[I+2][J+2];
-		l = M[I+2][J+3];
-		n = M[I+3][J+1];
-		o = M[I+3][J+2];
-		M[I][J+1] = b*cs - c*sn;
-		M[I][J+2] = b*sn + c*cs;
-		M[I+1][J] = e*cs - i*sn;
-		M[I+1][J+1] = cs*(f*cs - j*sn) - sn*(g*cs - k*sn);
-		M[I+1][J+2] = cs*(g*cs - k*sn) + sn*(f*cs - j*sn);
-		M[I+1][J+3] = h*cs - l*sn;
-		M[I+2][J] = e*sn + i*cs;
-		M[I+2][J+1] = cs*(f*sn + j*cs) - sn*(g*sn + k*cs);
-		M[I+2][J+2] = cs*(g*sn + k*cs) + sn*(f*sn + j*cs);
-		M[I+2][J+3] = h*sn + l*cs;
-		M[I+3][J+1] = n*cs - o*sn;
-		M[I+3][J+2] = n*sn + o*cs;
-	}
+	int I, J, k, cont1, cont2;
+	double sum1, sum2, R[12][12], RT[12][12];
 	
-	b = F[I+1];
-	c = F[I+2];
-	F[I+1] = b*cs - c*sn;
-	F[I+2] = b*sn + c*cs;
+	cont1 = 4*tag-4;
+	cont2 = 4*tag;
+	
+	R[cont1+0][cont1+0] = 1.0;
+	R[cont1+0][cont1+1] = 0.0;
+	R[cont1+0][cont1+2] = 0.0;
+	R[cont1+0][cont1+3] = 0.0;
 
-/* Pt*Ke*P =
-[        a,                     b*x - c*y,                     b*y + c*x,         d],
-[e*x - i*y, x*(f*x - j*y) - y*(g*x - k*y), x*(g*x - k*y) + y*(f*x - j*y), h*x - l*y],
-[e*y + i*x, x*(f*y + j*x) - y*(g*y + k*x), x*(g*y + k*x) + y*(f*y + j*x), h*y + l*x],
-[        m,                     n*x - o*y,                     n*y + o*x,         p]])
+	R[cont1+1][cont1+0] = 0.0;
+	R[cont1+1][cont1+1] = cos(theta);
+	R[cont1+1][cont1+2] = -sin(theta);
+	R[cont1+1][cont1+3] = 0.0;
 
+	R[cont1+2][cont1+0] = 0.0;
+	R[cont1+2][cont1+1] = sin(theta);
+	R[cont1+2][cont1+2] = cos(theta);
+	R[cont1+2][cont1+3] = 0.0;
 
-Pt*F =
-[        a],
-[b*x - c*y],
-[b*y + c*x],
-[        d]])*/
+	R[cont1+3][cont1+0] = 0.0;
+	R[cont1+3][cont1+1] = 0.0;
+	R[cont1+3][cont1+2] = 0.0;
+	R[cont1+3][cont1+3] = 1.0;
+	
+	//TRANSPOSTA
+	RT[cont1+0][cont1+0] = 1.0;
+	RT[cont1+0][cont1+1] = 0.0;
+	RT[cont1+0][cont1+2] = 0.0;
+	RT[cont1+0][cont1+3] = 0.0;
 
+	RT[cont1+1][cont1+0] = 0.0;
+	RT[cont1+1][cont1+1] = cos(theta);
+	RT[cont1+1][cont1+2] = sin(theta);
+	RT[cont1+1][cont1+3] = 0.0;
 
+	RT[cont1+2][cont1+0] = 0.0;
+	RT[cont1+2][cont1+1] = -sin(theta);
+	RT[cont1+2][cont1+2] = cos(theta);
+	RT[cont1+2][cont1+3] = 0.0;
+
+	RT[cont1+3][cont1+0] = 0.0;
+	RT[cont1+3][cont1+1] = 0.0;
+	RT[cont1+3][cont1+2] = 0.0;
+	RT[cont1+3][cont1+3] = 1.0;
+
+	//A*R
+	for(I=0; I<12 ;I++)
+		for(J=cont1; J<cont2; J++){
+			sum1 = 0.0;
+			sum2 = 0.0;
+			for(k=cont1; k<cont2; k++){
+				sum1 +=M[I][k]*R[k][J]; 	
+				sum2 +=K[I][k]*R[k][J];
+			}
+			M[I][J] = sum1;
+			K[I][J] = sum2;
+		}
+	//RT*A
+	for(I=cont1; I<cont2; I++)
+		for(J=0; J<12 ;J++){
+			sum1 = 0.0;
+			sum2 = 0.0;
+			for(k=cont1; k<cont2; k++){
+				sum1 +=RT[I][k]*M[k][J]; 	
+				sum2 +=RT[I][k]*K[k][J];
+			}
+			M[I][J] = sum1;
+			K[I][J] = sum2;
+		}
+	/*
+	for(I=0; I<12 ;I++)
+		for(J=cont1; J<cont2; J++){
+			sum1 = 0.0;
+			sum2 = 0.0;
+			for(k=0; k<12; k++){
+				sum1 +=RT[I][k]*M[k][J]; 	
+				sum2 +=RT[I][k]*K[k][J];
+			}
+			M[I][J] = sum1;
+			K[I][J] = sum2;
+		}
+	*/
+	//for(I=0; I<12 ;I++){
+	//	sum1 = 0.0;
+	//	for(k=0; k<12; k++)
+	//		sum1 += RT[I][k]*RES[k];			
+	//	RES[I] = sum1;		
+	//}
 	return;	
 
 }

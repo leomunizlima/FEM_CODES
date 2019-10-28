@@ -59,7 +59,7 @@ int Preprocess(int narg, char **arguments, ParametersType **Parameters_out, Matr
 	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->Alpha, label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->DeltaT, label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->FinalTime, label);
-	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Dimensionless, label);
+	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->Preconditioned, label);
 	tag = fscanf(InFile, "%lf\t:%[^\n]", &Parameters->Mach, label);
 	tag = fscanf(InFile, "%d\t:%[^\n]", &Parameters->NonLinearMaxIter, label);
 	tag = fscanf(InFile, "%s\t:%[^\n]", Parameters->StopMulticorrection, label);

@@ -15,7 +15,6 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	nel = Parameters->nel;
 	double theta;	//my alteration
 
-	
 	rho = (double*) mycalloc("rho of 'Paraview_Output'", nnodes, sizeof(double));
 	v1 = (double*) mycalloc("v1 of 'Paraview_Output'", nnodes, sizeof(double));
 	v2 = (double*) mycalloc("v2 of 'Paraview_Output'", nnodes, sizeof(double));
@@ -28,16 +27,15 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		eq2 = Node[I].id[1];
 		eq3 = Node[I].id[2];
 		eq4 = Node[I].id[3];
-		X = Node[I].x;	
-		Y = Node[I].y;	
-		cv = FemFunctions->cv(X, Y);
+		X = Node[I].x;
+		Y = Node[I].y;
+		cv = FemFunctions->cv(Parameters, X, Y);
 		gamma = FemFunctions->gamma(X, Y);
 
 		if (eq1 >= 0)
 			rho[I] = U[eq1];
 		else
 			rho[I] = FemFunctions->rhopresc(X, Y);
-
 		if (eq2 >= 0)
 			if(Node[I].v1Type < 0){				//my alteration
 				theta = FemFunctions->BC_theta(X,Y);
@@ -60,14 +58,13 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		if (eq4 >= 0)
 			e[I] = U[eq4];
 		else
-			e[I] = FemFunctions->epresc(X, Y);
+			e[I] = FemFunctions->epresc(Parameters, X, Y);
 
 		aux = e[I] - (v1[I]*v1[I] + v2[I]*v2[I])/(2.0*rho[I]);
 		temp[I] = aux/(rho[I]*cv);
 		pres[I] = (gamma - 1)*aux;
 	}
-	sprintf(FileName,"../../../../OUTPUT_DATA/%s_%s_%s_%s_%s_%s_N%d_E%d.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
-			Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_%d_%d.dat", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->Preconditioned, Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 
 	fprintf(OutFile,"<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
@@ -102,7 +99,7 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 	fprintf(OutFile,"\t\t\t\t<DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
 	for (I = 0; I < nnodes; I++)
 		fprintf(OutFile,"\t\t\t\t   %.12lf\t%.12lf\t%.12lf\n", Node[I].x,Node[I].y, 0.0);
-		
+
 	fprintf(OutFile,"\t\t\t\t</DataArray>\n");
 	fprintf(OutFile,"\t\t\t</Points>\n");
 	fprintf(OutFile,"\t\t\t<Cells>\n");
@@ -131,13 +128,13 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 
 	fclose(OutFile);
 
-	free(rho); 
+	free(rho);
 	free(v1);
 	free(v2);
-	free(e); 
+	free(e);
 	free(temp);
 	free(pres);
-		
+
 	return 0;
 }
 

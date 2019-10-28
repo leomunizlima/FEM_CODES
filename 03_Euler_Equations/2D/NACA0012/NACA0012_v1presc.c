@@ -3,7 +3,7 @@
 double NACA0012_v1presc(double x, double y){
 	double v1;
 	
-	if ( ( fabs(x) <= 1e-15 && fabs(y) <= 1e-15 ) || ( fabs(x - 1.0) <= 1e-15 && fabs(y) <= 1e-15 ) ){
+	if ( fabs(x) <= 1e-15 && fabs(y) <= 1e-15 ) {// || ( fabs(x - 1.0) <= 1e-4 && fabs(y) <= 1e-2 ) ){
 		v1 = 0.0;
 	}else{
 		v1 = 1.0;

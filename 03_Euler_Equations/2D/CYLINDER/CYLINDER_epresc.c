@@ -1,10 +1,14 @@
 #include "cylinder.h"
 
-double CYLINDER_epresc(double x, double y)
+double CYLINDER_epresc(ParametersType *Parameters, double x, double y)
 {
-	double e;
+	double e, cv;
 	
-	e = 0.9464;//7.64286; // rho * e, para c_v = 7.14286
+	cv = CYLINDER_cv(Parameters,x,y);
+
+	e = cv + 0.5;
+	
+	e = 12.8664424218441;//7.64286; // rho * e = 12.8664424218441, para definir Mach = 0.38
 	
 	return e;
 }

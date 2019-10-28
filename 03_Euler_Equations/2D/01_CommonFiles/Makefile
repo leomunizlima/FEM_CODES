@@ -1,8 +1,8 @@
 CC=gcc
-#'CC=tau_cc.sh
+#CC=tau_cc.sh
 IDIR=
-CFLAGS= -DEulerEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native
-GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall -Ofast -march=native
+CFLAGS= -DEulerEquations2D -Ddebug -c -lm -lrt -Wall -Ofast -march=native -Wno-strict-overflow
+GCFLAGS= -DEulerEquations2D -Ddebug -lm -lrt -Wall -Ofast -march=native -Wno-strict-overflow
 LDFLAGS=
 SOURCES= main.c \
 Preprocess.c \
@@ -18,15 +18,15 @@ setStabilizationForm.c \
 setzeros.c \
 setPreconditioner.c \
 setScaling.c \
-setDimensionlessness.c \
+setLocalPreconditioning.c \
 ebe_assembly.c \
 ede_Initialization.c \
 ede_assembly.c \
 csr_Initialization.c \
 csr_assembly.c \
 Build_M_K_F_SUPG.c \
-Build_M_K_F_DD_Transiente.c \
-Build_M_F_DD_Transiente.c \
+Build_M_K_F_NMV_Transiente.c \
+Build_M_F_NMV_Transiente.c \
 eval_U_dU.c \
 Ax_Ay_calculations.c \
 no_penetrability.c \
@@ -34,7 +34,7 @@ NO_BC_no_penetrability.c \
 BC_General_theta.c \
 set_BC_no_penetrability.c \
 Delta_CAU.c \
-Delta_DD.c \
+Delta_CAU_NMV.c \
 Delta_YZBeta.c \
 Delta_YZBetaNMV.c \
 Paraview_Output.c \
@@ -44,6 +44,7 @@ Paraview_Output_3D_DeltaT.c \
 calculate_DaB.c \
 uB_InitialSolution.c \
 rotation.c \
+rotationNMV.c \
 ../EXPLOSION/EXPLOSION_InitialSolution.c \
 ../EXPLOSION/EXPLOSION_gamma.c \
 ../EXPLOSION/EXPLOSION_cv.c \
@@ -88,6 +89,15 @@ rotation.c \
 ../NACA0012/NACA0012_epresc.c \
 ../NACA0012/NACA0012_BC_no_penetrability.c \
 ../NACA0012/NACA0012_theta.c \
+../NACA1512/NACA1512_InitialSolution.c \
+../NACA1512/NACA1512_gamma.c \
+../NACA1512/NACA1512_cv.c \
+../NACA1512/NACA1512_rhopresc.c \
+../NACA1512/NACA1512_v1presc.c \
+../NACA1512/NACA1512_v2presc.c \
+../NACA1512/NACA1512_epresc.c \
+../NACA1512/NACA1512_BC_no_penetrability.c \
+../NACA1512/NACA1512_theta.c \
 ../CYLINDER/CYLINDER_InitialSolution.c \
 ../CYLINDER/CYLINDER_gamma.c \
 ../CYLINDER/CYLINDER_cv.c \
@@ -160,7 +170,7 @@ rotation.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_New_TRBDF2.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old_TRBDF2.c \
 
-#Build_M_K_F_DD_Estatico.c \
+
 #Delta_SHOC1.c \
 #Delta_SHOC2.c \
 #Delta_SHOC3.c \
@@ -174,8 +184,8 @@ EXECUTABLE=EulerEquations2D
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CFLAGS= -DEulerEquations2D -g -Ddebug -c -lm -lrt -Wall
-debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -lm -lrt -Wall ../../../00_CommonFiles/Reordering/hsl_mc73/hsl_mc73d.o 
+debug: CFLAGS= -DEulerEquations2D -g -Ddebug -c -lm -lrt -Wall 
+debug: GCFLAGS= -DEulerEquations2D -g -Ddebug -lm -lrt -Wall  
 debug: all
 
 gprof: CFLAGS+=-pg

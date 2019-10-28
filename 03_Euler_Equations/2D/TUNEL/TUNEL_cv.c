@@ -1,6 +1,6 @@
 #include "tunel.h"
 
-double TUNEL_cv(double x, double y)
+double TUNEL_cv(ParametersType *Parameters, double x, double y)
 {
 	// calor específico
 	double cv;

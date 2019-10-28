@@ -1,6 +1,6 @@
 #include "sod.h"
 
-double SOD_epresc(double x, double y)
+double SOD_epresc(ParametersType *Parameters, double x, double y)
 {
 	double e;
 	

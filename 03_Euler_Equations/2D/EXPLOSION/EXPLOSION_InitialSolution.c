@@ -18,7 +18,7 @@ int EXPLOSION_InitialSolution(ParametersType *Parameters, NodeType *Node, double
 		I4 = Node[I].id[3];
 
 		//Sphere in 
-		if ((x-1)*(x-1) + (y-1)*(y-1)< 0.16){//<0.14
+		if ((x-1)*(x-1) + (y-1)*(y-1)<= 0.16 + 1e-6){//if ((x-1)*(x-1) + (y-1)*(y-1)<= 0.16 + 1e-5){
 			if (I1 >= 0)
 				u[I1] = 1.0; 
 			if (I2 >= 0)

@@ -4,7 +4,7 @@
 int uB_InitialSolution(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *u, double *uB)
 {
 	int i, e, nel, eNDOF, J1, J2, J3;
-	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21, twoArea, Area, gamma, deltaNMV, tolerance;
+	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21, twoArea, Area, gamma, cv, deltaNMV, tolerance;
 	double third = 1.0/3.0, ninefortieth = 9./40.;
 	double Ue[12], dUe[12], Ub[4], dUb[4], gradUx[4], gradUy[4];
 	double FB[4]={0.,0.,0.,0.};
@@ -34,6 +34,7 @@ int uB_InitialSolution(ParametersType *Parameters, FemStructsType *FemStructs, F
 		y3 = Node[J3].y;
 		
 		gamma = FemFunctions->gamma(third*(x1+x2+x3), third*(y1+y2+y3));
+		cv = FemFunctions->cv(Parameters, third*(x1+x2+x3), third*(y1+y2+y3));
 
 		y23 = y2 - y3;
 		y31 = y3 - y1;
@@ -103,8 +104,9 @@ int uB_InitialSolution(ParametersType *Parameters, FemStructsType *FemStructs, F
 		// *** Jacobian matrices Ax and Ay calculations
 		double Ax[4][4];
 		double Ay[4][4];
-	
-		FemFunctions->Ax_Ay_calculations(gamma,Parameters->Mach,Ub, Ax, Ay);
+		double Dpmax=0;		
+
+		FemFunctions->Ax_Ay_calculations(cv,gamma,Parameters->Mach,Ub, Ax, Ay, Dpmax);
 
 		/*---------------------------------------------ALTERACAO Y^-1)-------------------------------------------------------*/
 		double A0[4][4];		

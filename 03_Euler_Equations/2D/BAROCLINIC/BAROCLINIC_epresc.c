@@ -1,6 +1,6 @@
 #include "baroclinic.h"
 
-double BAROCLINIC_epresc(double x, double y)
+double BAROCLINIC_epresc(ParametersType *Paramenters, double x, double y)
 {
 	double gamma = 1.4, p0 = 1.0, epsilon = 0.05, rho0 = 1.0, rho1 = 0.001, rho2 = 1.8;
 	double rho, p1, p, Phiy, epsilon2, U4, v1, u0;

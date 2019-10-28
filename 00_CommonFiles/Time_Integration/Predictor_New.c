@@ -8,6 +8,7 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	double t, dt, alpha, norm_a, norm_Da, tol_correction;
 	double *a, *aB, *auxVec, *Da, *DaB, *u, *u_old, **R2, *R2aux, *invN2, **M2, *M2aux, *F; //Parametros do Preditor
 	double *uB, *delta_old, *delta_old_NMV;
+	double **R1, *R1aux;
 	AuxBuildStructuresType *AuxBuild;
 	
 	nel = Parameters->nel;
@@ -23,6 +24,10 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	R2aux = (double *) mycalloc("R2aux of 'Preditor_New'", NDOF*nel, sizeof(double));
 	for (I = 0; I < nel;I++)
 		R2[I] = &R2aux[NDOF*I]; 
+	R1 = (double**) mycalloc("R1 of 'Preditor_New'", nel, sizeof(double));
+	R1aux = (double *) mycalloc("R1aux of 'Preditor_New'", 12*nel, sizeof(double));
+	for (I = 0; I < nel;I++)
+		R1[I] = &R1aux[12*I];
 	invN2 = (double*) mycalloc("invN2 of 'Preditor_New'", nel, sizeof(double));
 	M2 = (double **) mycalloc("M2 of 'Preditor_New'", nel, sizeof(double*));
 	M2aux = (double *) mycalloc("M2aux of 'Preditor_New'", NNOEL*NDOF*NDOF*nel, sizeof(double));
@@ -42,6 +47,7 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	AuxBuild = (AuxBuildStructuresType*) mycalloc("AuxBuild of 'Predictor_New'",1,sizeof(AuxBuildStructuresType));
 	AuxBuild->tolerance = Parameters->StabilizationTolerance;
 	AuxBuild->M2 = M2;
+	AuxBuild->R1 = R1;
 	AuxBuild->R2 = R2;
 	AuxBuild->invN2 = invN2;
 	AuxBuild->delta_old_NMV = delta_old_NMV;
@@ -52,7 +58,7 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	FemStructs->duB = aB;
 
 	FemFunctions->InitialSolution(Parameters, FemStructs->Node, u);
-	uB_InitialSolution(Parameters, FemStructs, FemFunctions, u, uB);
+	//uB_InitialSolution(Parameters, FemStructs, FemFunctions, u, uB);
 	
 	t = 0.0;
 	passo = 0;
@@ -125,6 +131,8 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 	free(M2);
 	free(R2aux);
 	free(R2);
+	free(R1aux);
+	free(R1);
 	free(invN2);
 	free(delta_old_NMV);
 	free(AuxBuild);

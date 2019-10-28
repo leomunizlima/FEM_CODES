@@ -74,6 +74,10 @@ void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctio
 		if (Node[I].id[2] >= 0){
 			U[4*I+2] = u[Node[I].id[2]];
 			dU[4*I+2] = du[Node[I].id[2]];
+		} //else if para impor zero na componente vertical
+		else if(Node[I].v1Type < 0){
+			U[4*I+2] = 0.0;//FemFunctions->v2presc(x, y);
+			dU[4*I+2] = 0.0;
 		}
 		else{
 			U[4*I+2] = FemFunctions->v2presc(x, y);
@@ -86,7 +90,7 @@ void eval_U_dU(ParametersType *Parameters,FemStructsType *FemStructs, FemFunctio
 			dU[4*I+3] = du[Node[I].id[3]];
 		}
 		else{
-			U[4*I+3] = FemFunctions->epresc(x, y);
+			U[4*I+3] = FemFunctions->epresc(Parameters, x, y);
 			dU[4*I+3] = 0.0;
 		}
 

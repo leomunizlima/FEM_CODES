@@ -13,7 +13,7 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double delta, psi;
 	double tau, tau_a, tau_d, tau_t;
 	double *U, *dU;
-	double gamma;
+	double gamma, cv;
 	double Me[12][12], Ke[12][12], Ub[4], dUb[4], Ue[12], dUe[12], gradUx[4], gradUy[4];
 	double tolerance;
 	double alpha = Parameters->Alpha_Build;
@@ -52,6 +52,7 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		y3 = Node[J3].y;
 	
 		gamma = FemFunctions->gamma(third*(x1+x2+x3), third*(y1+y2+y3));
+		cv = FemFunctions->cv(Parameters, third*(x1+x2+x3), third*(y1+y2+y3));
 
 		y23 = y2 - y3;
 		y31 = y3 - y1;
@@ -124,8 +125,9 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		// *** Jacobian matrices Ax and Ay calculations
 		double Ax[4][4];
 		double Ay[4][4];
+		double Dpmax=0;
 	
-		FemFunctions->Ax_Ay_calculations(gamma,Parameters->Mach,Ub, Ax, Ay);
+		FemFunctions->Ax_Ay_calculations(cv,gamma,Parameters->Mach,Ub, Ax, Ay,Dpmax);
 
 		// *** Inversa da Metrica Riemmaniana A0^(-1)
 		double rho_i = Ub[3] - ((norma_U23 * 0.5) / Ub[0]); 
@@ -1025,36 +1027,34 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Ke[11][10] = Kg411 - (Kpg123  + Kpg127);
 		Ke[11][11] = Kg412 - (Kpg124  + Kpg128) - (Kcau13 + Kcau23); 
 
-		//*****************************************
+		//Fill local Ae and Re and Global R		
+		//******************** ROTATION **************************		
+		double theta1, theta2, theta3;
+		if (Node[J1].v1Type < 0){
+			theta1 = FemFunctions->BC_theta(x1,y1);
+			rotation(1,theta1,Me,Ke);
+		}
+		if (Node[J2].v1Type < 0){
+			theta2 = FemFunctions->BC_theta(x2,y2);
+			rotation(2,theta2,Me,Ke);
+		}
+		if (Node[J3].v1Type < 0){
+			theta3 = FemFunctions->BC_theta(x3,y3);
+			rotation(3,theta3,Me,Ke);
+		}
 
-		//Fill local Ae and Re and Global R
 		double Re[12], MedUe[12], KeUe[12], Ae[12][12];
 		
 		for (i=0; i<12; i++){
 			MedUe[i] = 0;
 			KeUe[i] = 0;
 			for (j=0; j<12; j++){
-				MedUe[i] += Me[i][j]*dUe[j];
+				MedUe[i] += Me[i][j]*dUe[j];			
 				KeUe[i] += Ke[i][j]*Ue[j];
 				Ae[i][j] = Me[i][j] + alpha*delta_t*Ke[i][j];
 			}
-			Re[i] = - MedUe[i] - KeUe[i];
-		}
-
-		double theta1, theta2, theta3;
-		if (Node[J1].v1Type == -1){
-			theta1 = FemFunctions->BC_theta(x1,y1);
-			rotation(0,theta1,Ae,Re);
-		}
-		if (Node[J2].v1Type == -1){
-			theta2=FemFunctions->BC_theta(x2,y2);
-			rotation(1,theta2,Ae,Re);
-		}
-		if (Node[J3].v1Type == -1){
-			theta3=FemFunctions->BC_theta(x3,y3);
-			rotation(2,theta3,Ae,Re);
-		}
-
+			Re[i] = - MedUe[i] - KeUe[i];	
+		}			
 
 		for (i=0; i<12; i++)
 			R[lm[e][i]] += Re[i];

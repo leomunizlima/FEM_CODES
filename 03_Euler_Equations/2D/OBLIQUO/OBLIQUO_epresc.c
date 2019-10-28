@@ -1,6 +1,6 @@
 #include "obliquo.h"
 
-double OBLIQUO_epresc(double x, double y)
+double OBLIQUO_epresc(ParametersType *Parameters, double x, double y)
 {
 	double e;
 	

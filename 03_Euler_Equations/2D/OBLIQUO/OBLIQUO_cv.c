@@ -1,6 +1,6 @@
 #include "obliquo.h"
 
-double OBLIQUO_cv(double x, double y)
+double OBLIQUO_cv(ParametersType *Parameters, double x, double y)
 {
 	// calor específico
 	double cv;

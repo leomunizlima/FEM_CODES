@@ -12,7 +12,7 @@ int Process(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsTy
 	setPreconditioner(Parameters, FemFunctions);
 	setScaling(Parameters, FemFunctions);
 	setStabilizationForm(Parameters, FemFunctions, FemOtherFunctions, &Predictor);
-	setDimensionlessness(Parameters, FemFunctions);
+	setLocalPreconditioning(Parameters, FemFunctions);
 	set_BC_no_penetrability(Parameters, FemFunctions);
 	setStopCriteria(Parameters, FemFunctions);
 	Predictor(Parameters, MatrixData, FemStructs, FemFunctions, FemOtherFunctions);

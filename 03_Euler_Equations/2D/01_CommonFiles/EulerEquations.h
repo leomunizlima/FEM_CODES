@@ -47,12 +47,13 @@ typedef struct
 	char MatrixVectorProductScheme[200];   // the global matrix storage form
 	char StabilizationForm[200];           // type of stabilization method
 	char ShockCapture[200];            // type discontinuities capture Operator
+	char ShockCapture_Micro[200];            // type discontinuities capture Operator in Micro Scale
 	char Preconditioner[200];           // preconditioners: yes - use or not - don't use
 	char Scaling[200];
 	char Experiments[200];
 	char StopMulticorrection[200];         // Fala se o loop espacial para pela norma ou por um numero fixo de iteracao - NORM: para pela norma; ITERATION: para pela iteracao
 	char reordering[200];			// Reordering for CSR (NOT, Spectral, Weigthed Spectral (WSO) or RCM)
-	char Dimensionless[200];		// Determines whether or not a problem is dimensionless
+	char Preconditioned[200];		// Determines whether or not a problem is dimensionless
 	char StopAtSteadyState[200];		// YES or NO if you want to stop in steady state or final time
 	double SolverTolerance;                // tolerance for the solution method
 	double NonLinearTolerance;            // tolerance for the loop of correction
@@ -109,7 +110,7 @@ typedef struct
 }MatrixDataType;
 
 typedef struct{
-	double **M2, **R2, *invN2, *delta_old_NMV;	
+	double **M2, **R1, **R2, *invN2, *delta_old_NMV;	
 	double tolerance;
 }AuxBuildStructuresType;
 
@@ -134,16 +135,18 @@ typedef struct
 typedef struct
 {
 	double (*gamma)(double, double);
-	double (*cv)(double, double);
+	double (*cv)(ParametersType *, double, double);
 	double (*rhopresc)(double, double);
 	double (*v1presc)(double, double);
 	double (*v2presc)(double, double);
-	double (*epresc)(double, double);
+	double (*epresc)(ParametersType *,double, double);
 	int (*InitialSolution)(ParametersType *, NodeType *, double *);
 
 	double (*ShockCapture)(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 					double *, double, double, double, double, double, double, double, int, double *, double*);
-	void (*Ax_Ay_calculations)(double, double, double [4], double [4][4], double [4][4]);
+	double (*ShockCapture_Micro)(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+					double *, double, double, double, double, double, double, double, int, double *, double*);
+	void (*Ax_Ay_calculations)(double, double, double, double [4], double [4][4], double [4][4], double);
 	double (*BC_theta)(double, double);
 	void (*BC_no_penetrability)(int , int, int, NodeType *, double, double, double, double, double, double,
 					    double, double, double, double, double [4][4], double [4][4], double [12][12], double [12][4],
@@ -195,13 +198,16 @@ int setzeros(ParametersType *, MatrixDataType *);
 double Delta_CAU(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 				double *, double, double, double, double, double, double, double, int, double *, double*);
 				
+double Delta_CAU_NMV(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+				double *, double, double, double, double, double, double, double, int, double *, double*);
+
 double Delta_YZBeta(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
 double Delta_YZBetaNMV(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
-double Delta_DD(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+double Delta_NMV(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
 void NO_BC_no_penetrability(int, int, int, NodeType *, double, double, double, double, double, double, double, double, double, double, 
@@ -234,15 +240,20 @@ void ede_List_insertA(NodeListType **, int, int, int *);
 
 int Build_M_K_F_SUPG(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
-int Build_M_K_F_DD_Transiente(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
+int Build_M_K_F_NMV_Transiente(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
-int Build_M_F_DD_Transiente(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
+int Build_M_F_NMV_Transiente(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
 void eval_U_dU(ParametersType *,FemStructsType *, FemFunctionsType *, double *,double *);
 
-void dimensionless_Ax_Ay_calculations(double gamma, double Mach, double Ub[4], double Ax[4][4], double Ay[4][4]);
 
-void dimensional_Ax_Ay_calculations(double gamma, double Mach, double Ub[4], double Ax[4][4], double Ay[4][4]);
+void VLR_Preconditioner_Ax_Ay_calculations(double cv, double gamma, double Mach, double Ub[4], double Ax[4][4], double Ay[4][4], double Dpmax);
+
+void WSCM_Preconditioner_Ax_Ay_calculations(double cv, double gamma, double Mach, double Ub[4], double Ax[4][4], double Ay[4][4], double Dpmax);
+
+void NPreconditioned_Ax_Ay_calculations(double cv, double gamma, double Mach, double Ub[4], double Ax[4][4], double Ay[4][4], double Dpmax);
+
+void setLocalPreconditioning(ParametersType *, FemFunctionsType *);
 
 void setDimensionlessness(ParametersType *, FemFunctionsType *);
 
@@ -272,7 +283,13 @@ void BC_theta_OK(int, int, int, NodeType *, double [3], double (*BC_theta)(doubl
 
 void BC_theta_NO(int, int, int, NodeType *, double [3], double (*BC_theta)(double, double));
 
-void rotation(int tag, double theta, double M[12][12], double F[12]);
+void rotation(int tag, double theta, double M[12][12], double K[12][12]);
+
+void rotationNMV(int tag, double theta, double Me[12][12], double Mhh[12][12], double Khh[12][12], double N1[12][4], double KhB[12][4], double MBh[4][12], double KBh[4][12]);
+
+void rotationNMV_BDF(int tag, double theta, double Me[12][12], double Mbdf[12][12], double Ne[12][4], double MBh[4][12], double K2[4][12]); 
+
+void rotationFe(int tag, double theta, double RES[12]);
 
 #endif
 

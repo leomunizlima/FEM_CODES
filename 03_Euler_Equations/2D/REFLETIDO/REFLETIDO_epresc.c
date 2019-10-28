@@ -1,6 +1,6 @@
 #include "refletido.h"
 
-double REFLETIDO_epresc(double x, double y){
+double REFLETIDO_epresc(ParametersType *Parameters, double x, double y){
 	double e;
 	
 	if(fabs(x)<=1e-15) //rho*e - esquerda

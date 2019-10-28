@@ -1,6 +1,6 @@
 #include "refletido.h"
 
-double REFLETIDO_cv(double x, double y){
+double REFLETIDO_cv(ParametersType *Parameters, double x, double y){
 	// calor específico
 	double cv;
 	
