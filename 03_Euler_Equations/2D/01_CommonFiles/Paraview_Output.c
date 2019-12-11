@@ -64,7 +64,7 @@ int Paraview_Output(ParametersType *Parameters, FemStructsType *FemStructs, FemF
 		temp[I] = aux/(rho[I]*cv);
 		pres[I] = (gamma - 1)*aux;
 	}
-	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_%d_%d.dat", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->Preconditioned, Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_%d_%d.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->Preconditioned, Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
 	OutFile = myfopen(FileName,"w");
 
 	fprintf(OutFile,"<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
