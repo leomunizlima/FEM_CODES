@@ -15,7 +15,6 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	double *U, *dU;
 	double gamma, cv;
 	double Me[12][12], Ke[12][12], Ub[4], dUb[4], Ue[12], dUe[12], gradUx[4], gradUy[4];
-	double tolerance;
 	double alpha = Parameters->Alpha_Build;
 	double delta_t = Parameters->DeltaT_Build;
 	double *R = FemStructs->F;
@@ -25,7 +24,6 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 	
-	tolerance = FemStructs->AuxBuild->tolerance;
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
@@ -239,7 +237,7 @@ int Build_M_K_F_SUPG(ParametersType *Parameters, MatrixDataType *MatrixData, Fem
 		Ayy44 = Ay[3][2]*Ay[2][3] + Ay[3][3]*Ay[3][3];
 
 		//  OPERADOR DE CAPTURA DE DESCONTINUIDADES
-		delta = FemFunctions->ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21,
+		delta = FemFunctions->ShockCapture(Parameters, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21,
 											twoArea, e, Parameters->invY, Ub);
 
 		// *** Calculo do parametro de estabilizacao (tau) do SUPG            

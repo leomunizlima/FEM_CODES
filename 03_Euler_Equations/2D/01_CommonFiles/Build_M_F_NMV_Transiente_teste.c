@@ -218,7 +218,7 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, double *delta_old, doub
 
 		*/
 		double A0[4][4];		
-		delta = ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub); 
+		delta = ShockCapture(Parameters, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub); 
 
 
 		//------------------------------------------------------------------------------
@@ -484,7 +484,7 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, double *delta_old, doub
 		KBh412 = ninefortieth * Kc44;
 		
 
-		delta = Delta_YZBetaNMV(tolerance, delta_old_NMV, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
+		delta = Delta_YZBetaNMV(Parameters, delta_old_NMV, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
 		
 		// *** Matriz de Rigidez KBB 4x4
 		double KBB;

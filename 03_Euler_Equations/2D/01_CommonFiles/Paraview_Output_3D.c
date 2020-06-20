@@ -65,6 +65,7 @@ int Paraview_Output_3D(ParametersType *Parameters, FemStructsType *FemStructs, F
 		pres[I] = (gamma - 1)*aux;
 	}
 	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_%d_%d_3D.vtu", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->Preconditioned, Parameters->TimeIntegration,Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
+	
 	OutFile = myfopen(FileName,"w");
 
 	fprintf(OutFile,"<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");

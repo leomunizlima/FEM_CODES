@@ -1,11 +1,12 @@
 #include "EulerEquations.h"
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
-double Delta_YZBeta(ParametersType *Parameters, double *delta_old, double *gradUx, double *gradUy, double (*Ax)[4], double (*Ay)[4], double (*A0)[4], 
+double Delta_YZBetaNMV2(ParametersType *Parameters, double *delta_old, double *gradUx, double *gradUy, double (*Ax)[4], double (*Ay)[4], double (*A0)[4], 
 				double *dUb, double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, int e, double *invY, double *Ub)
 {
 	double *AxgradUx, *AygradUy, *Z, norm_YZ, norm_YdUx, norm_YdUy, sum_norm_YdU, norm_YU, delta1, delta2, delta;
 	double J1, J2, norm_gradRHO, Hyzbeta, aux_sum_norm_YdU, aux_Hyzbeta, aux_norm_YU;
+	double M = Parameters->Mach; 
 	int i;
 
 	AxgradUx = (double*) mycalloc("AxgradUx of 'Delta_YZBeta'", 4, sizeof(double));
@@ -92,8 +93,23 @@ double Delta_YZBeta(ParametersType *Parameters, double *delta_old, double *gradU
 	aux_Hyzbeta = Hyzbeta*0.5*Hyzbeta*0.5;
 	delta2 = norm_YZ*aux_sum_norm_YdU*aux_norm_YU*aux_Hyzbeta;
 
-	delta = 0.5*(delta1 + delta2);
-	
+	/*
+	if (M>2.0)
+		delta = 0.25*M*(delta1 + delta2);
+	else
+		delta = 0.5*(delta1 + delta2);
+	*/
+
+	double aux_delta, w = 0.5;	
+	if (M>2.0)
+		aux_delta = 0.25*M*(delta1 + delta2);
+	else
+		aux_delta = 0.5*(delta1 + delta2);
+
+	//aux_delta = w*(delta1 + delta2); 
+	delta = w*(aux_delta) + (1 - w)*delta_old[e];
+	delta_old[e] = delta;
+	 
 	
 	free(AxgradUx);
 	free(AygradUy);

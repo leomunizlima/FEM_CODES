@@ -12,8 +12,7 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 	double Ub[4], Ue[12], dUb[4], dUe[12], *U, *dU;
 	double delta, gamma, cv;
 	double gradUx[4], gradUy[4];
-	double Me[12][12], Ke[12][12], Ne[12][12], N[12], uBaux[4];
-	double tolerance;
+	double Me[12][12], Ke[12][12];// uBaux[4], Ne[12][12], N[12],
 	double *R = FemStructs->F;
 	double *uB_old = FemStructs->uB;
 	double *delta_old = FemStructs->delta_old;
@@ -23,7 +22,6 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 
-	tolerance = FemStructs->AuxBuild->tolerance;
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
@@ -110,12 +108,14 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 			dUb[i] = (dUe[i] + dUe[i+4] + dUe[i+8]) * third;
 		}
 
-		// *** Fill uBaux with the values ​​of uB_old refers to the element
+		// *** Fill uBaux with the values ​​of uB_old refers to the element			
 		eNDOF = e*NDOF;
+		/*	
 		uBaux[0] = uB_old[eNDOF];
 		uBaux[1] = uB_old[eNDOF + 1];
 		uBaux[2] = uB_old[eNDOF + 2];
 		uBaux[3] = uB_old[eNDOF + 3];
+		*/
 		
 		// *** Calculation of Gradient (gradu = Bu)
 		for (i = 0; i < 4; i++)
@@ -129,7 +129,7 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		
 		p1 = (gamma - 1.0)*( Ue[3] - 1.0/(2*Ue[0])*(Ue[1]*Ue[1] + Ue[2]*Ue[2]) );		//presssure in node 1				
 		p2 = (gamma - 1.0)*( Ue[7] - 1.0/(2*Ue[4])*(Ue[5]*Ue[5] + Ue[6]*Ue[6]) );		//presssure in node 2
-		p3 = (gamma - 1.0)*( Ue[11] - 1.0/(2*Ue[8])*(Ue[9]*Ue[9] + Ue[10]*Ue[10]) );	//presssure in node 3	
+		p3 = (gamma - 1.0)*( Ue[11] - 1.0/(2*Ue[8])*(Ue[9]*Ue[9] + Ue[10]*Ue[10]) );		//presssure in node 3	
 
 		Dp12 = fabs(p1-p2);
 		Dp13 = fabs(p1-p3);
@@ -181,8 +181,21 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		A0[3][3] = rhoi_e * V4 * V4;      
 		
 		//  Delta do método DD
-		delta = FemFunctions->ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub); //COM Y^(-1) FIXO
-			
+		delta = FemFunctions->ShockCapture(Parameters, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub); //COM Y^(-1) FIXO
+		
+		// *** Matriz de Rigidez advinda do DD Khhdd 12x12 onde a matriz é simétrica e bloco diagonal, segue calculo das 6 componentes
+		double Khhdd11, Khhdd15, Khhdd19, Khhdd55, Khhdd59, Khhdd99;
+		double delta4area = delta / (4.0 * Area);
+		
+		Khhdd11 = delta4area * (y23 * y23 + x32 * x32);
+		Khhdd15 = delta4area * (y23 * y31 + x32 * x13);
+		Khhdd19 = delta4area * (y23 * y12 + x32 * x21);
+		Khhdd55 = delta4area * (y31 * y31 + x13 * x13);
+		Khhdd59 = delta4area * (y31 * y12 + x13 * x21);
+		Khhdd99 = delta4area * (y12 * y12 + x21 * x21);
+
+		if (delta<1e-12)
+			delta = 0.001;
 		//------------------------------------------------------------------------------
 		//  MONTAGENS DAS MATRIZES
 		//------------------------------------------------------------------------------
@@ -251,18 +264,15 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		Mhh1 = Area * sixth;
 		Mhh2 = Area / 12.0;
 		
-		// *** Matriz de Massa MhB 12x4 e MBh 4x12, onde os coeficientes são iguais, contudo atribuiremos zero a MhB (condensacao estatica ) e 
-		// os devidos valores a MBh
-		
-		double MhB;
-		MhB = 0.0;
-
-		double MBh;	
+		// *** Matriz de Massa MhB 12x4 e MBh 4x12, onde os coeficientes são iguais, mas devido a condensação estatica atribuiremos MhB = 0.
+	//	double MhB, MBh;
+	//	MhB =0.0;// (3.0 * Area) / 20.0;
+		double MBh;
 		MBh = (3.0 * Area) / 20.0;
 		
 		// *** Matriz de Massa MBB 4x4
-		double MBB;
-		MBB = 0.0;
+		//double MBB;
+		//MBB = 0.0;//(81.0 * Area) / 280.0;
 		
 		// *** Matriz de Rigidez advinda de Galerkin Khhg 12x12 onde as 4 primeiras linhas repetem duas vezes, segue calculo das 4 primeiras linhas
 		double Khhg11, Khhg12, Khhg13, Khhg14, Khhg21, Khhg22, Khhg23, Khhg24, Khhg31, Khhg32, Khhg33, Khhg34, Khhg41, Khhg42, Khhg43, Khhg44;
@@ -319,16 +329,6 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		Khhg411 = Kc43 * sixth;
 		Khhg412 = Kc44 * sixth;		
 
-		// *** Matriz de Rigidez advinda do DD Khhdd 12x12 onde a matriz é simétrica e bloco diagonal, segue calculo das 6 componentes
-		double Khhdd11, Khhdd15, Khhdd19, Khhdd55, Khhdd59, Khhdd99;
-		double delta4area = delta / (4.0 * Area);
-		
-		Khhdd11 = delta4area * (y23 * y23 + x32 * x32);
-		Khhdd15 = delta4area * (y23 * y31 + x32 * x13);
-		Khhdd19 = delta4area * (y23 * y12 + x32 * x21);
-		Khhdd55 = delta4area * (y31 * y31 + x13 * x13);
-		Khhdd59 = delta4area * (y31 * y12 + x13 * x21);
-		Khhdd99 = delta4area * (y12 * y12 + x21 * x21);
 		
 		// *** Matriz de Rigidez KhB 12x4
 		double a1 = ninefortieth * (   y23  + 2.0*y31 + 2.0*y12);
@@ -456,229 +456,179 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		KBB = (81.0*delta*(y23*y23 + y31*y31 + y12*y12 + y23*y31 + y23*y12 + y31*y12 + x32*x32 + x13*x13 + x21*x21 + x32*x13 + x32*x21 + x13*x21))/(40.0*Area);
 		
 		// *** Coeficientes da Matriz de Massa [Me]
-		// Me = Mhh - KhB*KBB^(-1)*MBh
-		//
+		// Me = Mhh - (MhB + delta_t*KhB)*(MBB + delta_t*KBB)^(-1)*MBh -> Me = Mhh - KhB*(KBB)^(-1)*MBh
 		// Calculando inversa de MBB + delta_t*KBB
-		// double invBB = 1.0 / (MBB + delta_t*KBB); (mudando...)
-		double invKBB = 1.0/KBB;
-				
-/*		double invBB__t__MhB_p_deltat_t_KhB11 = invBB * (MhB + delta_t*KhB11);
-		double invBB__t__deltat_t_KhB12 = invBB * delta_t*KhB12;
-		double invBB__t__deltat_t_KhB13 = invBB * delta_t*KhB13;
-		double invBB__t__deltat_t_KhB14 = invBB * delta_t*KhB14;
-		double invBB__t__deltat_t_KhB21 = invBB * delta_t*KhB21;
-		double invBB__t__MhB_p_deltat_t_KhB22 = invBB * (MhB + delta_t*KhB22);
-		double invBB__t__deltat_t_KhB23 = invBB * delta_t*KhB23;
-		double invBB__t__deltat_t_KhB24 = invBB * delta_t*KhB24;
-		double invBB__t__deltat_t_KhB31 = invBB * delta_t*KhB31;
-		double invBB__t__deltat_t_KhB32 = invBB * delta_t*KhB32;
-		double invBB__t__MhB_p_deltat_t_KhB33 = invBB * (MhB + delta_t*KhB33);
-		double invBB__t__deltat_t_KhB34 = invBB * delta_t*KhB34;
-		double invBB__t__deltat_t_KhB41 = invBB * delta_t*KhB41;
-		double invBB__t__deltat_t_KhB42 = invBB * delta_t*KhB42;
-		double invBB__t__deltat_t_KhB43 = invBB * delta_t*KhB43;
-		double invBB__t__MhB_p_deltat_t_KhB44 = invBB * (MhB + delta_t*KhB44);
-		double invBB__t__MhB_p_deltat_t_KhB51 = invBB * (MhB + delta_t*KhB51);
-		double invBB__t__deltat_t_KhB52 = invBB * delta_t*KhB52;
-		double invBB__t__deltat_t_KhB53 = invBB * delta_t*KhB53;
-		double invBB__t__deltat_t_KhB54 = invBB * delta_t*KhB54;
-		double invBB__t__deltat_t_KhB61 = invBB * delta_t*KhB61;
-		double invBB__t__MhB_p_deltat_t_KhB62 = invBB * (MhB + delta_t*KhB62);
-		double invBB__t__deltat_t_KhB63 = invBB * delta_t*KhB63;
-		double invBB__t__deltat_t_KhB64 = invBB * delta_t*KhB64;
-		double invBB__t__deltat_t_KhB71 = invBB * delta_t*KhB71;
-		double invBB__t__deltat_t_KhB72 = invBB * delta_t*KhB72;
-		double invBB__t__MhB_p_deltat_t_KhB73 = invBB * (MhB + delta_t*KhB73);
-		double invBB__t__deltat_t_KhB74 = invBB * delta_t*KhB74;
-		double invBB__t__deltat_t_KhB81 = invBB * delta_t*KhB81;
-		double invBB__t__deltat_t_KhB82 = invBB * delta_t*KhB82;
-		double invBB__t__deltat_t_KhB83 = invBB * delta_t*KhB83;
-		double invBB__t__MhB_p_deltat_t_KhB84 = invBB * (MhB + delta_t*KhB84);
-		double invBB__t__MhB_p_deltat_t_KhB91 = invBB * (MhB + delta_t*KhB91);
-		double invBB__t__deltat_t_KhB92 = invBB * delta_t*KhB92;
-		double invBB__t__deltat_t_KhB93 = invBB * delta_t*KhB93;
-		double invBB__t__deltat_t_KhB94 = invBB * delta_t*KhB94;
-		double invBB__t__deltat_t_KhB101 = invBB * delta_t*KhB101;
-		double invBB__t__MhB_p_deltat_t_KhB102 = invBB * (MhB + delta_t*KhB102);
-		double invBB__t__deltat_t_KhB103 = invBB * delta_t*KhB103;
-		double invBB__t__deltat_t_KhB104 = invBB * delta_t*KhB104;
-		double invBB__t__deltat_t_KhB111 = invBB * delta_t*KhB111;
-		double invBB__t__deltat_t_KhB112 = invBB * delta_t*KhB112;
-		double invBB__t__MhB_p_deltat_t_KhB113 = invBB * (MhB + delta_t*KhB113);
-		double invBB__t__deltat_t_KhB114 = invBB * delta_t*KhB114;
-		double invBB__t__deltat_t_KhB121 = invBB * delta_t*KhB121;
-		double invBB__t__deltat_t_KhB122 = invBB * delta_t*KhB122;
-		double invBB__t__deltat_t_KhB123 = invBB * delta_t*KhB123;
-		double invBB__t__MhB_p_deltat_t_KhB124 = invBB * (MhB + delta_t*KhB124);
-*/
-
+		//double invBB = 1.0 / (MBB + delta_t*KBB);
+		double invKBB = 1.0 / KBB;
+						
 		//no1 - no1
 		Me[0][0] = Mhh1 - invKBB * KhB11 * MBh;
-		Me[0][1] =      - invKBB * KhB12 * MBh;
-		Me[0][2] =      - invKBB * KhB13 * MBh;
-		Me[0][3] =      - invKBB * KhB14 * MBh;
-		Me[1][0] =      - invKBB * KhB21 * MBh;
+		Me[0][1] =      -    invKBB * KhB12 * MBh;
+		Me[0][2] =      -    invKBB * KhB13 * MBh;
+		Me[0][3] =      -    invKBB * KhB14 * MBh;
+		Me[1][0] =      -    invKBB * KhB21 * MBh;
 		Me[1][1] = Mhh1 - invKBB * KhB22 * MBh;
-		Me[1][2] =      - invKBB * KhB23 * MBh;
-		Me[1][3] =      - invKBB * KhB24 * MBh;
-		Me[2][0] =      - invKBB * KhB31 * MBh;
-		Me[2][1] =      - invKBB * KhB32 * MBh;
+		Me[1][2] =      -    invKBB * KhB23 * MBh;
+		Me[1][3] =      -    invKBB * KhB24 * MBh;
+		Me[2][0] =      -    invKBB * KhB31 * MBh;
+		Me[2][1] =      -    invKBB * KhB32 * MBh;
 		Me[2][2] = Mhh1 - invKBB * KhB33 * MBh;
-		Me[2][3] =      - invKBB * KhB34 * MBh;
-		Me[3][0] =      - invKBB * KhB41 * MBh;
-		Me[3][1] =      - invKBB * KhB42 * MBh;
-		Me[3][2] =      - invKBB * KhB43 * MBh;
+		Me[2][3] =      -    invKBB * KhB34 * MBh;
+		Me[3][0] =      -    invKBB * KhB41 * MBh;
+		Me[3][1] =      -    invKBB * KhB42 * MBh;
+		Me[3][2] =      -    invKBB * KhB43 * MBh;
 		Me[3][3] = Mhh1 - invKBB * KhB44 * MBh;
 
 		//no1 - no2 
 		Me[0][4] = Mhh2 - invKBB * KhB11 * MBh;
-		Me[0][5] =      - invKBB * KhB12 * MBh;
-		Me[0][6] =      - invKBB * KhB13 * MBh;
-		Me[0][7] =      - invKBB * KhB14 * MBh;
-		Me[1][4] =      - invKBB * KhB21 * MBh;
+		Me[0][5] =      -    invKBB * KhB12 * MBh;
+		Me[0][6] =      -    invKBB * KhB13 * MBh;
+		Me[0][7] =      -    invKBB * KhB14 * MBh;
+		Me[1][4] =      -    invKBB * KhB21 * MBh;
 		Me[1][5] = Mhh2 - invKBB * KhB22 * MBh;
-		Me[1][6] =      - invKBB * KhB23 * MBh;
-		Me[1][7] =      - invKBB * KhB24 * MBh;
-		Me[2][4] =      - invKBB * KhB31 * MBh;
-		Me[2][5] =      - invKBB * KhB32 * MBh;
+		Me[1][6] =      -    invKBB * KhB23 * MBh;
+		Me[1][7] =      -    invKBB * KhB24 * MBh;
+		Me[2][4] =      -    invKBB * KhB31 * MBh;
+		Me[2][5] =      -    invKBB * KhB32 * MBh;
 		Me[2][6] = Mhh2 - invKBB * KhB33 * MBh;
-		Me[2][7] =      - invKBB * KhB34 * MBh;
-		Me[3][4] =      - invKBB * KhB41 * MBh;
-		Me[3][5] =      - invKBB * KhB42 * MBh;
-		Me[3][6] =      - invKBB * KhB43 * MBh;
+		Me[2][7] =      -    invKBB * KhB34 * MBh;
+		Me[3][4] =      -    invKBB * KhB41 * MBh;
+		Me[3][5] =      -    invKBB * KhB42 * MBh;
+		Me[3][6] =      -    invKBB * KhB43 * MBh;
 		Me[3][7] = Mhh2 - invKBB * KhB44 * MBh;
 
 		//no1 - no3
 		Me[0][8]  = Mhh2 - invKBB * KhB11 * MBh;
-		Me[0][9]  =      - invKBB * KhB12 * MBh;
-		Me[0][10] =      - invKBB * KhB13 * MBh;
-		Me[0][11] =      - invKBB * KhB14 * MBh;
-		Me[1][8]  =      - invKBB * KhB21 * MBh;
+		Me[0][9]  =      -    invKBB * KhB12 * MBh;
+		Me[0][10] =      -    invKBB * KhB13 * MBh;
+		Me[0][11] =      -    invKBB * KhB14 * MBh;
+		Me[1][8]  =      -    invKBB * KhB21 * MBh;
 		Me[1][9]  = Mhh2 - invKBB * KhB22 * MBh;
-		Me[1][10] =      - invKBB * KhB23 * MBh;
-		Me[1][11] =      - invKBB * KhB24 * MBh;
-		Me[2][8]  =      - invKBB * KhB31 * MBh;
-		Me[2][9]  =      - invKBB * KhB32 * MBh;
+		Me[1][10] =      -    invKBB * KhB23 * MBh;
+		Me[1][11] =      -    invKBB * KhB24 * MBh;
+		Me[2][8]  =      -    invKBB * KhB31 * MBh;
+		Me[2][9]  =      -    invKBB * KhB32 * MBh;
 		Me[2][10] = Mhh2 - invKBB * KhB33 * MBh;
-		Me[2][11] =      - invKBB * KhB34 * MBh;
-		Me[3][8]  =      - invKBB * KhB41 * MBh;
-		Me[3][9]  =      - invKBB * KhB42 * MBh;
-		Me[3][10] =      - invKBB * KhB43 * MBh;
+		Me[2][11] =      -    invKBB * KhB34 * MBh;
+		Me[3][8]  =      -    invKBB * KhB41 * MBh;
+		Me[3][9]  =      -    invKBB * KhB42 * MBh;
+		Me[3][10] =      -    invKBB * KhB43 * MBh;
 		Me[3][11] = Mhh2 - invKBB * KhB44 * MBh;
 
 		//no2 - no1
 		Me[4][0] = Mhh2 - invKBB * KhB51 * MBh;
-		Me[4][1] =      - invKBB * KhB52 * MBh;
-		Me[4][2] =      - invKBB * KhB53 * MBh;
-		Me[4][3] =      - invKBB * KhB54 * MBh;
-		Me[5][0] =      - invKBB * KhB61 * MBh;
+		Me[4][1] =      -    invKBB * KhB52 * MBh;
+		Me[4][2] =      -    invKBB * KhB53 * MBh;
+		Me[4][3] =      -    invKBB * KhB54 * MBh;
+		Me[5][0] =      -    invKBB * KhB61 * MBh;
 		Me[5][1] = Mhh2 - invKBB * KhB62 * MBh;
-		Me[5][2] =      - invKBB * KhB63 * MBh;
-		Me[5][3] =      - invKBB * KhB64 * MBh;
-		Me[6][0] =      - invKBB * KhB71 * MBh;
-		Me[6][1] =      - invKBB * KhB72 * MBh;
+		Me[5][2] =      -    invKBB * KhB63 * MBh;
+		Me[5][3] =      -    invKBB * KhB64 * MBh;
+		Me[6][0] =      -    invKBB * KhB71 * MBh;
+		Me[6][1] =      -    invKBB * KhB72 * MBh;
 		Me[6][2] = Mhh2 - invKBB * KhB73 * MBh;
-		Me[6][3] =      - invKBB * KhB74 * MBh;
-		Me[7][0] =      - invKBB * KhB81 * MBh;
-		Me[7][1] =      - invKBB * KhB82 * MBh;
-		Me[7][2] =      - invKBB * KhB83 * MBh;
+		Me[6][3] =      -    invKBB * KhB74 * MBh;
+		Me[7][0] =      -    invKBB * KhB81 * MBh;
+		Me[7][1] =      -    invKBB * KhB82 * MBh;
+		Me[7][2] =      -    invKBB * KhB83 * MBh;
 		Me[7][3] = Mhh2 - invKBB * KhB84 * MBh;
 
 		//no2 - no2
 		Me[4][4] = Mhh1 - invKBB * KhB51 * MBh;
-		Me[4][5] =      - invKBB * KhB52 * MBh;
-		Me[4][6] =      - invKBB * KhB53 * MBh;
-		Me[4][7] =      - invKBB * KhB54 * MBh;
-		Me[5][4] =      - invKBB * KhB61 * MBh;
+		Me[4][5] =      -    invKBB * KhB52 * MBh;
+		Me[4][6] =      -    invKBB * KhB53 * MBh;
+		Me[4][7] =      -    invKBB * KhB54 * MBh;
+		Me[5][4] =      -    invKBB * KhB61 * MBh;
 		Me[5][5] = Mhh1 - invKBB * KhB62 * MBh;
-		Me[5][6] =      - invKBB * KhB63 * MBh;
-		Me[5][7] =      - invKBB * KhB64 * MBh;
-		Me[6][4] =      - invKBB * KhB71 * MBh;
-		Me[6][5] =      - invKBB * KhB72 * MBh;
+		Me[5][6] =      -    invKBB * KhB63 * MBh;
+		Me[5][7] =      -    invKBB * KhB64 * MBh;
+		Me[6][4] =      -    invKBB * KhB71 * MBh;
+		Me[6][5] =      -    invKBB * KhB72 * MBh;
 		Me[6][6] = Mhh1 - invKBB * KhB73 * MBh;
-		Me[6][7] =      - invKBB * KhB74 * MBh;
-		Me[7][4] =      - invKBB * KhB81 * MBh;
-		Me[7][5] =      - invKBB * KhB82 * MBh;
-		Me[7][6] =      - invKBB * KhB83 * MBh;
+		Me[6][7] =      -    invKBB * KhB74 * MBh;
+		Me[7][4] =      -    invKBB * KhB81 * MBh;
+		Me[7][5] =      -    invKBB * KhB82 * MBh;
+		Me[7][6] =      -    invKBB * KhB83 * MBh;
 		Me[7][7] = Mhh1 - invKBB * KhB84 * MBh;
 
 		//no2 - no3
 		Me[4][8]  = Mhh2 - invKBB * KhB51 * MBh;
-		Me[4][9]  =      - invKBB * KhB52 * MBh;
-		Me[4][10] =      - invKBB * KhB53 * MBh;
-		Me[4][11] =      - invKBB * KhB54 * MBh;
-		Me[5][8]  =      - invKBB * KhB61 * MBh;
+		Me[4][9]  =      -    invKBB * KhB52 * MBh;
+		Me[4][10] =      -    invKBB * KhB53 * MBh;
+		Me[4][11] =      -    invKBB * KhB54 * MBh;
+		Me[5][8]  =      -    invKBB * KhB61 * MBh;
 		Me[5][9]  = Mhh2 - invKBB * KhB62 * MBh;
-		Me[5][10] =      - invKBB * KhB63 * MBh;
-		Me[5][11] =      - invKBB * KhB64 * MBh;
-		Me[6][8]  =      - invKBB * KhB71 * MBh;
-		Me[6][9]  =      - invKBB * KhB72 * MBh;
+		Me[5][10] =      -    invKBB * KhB63 * MBh;
+		Me[5][11] =      -    invKBB * KhB64 * MBh;
+		Me[6][8]  =      -    invKBB * KhB71 * MBh;
+		Me[6][9]  =      -    invKBB * KhB72 * MBh;
 		Me[6][10] = Mhh2 - invKBB * KhB73 * MBh;
-		Me[6][11] =      - invKBB * KhB74 * MBh;
-		Me[7][8]  =      - invKBB * KhB81 * MBh;
-		Me[7][9]  =      - invKBB * KhB82 * MBh;
-		Me[7][10] =      - invKBB * KhB83 * MBh;
+		Me[6][11] =      -    invKBB * KhB74 * MBh;
+		Me[7][8]  =      -    invKBB * KhB81 * MBh;
+		Me[7][9]  =      -    invKBB * KhB82 * MBh;
+		Me[7][10] =      -    invKBB * KhB83 * MBh;
 		Me[7][11] = Mhh2 - invKBB * KhB84 * MBh;
 
 		//no3 - no1
-		Me[8][0]  = Mhh2 - invKBB * KhB91  * MBh;
-		Me[8][1]  =      - invKBB * KhB92  * MBh;
-		Me[8][2]  =      - invKBB * KhB93  * MBh;
-		Me[8][3]  =      - invKBB * KhB94  * MBh;
-		Me[9][0]  =      - invKBB * KhB101 * MBh;
+		Me[8][0]  = Mhh2 - invKBB * KhB91 * MBh;
+		Me[8][1]  =      -    invKBB * KhB92 * MBh;
+		Me[8][2]  =      -    invKBB * KhB93 * MBh;
+		Me[8][3]  =      -    invKBB * KhB94 * MBh;
+		Me[9][0]  =      -    invKBB * KhB101 * MBh;
 		Me[9][1]  = Mhh2 - invKBB * KhB102 * MBh;
-		Me[9][2]  =      - invKBB * KhB103 * MBh;
-		Me[9][3]  =      - invKBB * KhB104 * MBh;
-		Me[10][0] =      - invKBB * KhB111 * MBh;
-		Me[10][1] =      - invKBB * KhB112 * MBh;
+		Me[9][2]  =      -    invKBB * KhB103 * MBh;
+		Me[9][3]  =      -    invKBB * KhB104 * MBh;
+		Me[10][0] =      -    invKBB * KhB111 * MBh;
+		Me[10][1] =      -    invKBB * KhB112 * MBh;
 		Me[10][2] = Mhh2 - invKBB * KhB113 * MBh;
-		Me[10][3] =      - invKBB * KhB114 * MBh;
-		Me[11][0] =      - invKBB * KhB121 * MBh;
-		Me[11][1] =      - invKBB * KhB122 * MBh;
-		Me[11][2] =      - invKBB * KhB123 * MBh;
+		Me[10][3] =      -    invKBB * KhB114 * MBh;
+		Me[11][0] =      -    invKBB * KhB121 * MBh;
+		Me[11][1] =      -    invKBB * KhB122 * MBh;
+		Me[11][2] =      -    invKBB * KhB123 * MBh;
 		Me[11][3] = Mhh2 - invKBB * KhB124 * MBh;
 
 		//no3 - no2
 		Me[8][4]  = Mhh2 - invKBB * KhB91 * MBh;
-		Me[8][5]  =      - invKBB * KhB92 * MBh;
-		Me[8][6]  =      - invKBB * KhB93 * MBh;
-		Me[8][7]  =      - invKBB * KhB94 * MBh;
-		Me[9][4]  =      - invKBB * KhB101 * MBh;
+		Me[8][5]  =      -    invKBB * KhB92 * MBh;
+		Me[8][6]  =      -    invKBB * KhB93 * MBh;
+		Me[8][7]  =      -    invKBB * KhB94 * MBh;
+		Me[9][4]  =      -    invKBB * KhB101 * MBh;
 		Me[9][5]  = Mhh2 - invKBB * KhB102 * MBh;
-		Me[9][6]  =      - invKBB * KhB103 * MBh;
-		Me[9][7]  =      - invKBB * KhB104 * MBh;
-		Me[10][4] =      - invKBB * KhB111 * MBh;
-		Me[10][5] =      - invKBB * KhB112 * MBh;
+		Me[9][6]  =      -    invKBB * KhB103 * MBh;
+		Me[9][7]  =      -    invKBB * KhB104 * MBh;
+		Me[10][4] =      -    invKBB * KhB111 * MBh;
+		Me[10][5] =      -    invKBB * KhB112 * MBh;
 		Me[10][6] = Mhh2 - invKBB * KhB113 * MBh;
-		Me[10][7] =      - invKBB * KhB114 * MBh;
-		Me[11][4] =      - invKBB * KhB121 * MBh;
-		Me[11][5] =      - invKBB * KhB122 * MBh;
-		Me[11][6] =      - invKBB * KhB123 * MBh;
+		Me[10][7] =      -    invKBB * KhB114 * MBh;
+		Me[11][4] =      -    invKBB * KhB121 * MBh;
+		Me[11][5] =      -    invKBB * KhB122 * MBh;
+		Me[11][6] =      -    invKBB * KhB123 * MBh;
 		Me[11][7] = Mhh2 - invKBB * KhB124 * MBh;
 
 		//no3 - no3
-		Me[8][8]   = Mhh1 - invKBB * KhB91 * MBh;
-		Me[8][9]   =      - invKBB * KhB92 * MBh;
-		Me[8][10]  =      - invKBB * KhB93 * MBh;
-		Me[8][11]  =      - invKBB * KhB94 * MBh;
-		Me[9][8]   =      - invKBB * KhB101 * MBh;
+		Me[8][8]   = Mhh1 - invKBB * KhB91  * MBh;
+		Me[8][9]   =      -    invKBB * KhB92 * MBh;
+		Me[8][10]  =      -    invKBB * KhB93 * MBh;
+		Me[8][11]  =      -    invKBB * KhB94 * MBh;
+		Me[9][8]   =      -    invKBB * KhB101 * MBh;
 		Me[9][9]   = Mhh1 - invKBB * KhB102 * MBh;
-		Me[9][10]  =      - invKBB * KhB103 * MBh;
-		Me[9][11]  =      - invKBB * KhB104 * MBh;
-		Me[10][8]  =      - invKBB * KhB111 * MBh;
-		Me[10][9]  =      - invKBB * KhB112 * MBh;
+		Me[9][10]  =      -    invKBB * KhB103 * MBh;
+		Me[9][11]  =      -    invKBB * KhB104 * MBh;
+		Me[10][8]  =      -    invKBB * KhB111 * MBh;
+		Me[10][9]  =      -    invKBB * KhB112 * MBh;
 		Me[10][10] = Mhh1 - invKBB * KhB113 * MBh;
-		Me[10][11] =      - invKBB * KhB114 * MBh;
-		Me[11][8]  =      - invKBB * KhB121 * MBh;
-		Me[11][9]  =      - invKBB * KhB122 * MBh;
-		Me[11][10] =      - invKBB * KhB123 * MBh;
+		Me[10][11] =      -    invKBB * KhB114 * MBh;
+		Me[11][8]  =      -    invKBB * KhB121 * MBh;
+		Me[11][9]  =      -    invKBB * KhB122 * MBh;
+		Me[11][10] =      -    invKBB * KhB123 * MBh;
 		Me[11][11] = Mhh1 - invKBB * KhB124 * MBh;
 
 		// *** Coeficientes da Matriz de Rigidez [Ke]
-		// Ke = Khh - KhB*KBB^(-1)*KBh
+		// Ke = Khh - (MhB + delta_t*KhB)*(MBB + delta_t*KBB)^(-1)*KBh -> Ke = Khh - KhB*(KBB)^(-1)*KBh
+
 		//no1 - no1
-		Ke[0][0] = Khhg11 + Khhdd11 - invKBB * KhB11 * KBh11 - invKBB * KhB12 * KBh21 -  invKBB * KhB13 * KBh31    -    invKBB * KhB14 * KBh41;
-		Ke[0][1] =      Khhg12      - invKBB * KhB11 * KBh12 -    invKBB * KhB12 * KBh22    -    invKBB * KhB13 * KBh32    -    invKBB * KhB14 * KBh42;
+		Ke[0][0] = Khhg11 + Khhdd11 - invKBB * KhB11 * KBh11 - invKBB * KhB12 * KBh21 - invKBB * KhB13 * KBh31    -    invKBB * KhB14 * KBh41;
+		Ke[0][1] = Khhg12 - invKBB * KhB11 * KBh12 - invKBB * KhB12 * KBh22 - invKBB * KhB13 * KBh32 -    invKBB * KhB14 * KBh42;
 		Ke[0][2] =      Khhg13      - invKBB * KhB11 * KBh13 -    invKBB * KhB12 * KBh23    -    invKBB * KhB13 * KBh33    -    invKBB * KhB14 * KBh43;
 		Ke[0][3] =      Khhg14      - invKBB * KhB11 * KBh14 -    invKBB * KhB12 * KBh24    -    invKBB * KhB13 * KBh34    -    invKBB * KhB14 * KBh44;
 		Ke[1][0] =      Khhg21      -    invKBB * KhB21 * KBh11    - invKBB * KhB22 * KBh21 -    invKBB * KhB23 * KBh31    -    invKBB * KhB24 * KBh41;
@@ -779,10 +729,10 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		Ke[6][9]  =       Khhg310     -    invKBB * KhB71 * KBh110    -    invKBB * KhB72 * KBh210    - invKBB * KhB73 * KBh310 -    invKBB * KhB74 * KBh410; 
 		Ke[6][10] = Khhg311 + Khhdd59 -    invKBB * KhB71 * KBh111    -    invKBB * KhB72 * KBh211    - invKBB * KhB73 * KBh311 -    invKBB * KhB74 * KBh411; 
 		Ke[6][11] =       Khhg312     -    invKBB * KhB71 * KBh112    -    invKBB * KhB72 * KBh212    - invKBB * KhB73 * KBh312 -    invKBB * KhB74 * KBh412; 
-		Ke[7][8]  =       Khhg49      -    invKBB * KhB81 * KBh19     -    invKBB * KhB82 * KBh29     -    invKBB * KhB83 * KBh39     - invKBB * KhB84 * KBh49; 
-		Ke[7][9]  =       Khhg410     -    invKBB * KhB81 * KBh110    -    invKBB * KhB82 * KBh210    -    invKBB * KhB83 * KBh310    - invKBB * KhB84 * KBh410; 
-		Ke[7][10] =       Khhg411     -    invKBB * KhB81 * KBh111    -    invKBB * KhB82 * KBh211    -    invKBB * KhB83 * KBh311    - invKBB * KhB84 * KBh411; 
-		Ke[7][11] = Khhg412 + Khhdd59 -    invKBB * KhB81 * KBh112    -    invKBB * KhB82 * KBh212    -    invKBB * KhB83 * KBh312    - invKBB * KhB84 * KBh412; 
+		Ke[7][8]  =       Khhg49      - invKBB * KhB81 * KBh19     -    invKBB * KhB82 * KBh29     -    invKBB * KhB83 * KBh39     - invKBB * KhB84 * KBh49; 
+		Ke[7][9]  =       Khhg410     - invKBB * KhB81 * KBh110    -  invKBB * KhB82 * KBh210      -    invKBB * KhB83 * KBh310    - invKBB * KhB84 * KBh410; 
+		Ke[7][10] =       Khhg411     - invKBB * KhB81 * KBh111    -    invKBB * KhB82 * KBh211    -    invKBB * KhB83 * KBh311    - invKBB * KhB84 * KBh411; 
+		Ke[7][11] = Khhg412 + Khhdd59 - invKBB * KhB81 * KBh112    -    invKBB * KhB82 * KBh212    -    invKBB * KhB83 * KBh312    - invKBB * KhB84 * KBh412; 
 		
 		//no3 - no1
 		Ke[8][0]  = Khhg11 + Khhdd19 - invKBB * KhB91 * KBh11  -    invKBB * KhB92 * KBh21     -    invKBB * KhB93 * KBh31     -    invKBB * KhB94 * KBh41; 
@@ -822,81 +772,82 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 		Ke[11][7] = Khhg48 + Khhdd59 -    invKBB * KhB121 * KBh18    -    invKBB * KhB122 * KBh28    -    invKBB * KhB123 * KBh38    - invKBB * KhB124 * KBh48; 
 
 		//no3 - no3
-		Ke[8][8]   = Khhg19 + Khhdd99  - invKBB * KhB91 * KBh19   -    invKBB * KhB92 * KBh29      -    invKBB * KhB93 * KBh39      -    invKBB * KhB94 * KBh49;  
-		Ke[8][9]   =      Khhg110      - invKBB * KhB91 * KBh110  -    invKBB * KhB92 * KBh210     -    invKBB * KhB93 * KBh310     -    invKBB * KhB94 * KBh410; 
-		Ke[8][10]  =      Khhg111      - invKBB * KhB91 * KBh111  -    invKBB * KhB92 * KBh211     -    invKBB * KhB93 * KBh311     -    invKBB * KhB94 * KBh411; 
-		Ke[8][11]  =      Khhg112      - invKBB * KhB91 * KBh112  -    invKBB * KhB92 * KBh212     -    invKBB * KhB93 * KBh312     -    invKBB * KhB94 * KBh412;  
-		Ke[9][8]   =      Khhg29       -    invKBB * KhB101 * KBh19     - invKBB * KhB102 * KBh29  -    invKBB * KhB103 * KBh39     -    invKBB * KhB104 * KBh49; 
-		Ke[9][9]   = Khhg210 + Khhdd99 -    invKBB * KhB101 * KBh110    - invKBB * KhB102 * KBh210 -    invKBB * KhB103 * KBh310    -    invKBB * KhB104 * KBh410;  
-		Ke[9][10]  =      Khhg211      -    invKBB * KhB101 * KBh111    - invKBB * KhB102 * KBh211 -    invKBB * KhB103 * KBh311    -    invKBB * KhB104 * KBh411; 
-		Ke[9][11]  =      Khhg212      -    invKBB * KhB101 * KBh112    - invKBB * KhB102 * KBh212 -    invKBB * KhB103 * KBh312    -    invKBB * KhB104 * KBh412; 
-		Ke[10][8]  =      Khhg39       -    invKBB * KhB111 * KBh19     -    invKBB * KhB112 * KBh29     - invKBB * KhB113 * KBh39  -    invKBB * KhB114 * KBh49; 
-		Ke[10][9]  =      Khhg310      -    invKBB * KhB111 * KBh110    -    invKBB * KhB112 * KBh210    - invKBB * KhB113 * KBh310 -    invKBB * KhB114 * KBh410; 
-		Ke[10][10] = Khhg311 + Khhdd99 -    invKBB * KhB111 * KBh111    -    invKBB * KhB112 * KBh211    - invKBB * KhB113 * KBh311 -    invKBB * KhB114 * KBh411; 
-		Ke[10][11] =      Khhg312      -    invKBB * KhB111 * KBh112    -    invKBB * KhB112 * KBh212    - invKBB * KhB113 * KBh312 -    invKBB * KhB114 * KBh412;  
-		Ke[11][8]  =      Khhg49       -    invKBB * KhB121 * KBh19     -    invKBB * KhB122 * KBh29     -    invKBB * KhB123 * KBh39     - invKBB * KhB124 * KBh49; 
-		Ke[11][9]  =      Khhg410      -    invKBB * KhB121 * KBh110    -    invKBB * KhB122 * KBh210    -    invKBB * KhB123 * KBh310    - invKBB * KhB124 * KBh410; 
-		Ke[11][10] =      Khhg411      -    invKBB * KhB121 * KBh111    -    invKBB * KhB122 * KBh211    -    invKBB * KhB123 * KBh311    - invKBB * KhB124 * KBh411; 
-		Ke[11][11] = Khhg412 + Khhdd99 -    invKBB * KhB121 * KBh112    -    invKBB * KhB122 * KBh212    -    invKBB * KhB123 * KBh312    - invKBB * KhB124 * KBh412;
+		Ke[8][8]   = Khhg19 + Khhdd99  - invKBB * KhB91 * KBh19   - invKBB * KhB92 * KBh29      -    invKBB * KhB93 * KBh39      -    invKBB * KhB94 * KBh49;  
+		Ke[8][9]   =      Khhg110      - invKBB * KhB91 * KBh110  - invKBB * KhB92 * KBh210     -    invKBB * KhB93 * KBh310     -    invKBB * KhB94 * KBh410; 
+		Ke[8][10]  =      Khhg111      - invKBB * KhB91 * KBh111  - invKBB * KhB92 * KBh211     -    invKBB * KhB93 * KBh311     -    invKBB * KhB94 * KBh411; 
+		Ke[8][11]  =      Khhg112      - invKBB * KhB91 * KBh112  - invKBB * KhB92 * KBh212     -    invKBB * KhB93 * KBh312     -    invKBB * KhB94 * KBh412;  
+		Ke[9][8]   =      Khhg29       - invKBB * KhB101 * KBh19  - invKBB * KhB102 * KBh29  -    invKBB * KhB103 * KBh39     -    invKBB * KhB104 * KBh49; 
+		Ke[9][9]   = Khhg210 + Khhdd99 - invKBB * KhB101 * KBh110 - invKBB * KhB102 * KBh210 -    invKBB * KhB103 * KBh310    -    invKBB * KhB104 * KBh410;  
+		Ke[9][10]  =      Khhg211      - invKBB * KhB101 * KBh111 - invKBB * KhB102 * KBh211 -    invKBB * KhB103 * KBh311    -    invKBB * KhB104 * KBh411; 
+		Ke[9][11]  =      Khhg212      - invKBB * KhB101 * KBh112 - invKBB * KhB102 * KBh212 -    invKBB * KhB103 * KBh312    -    invKBB * KhB104 * KBh412; 
+		Ke[10][8]  =      Khhg39       - invKBB * KhB111 * KBh19  -    invKBB * KhB112 * KBh29     - invKBB * KhB113 * KBh39  -    invKBB * KhB114 * KBh49; 
+		Ke[10][9]  =      Khhg310      - invKBB * KhB111 * KBh110 -    invKBB * KhB112 * KBh210    - invKBB * KhB113 * KBh310 -    invKBB * KhB114 * KBh410; 
+		Ke[10][10] = Khhg311 + Khhdd99 - invKBB * KhB111 * KBh111  -   invKBB * KhB112 * KBh211    - invKBB * KhB113 * KBh311 -    invKBB * KhB114 * KBh411; 
+		Ke[10][11] =      Khhg312      - invKBB * KhB111 * KBh112  -   invKBB * KhB112 * KBh212    - invKBB * KhB113 * KBh312 -    invKBB * KhB114 * KBh412;  
+		Ke[11][8]  =      Khhg49       - invKBB * KhB121 * KBh19   -   invKBB * KhB122 * KBh29     -    invKBB * KhB123 * KBh39     - invKBB * KhB124 * KBh49; 
+		Ke[11][9]  =      Khhg410      - invKBB * KhB121 * KBh110  -   invKBB * KhB122 * KBh210    -    invKBB * KhB123 * KBh310    - invKBB * KhB124 * KBh410; 
+		Ke[11][10] =      Khhg411      - invKBB * KhB121 * KBh111  -   invKBB * KhB122 * KBh211    -    invKBB * KhB123 * KBh311    - invKBB * KhB124 * KBh411; 
+		Ke[11][11] = Khhg412 + Khhdd99 - invKBB * KhB121 * KBh112  -    invKBB * KhB122 * KBh212    -    invKBB * KhB123 * KBh312    - invKBB * KhB124 * KBh412;
 
 		// *** Coeficientes da Matriz [Ne]
 		// Ne = (MhB - (MhB + delta_t*KhB)(MBB + delta_t*KBB)^(-1)MBB) / delta_t
 		
+		/*
 		double invdelta_t = 1.0 / delta_t; 
 		
 		//no1
-		Ne[0][0] = (MhB - invBB__t__MhB_p_deltat_t_KhB11 * MBB) * invdelta_t;
-		Ne[0][1] = (    - invBB__t__deltat_t_KhB12 * MBB) * invdelta_t;
-		Ne[0][2] = (    - invBB__t__deltat_t_KhB13 * MBB) * invdelta_t;
-		Ne[0][3] = (    - invBB__t__deltat_t_KhB14 * MBB) * invdelta_t;
-		Ne[1][0] = (    - invBB__t__deltat_t_KhB21 * MBB) * invdelta_t;
-		Ne[1][1] = (MhB - invBB__t__MhB_p_deltat_t_KhB22 * MBB) * invdelta_t;
-		Ne[1][2] = (    - invBB__t__deltat_t_KhB23 * MBB) * invdelta_t;
-		Ne[1][3] = (    - invBB__t__deltat_t_KhB24 * MBB) * invdelta_t;
-		Ne[2][0] = (    - invBB__t__deltat_t_KhB31 * MBB) * invdelta_t;
-		Ne[2][1] = (    - invBB__t__deltat_t_KhB32 * MBB) * invdelta_t;
-		Ne[2][2] = (MhB - invBB__t__MhB_p_deltat_t_KhB33 * MBB) * invdelta_t;
-		Ne[2][3] = (    - invBB__t__deltat_t_KhB34 * MBB) * invdelta_t;
-		Ne[3][0] = (    - invBB__t__deltat_t_KhB41 * MBB) * invdelta_t;
-		Ne[3][1] = (    - invBB__t__deltat_t_KhB42 * MBB) * invdelta_t;
-		Ne[3][2] = (    - invBB__t__deltat_t_KhB43 * MBB) * invdelta_t;
-		Ne[3][3] = (MhB - invBB__t__MhB_p_deltat_t_KhB44 * MBB) * invdelta_t;
+		Ne[0][0] = (MhB - invKBB * KhB11 * MBB) * invdelta_t;
+		Ne[0][1] = (    - invKBB * KhB12 * MBB) * invdelta_t;
+		Ne[0][2] = (    - invKBB * KhB13 * MBB) * invdelta_t;
+		Ne[0][3] = (    - invKBB * KhB14 * MBB) * invdelta_t;
+		Ne[1][0] = (    - invKBB * KhB21 * MBB) * invdelta_t;
+		Ne[1][1] = (MhB - invKBB * KhB22 * MBB) * invdelta_t;
+		Ne[1][2] = (    - invKBB * KhB23 * MBB) * invdelta_t;
+		Ne[1][3] = (    - invKBB * KhB24 * MBB) * invdelta_t;
+		Ne[2][0] = (    - invKBB * KhB31 * MBB) * invdelta_t;
+		Ne[2][1] = (    - invKBB * KhB32 * MBB) * invdelta_t;
+		Ne[2][2] = (MhB - invKBB * KhB33 * MBB) * invdelta_t;
+		Ne[2][3] = (    - invKBB * KhB34 * MBB) * invdelta_t;
+		Ne[3][0] = (    - invKBB * KhB41 * MBB) * invdelta_t;
+		Ne[3][1] = (    - invKBB * KhB42 * MBB) * invdelta_t;
+		Ne[3][2] = (    - invKBB * KhB43 * MBB) * invdelta_t;
+		Ne[3][3] = (MhB - invKBB * KhB44 * MBB) * invdelta_t;
 
 		//no2
-		Ne[4][0] = (MhB - invBB__t__MhB_p_deltat_t_KhB51 * MBB) * invdelta_t;
-		Ne[4][1] = (    - invBB__t__deltat_t_KhB52 * MBB) * invdelta_t;
-		Ne[4][2] = (    - invBB__t__deltat_t_KhB53 * MBB) * invdelta_t;
-		Ne[4][3] = (    - invBB__t__deltat_t_KhB54 * MBB) * invdelta_t;
-		Ne[5][0] = (    - invBB__t__deltat_t_KhB61 * MBB) * invdelta_t;
-		Ne[5][1] = (MhB - invBB__t__MhB_p_deltat_t_KhB62 * MBB) * invdelta_t;
-		Ne[5][2] = (    - invBB__t__deltat_t_KhB63 * MBB) * invdelta_t;
-		Ne[5][3] = (    - invBB__t__deltat_t_KhB64 * MBB) * invdelta_t;
-		Ne[6][0] = (    - invBB__t__deltat_t_KhB71 * MBB) * invdelta_t;
-		Ne[6][1] = (    - invBB__t__deltat_t_KhB72 * MBB) * invdelta_t;
-		Ne[6][2] = (MhB - invBB__t__MhB_p_deltat_t_KhB73 * MBB) * invdelta_t;
-		Ne[6][3] = (    - invBB__t__deltat_t_KhB74 * MBB) * invdelta_t;
-		Ne[7][0] = (    - invBB__t__deltat_t_KhB81 * MBB) * invdelta_t;
-		Ne[7][1] = (    - invBB__t__deltat_t_KhB82 * MBB) * invdelta_t;
-		Ne[7][2] = (    - invBB__t__deltat_t_KhB83 * MBB) * invdelta_t;
-		Ne[7][3] = (MhB - invBB__t__MhB_p_deltat_t_KhB84 * MBB) * invdelta_t;
+		Ne[4][0] = (MhB - invKBB * KhB51 * MBB) * invdelta_t;
+		Ne[4][1] = (    - invKBB * KhB52 * MBB) * invdelta_t;
+		Ne[4][2] = (    - invKBB * KhB53 * MBB) * invdelta_t;
+		Ne[4][3] = (    - invKBB * KhB54 * MBB) * invdelta_t;
+		Ne[5][0] = (    - invKBB * KhB61 * MBB) * invdelta_t;
+		Ne[5][1] = (MhB - invKBB * KhB62 * MBB) * invdelta_t;
+		Ne[5][2] = (    - invKBB * KhB63 * MBB) * invdelta_t;
+		Ne[5][3] = (    - invKBB * KhB64 * MBB) * invdelta_t;
+		Ne[6][0] = (    - invKBB * KhB71 * MBB) * invdelta_t;
+		Ne[6][1] = (    - invKBB * KhB72 * MBB) * invdelta_t;
+		Ne[6][2] = (MhB - invKBB * KhB73 * MBB) * invdelta_t;
+		Ne[6][3] = (    - invKBB * KhB74 * MBB) * invdelta_t;
+		Ne[7][0] = (    - invKBB * KhB81 * MBB) * invdelta_t;
+		Ne[7][1] = (    - invKBB * KhB82 * MBB) * invdelta_t;
+		Ne[7][2] = (    - invKBB * KhB83 * MBB) * invdelta_t;
+		Ne[7][3] = (MhB - invKBB * KhB84 * MBB) * invdelta_t;
 
 		//no3
-		Ne[8][0]  = (MhB - invBB__t__MhB_p_deltat_t_KhB91  * MBB) * invdelta_t;
-		Ne[8][1]  = (    - invBB__t__deltat_t_KhB92  * MBB) * invdelta_t;
-		Ne[8][2]  = (    - invBB__t__deltat_t_KhB93  * MBB) * invdelta_t;
-		Ne[8][3]  = (    - invBB__t__deltat_t_KhB94  * MBB) * invdelta_t;
-		Ne[9][0]  = (    - invBB__t__deltat_t_KhB101 * MBB) * invdelta_t;
-		Ne[9][1]  = (MhB - invBB__t__MhB_p_deltat_t_KhB102 * MBB) * invdelta_t;
-		Ne[9][2]  = (    - invBB__t__deltat_t_KhB103 * MBB) * invdelta_t;
-		Ne[9][3]  = (    - invBB__t__deltat_t_KhB104 * MBB) * invdelta_t;
-		Ne[10][0] = (    - invBB__t__deltat_t_KhB111 * MBB) * invdelta_t;
-		Ne[10][1] = (    - invBB__t__deltat_t_KhB112 * MBB) * invdelta_t;
-		Ne[10][2] = (MhB - invBB__t__MhB_p_deltat_t_KhB113 * MBB) * invdelta_t;
-		Ne[10][3] = (    - invBB__t__deltat_t_KhB114 * MBB) * invdelta_t;
-		Ne[11][0] = (    - invBB__t__deltat_t_KhB121 * MBB) * invdelta_t;
-		Ne[11][1] = (    - invBB__t__deltat_t_KhB122 * MBB) * invdelta_t;
-		Ne[11][2] = (    - invBB__t__deltat_t_KhB123 * MBB) * invdelta_t;
-		Ne[11][3] = (MhB - invBB__t__MhB_p_deltat_t_KhB124 * MBB) * invdelta_t;
+		Ne[8][0]  = (MhB - invKBB * KhB91  * MBB) * invdelta_t;
+		Ne[8][1]  = (    - invKBB * KhB92  * MBB) * invdelta_t;
+		Ne[8][2]  = (    - invKBB * KhB93  * MBB) * invdelta_t;
+		Ne[8][3]  = (    - invKBB * KhB94  * MBB) * invdelta_t;
+		Ne[9][0]  = (    - invKBB * KhB101 * MBB) * invdelta_t;
+		Ne[9][1]  = (MhB - invKBB * KhB102 * MBB) * invdelta_t;
+		Ne[9][2]  = (    - invKBB * KhB103 * MBB) * invdelta_t;
+		Ne[9][3]  = (    - invKBB * KhB104 * MBB) * invdelta_t;
+		Ne[10][0] = (    - invKBB * KhB111 * MBB) * invdelta_t;
+		Ne[10][1] = (    - invKBB * KhB112 * MBB) * invdelta_t;
+		Ne[10][2] = (MhB - invKBB * KhB113 * MBB) * invdelta_t;
+		Ne[10][3] = (    - invKBB * KhB114 * MBB) * invdelta_t;
+		Ne[11][0] = (    - invKBB * KhB121 * MBB) * invdelta_t;
+		Ne[11][1] = (    - invKBB * KhB122 * MBB) * invdelta_t;
+		Ne[11][2] = (    - invKBB * KhB123 * MBB) * invdelta_t;
+		Ne[11][3] = (MhB - invKBB * KhB124 * MBB) * invdelta_t; */
 
 
 		//*****************************************
@@ -911,23 +862,24 @@ int Build_M_K_F_NMV_Estatica(ParametersType *Parameters, MatrixDataType *MatrixD
 				Ae[i][j] = Me[i][j] + alpha*delta_t*Ke[i][j];
 			}
 			Re[i] = - MedUe[i] - KeUe[i];
-			N[i] = Ne[i][0]*uBaux[0] + Ne[i][1]*uBaux[1] + Ne[i][2]*uBaux[2] + Ne[i][3]*uBaux[3];
+			//N[i] = Ne[i][0]*uBaux[0] + Ne[i][1]*uBaux[1] + Ne[i][2]*uBaux[2] + Ne[i][3]*uBaux[3];
 		}
-
 		
 		// Calculando novo uB
-		uB_old[eNDOF] = invBB*(MBB*uBaux[0] - delta_t*MhB*(dUe[0] + dUe[4] + dUe[8]) - delta_t*(KBh11*Ue[0] + KBh12*Ue[1] + KBh13*Ue[2] + KBh14*Ue[3] + KBh15*Ue[4] +
-										KBh16*Ue[5] + KBh17*Ue[6] + KBh18*Ue[7] + KBh19*Ue[8] + KBh110*Ue[9] + KBh111*Ue[10] + KBh112*Ue[11]));
-		uB_old[eNDOF + 1] = invBB*(MBB*uBaux[1] - delta_t*MhB*(dUe[1] + dUe[5] + dUe[9]) - delta_t*(KBh21*Ue[0] + KBh22*Ue[1] + KBh23*Ue[2] + KBh24*Ue[3] + KBh25*Ue[4] + 
-										KBh26*Ue[5] + KBh27*Ue[6] + KBh28*Ue[7] + KBh29*Ue[8] + KBh210*Ue[9] + KBh211*Ue[10] + KBh212*Ue[11]));
-		uB_old[eNDOF + 2] = invBB*(MBB*uBaux[2] - delta_t*MhB*(dUe[2] + dUe[6] + dUe[10]) - delta_t*(KBh31*Ue[0] + KBh32*Ue[1] + KBh33*Ue[2] + KBh34*Ue[3] + KBh35*Ue[4] + 
-										KBh36*Ue[5] + KBh37*Ue[6] + KBh38*Ue[7] + KBh39*Ue[8] + KBh310*Ue[9] + KBh311*Ue[10] + KBh312*Ue[11]));
-		uB_old[eNDOF + 3] = invBB*(MBB*uBaux[3] - delta_t*MhB*(dUe[3] + dUe[7] + dUe[11]) - delta_t*(KBh41*Ue[0] + KBh42*Ue[1] + KBh43*Ue[2] + KBh44*Ue[3] + KBh45*Ue[4] + 
-										KBh46*Ue[5] + KBh47*Ue[6] + KBh48*Ue[7] + KBh49*Ue[8] + KBh410*Ue[9] + KBh411*Ue[10] + KBh412*Ue[11]));
-
+		/*
+		uB_old[eNDOF] = invBB*(MBB*uBaux[0] - delta_t*MhB*(dUe[0] + dUe[4] + dUe[8]) - delta_t*(KBh11*Ue[0] + KBh12*Ue[1] + KBh13*Ue[2] + KBh14*Ue[3] + 				KBh15*Ue[4] + KBh16*Ue[5] + KBh17*Ue[6] + KBh18*Ue[7] + KBh19*Ue[8] + KBh110*Ue[9] + KBh111*Ue[10] + KBh112*Ue[11]));
+		uB_old[eNDOF + 1] = invBB*(MBB*uBaux[1] - delta_t*MhB*(dUe[1] + dUe[5] + dUe[9]) - delta_t*(KBh21*Ue[0] + KBh22*Ue[1] + KBh23*Ue[2] + KBh24*Ue[3] + 					KBh25*Ue[4] + KBh26*Ue[5] + KBh27*Ue[6] + KBh28*Ue[7] + KBh29*Ue[8] + KBh210*Ue[9] + KBh211*Ue[10] + KBh212*Ue[11]));
+		uB_old[eNDOF + 2] = invBB*(MBB*uBaux[2] - delta_t*MhB*(dUe[2] + dUe[6] + dUe[10]) - delta_t*(KBh31*Ue[0] + KBh32*Ue[1] + KBh33*Ue[2] + KBh34*Ue[3] + 					KBh35*Ue[4] + KBh36*Ue[5] + KBh37*Ue[6] + KBh38*Ue[7] + KBh39*Ue[8] + KBh310*Ue[9] + KBh311*Ue[10] + KBh312*Ue[11]));
+		uB_old[eNDOF + 3] = invBB*(MBB*uBaux[3] - delta_t*MhB*(dUe[3] + dUe[7] + dUe[11]) - delta_t*(KBh41*Ue[0] + KBh42*Ue[1] + KBh43*Ue[2] + KBh44*Ue[3] + 					KBh45*Ue[4] + KBh46*Ue[5] + KBh47*Ue[6] + KBh48*Ue[7] + KBh49*Ue[8] + KBh410*Ue[9] + KBh411*Ue[10] + KBh412*Ue[11]));
+		*/
+		/*correçao MhB->MBh*/
+		uB_old[eNDOF] 	  = - invKBB * (MBh*(dUe[0] + dUe[4] + dUe[8]) + (KBh11*Ue[0] + KBh12*Ue[1] + KBh13*Ue[2] + KBh14*Ue[3] + KBh15*Ue[4] + KBh16*Ue[5] + 						KBh17*Ue[6] + KBh18*Ue[7] + KBh19*Ue[8] + KBh110*Ue[9] + KBh111*Ue[10] + KBh112*Ue[11]));
+		uB_old[eNDOF + 1] = - invKBB * (MBh*(dUe[1] + dUe[5] + dUe[9]) + (KBh21*Ue[0] + KBh22*Ue[1] + KBh23*Ue[2] + KBh24*Ue[3] + 						KBh25*Ue[4] + KBh26*Ue[5] + KBh27*Ue[6] + KBh28*Ue[7] + KBh29*Ue[8] + KBh210*Ue[9] + KBh211*Ue[10] + KBh212*Ue[11]));
+		uB_old[eNDOF + 2] = - invKBB * (MBh*(dUe[2] + dUe[6] + dUe[10]) + (KBh31*Ue[0] + KBh32*Ue[1] + KBh33*Ue[2] + KBh34*Ue[3] + 					  	KBh35*Ue[4] + KBh36*Ue[5] + KBh37*Ue[6] + KBh38*Ue[7] + KBh39*Ue[8] + KBh310*Ue[9] + KBh311*Ue[10] + KBh312*Ue[11]));
+		uB_old[eNDOF + 3] = - invKBB * (MBh*(dUe[3] + dUe[7] + dUe[11]) + (KBh41*Ue[0] + KBh42*Ue[1] + KBh43*Ue[2] + KBh44*Ue[3] + 					KBh45*Ue[4] + KBh46*Ue[5] + KBh47*Ue[6] + KBh48*Ue[7] + KBh49*Ue[8] + KBh410*Ue[9] + KBh411*Ue[10] + KBh412*Ue[11]));
 		// Assembly of global R
 		for (i = 0; i < 12; i++)
-			R[lm[e][i]] += N[i] + Re[i];
+			R[lm[e][i]] += Re[i];//N[i] + Re[i];
 		R[neq] = 0;
 
 		FemFunctions->assembly(Parameters, MatrixData, FemStructs, e, Ae);

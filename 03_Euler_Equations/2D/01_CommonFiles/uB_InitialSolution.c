@@ -4,14 +4,13 @@
 int uB_InitialSolution(ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *u, double *uB)
 {
 	int i, e, nel, eNDOF, J1, J2, J3;
-	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21, twoArea, Area, gamma, cv, deltaNMV, tolerance;
+	double x1, x2, x3, y1, y2, y3, y23, y31, y12, x32, x13, x21, twoArea, Area, gamma, cv, deltaNMV;
 	double third = 1.0/3.0, ninefortieth = 9./40.;
 	double Ue[12], dUe[12], Ub[4], dUb[4], gradUx[4], gradUy[4];
 	double FB[4]={0.,0.,0.,0.};
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 
-	tolerance = Parameters->StabilizationTolerance;
 	nel = Parameters->nel;
 	
 	double *U = (double*) mycalloc("U of 'Build_M_F_DD_Transiente'", 4*Parameters->nnodes, sizeof(double));
@@ -229,7 +228,7 @@ int uB_InitialSolution(ParametersType *Parameters, FemStructsType *FemStructs, F
 		KBh412 = ninefortieth * Kc44;
 		
 
-		deltaNMV = Delta_YZBetaNMV(tolerance, FemStructs->delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
+		deltaNMV = FemFunctions->ShockCapture(Parameters, FemStructs->delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
 		// *** Matriz de Rigidez KBB 4x4
 		double KBB, inv_KBB;
 		

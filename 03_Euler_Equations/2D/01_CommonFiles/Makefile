@@ -26,6 +26,7 @@ csr_Initialization.c \
 csr_assembly.c \
 Build_M_K_F_SUPG.c \
 Build_M_K_F_NMV_Transiente.c \
+Build_M_K_F_NMV_Estatica.c \
 Build_M_F_NMV_Transiente.c \
 eval_U_dU.c \
 Ax_Ay_calculations.c \
@@ -36,7 +37,9 @@ set_BC_no_penetrability.c \
 Delta_CAU.c \
 Delta_CAU_NMV.c \
 Delta_YZBeta.c \
-Delta_YZBetaNMV.c \
+Delta_YZBetaNMV1.c \
+Delta_YZBetaNMV2.c \
+Delta_YZBetaNMV2_micro.c \
 Paraview_Output.c \
 Paraview_Output_3D.c \
 Paraview_Output_DeltaT.c \

@@ -1,36 +1,31 @@
-Exp01       :Experiments
-EXPLOSION	  :Problem title
-1e-8		    :Solver tolerance
-1e-2		    :Correction tolerance
-1e-3		    :Time integration tolerance
-1e-8		    :Stabilization coefficient tolerance
-1000		    :Maximum number of solver iterations
-30		      :Number of vectors in krylov basis
-GMRES		    :Solver
-BlockDiag 	:Preconditioner
-NOT		:Scaling (NOT or BlockScaling)	
-NOT	      :Reordering
-Predictor1_BDF	:Time integration method
-NO	        :Stop at steady state
-0.5		      :Alpha
-1e-2		    :Step time
-0.25		    :Final time
-NO		      :Dimensionless
-1.0		      :Mach of reference
-3		        :Number of multicorrection
-ITERATION		:Stop multicorrection
-EBE		      :Matrix vector product scheme
-SUPG		      :Stabilization form
-YZBeta		  :Operator captures
-1.0		      :invY[0]=1/U1
-0.0		      :invY[1]=1/U2
-0.0		      :invY[2]=1/U3
-0.4		      :invY[3]=1/U4
-8321	:Number of nodes (64x64)
-16384	:Number of elements (64x64)
-33025	:Number of nodes (128x128)
-65536	:Number of elements (128x128)
-131585	:Number of nodes (256x256)
-262144	:Number of elements (256x256)
-525313	:Number of nodes (512x512)
-1048576	:Number of elements (512x512)
+wileyNJD-NMV		:Experiments 
+EXPLOSION		:Problem title
+1e-5			:Solver tolerance
+1e-3			:correction tolerance
+1e-5			:time integration tolerance
+1e-8			:Stabilization coefficient tolerance
+100			:Maximum number of solver iterations
+500			:Number of vectors in krylov basis
+GMRES			:Solver
+BlockDiag		:Preconditioner(ILUp, BlockDiag, Diag or NOT)
+NOT			:Scaling (NOT or BlockScaling)	
+NOT			:Reordering (Spectral, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
+PREDICTOR1		:Time integration method (Predictor1, Predictor1_BDF1, Predictor1_BDF2, Predictor2, Predictor2_BDF1, or Predictor2_BDF2)
+NO			:Stop at steady state (YES or NO)
+0.5			:Alpha
+1e-3			:step time
+0.25			:final time
+NOT			:Local preconditioning (VLR, WSCM or NOT)
+1.0			:Mach of reference
+3			:number of multicorrection
+ITERATION		:stop multicorrection(NORM or ITERATION)
+EBE			:Matrix vector product scheme (EBE, EBE2, EDE, EDE2, or CSR)
+NMVe			:Stabilization form (SUPG or DD)
+YZBeta			:Operator captures (CAU, CAUDD or YZBeta)
+1.0			:invY[0]=1/U1
+0.0			:invY[1]=1/U2
+0.0			:invY[2]=1/U3
+0.4			:invY[3]=1/U4
+13470			:number of nodes
+26538			:number of elements
+

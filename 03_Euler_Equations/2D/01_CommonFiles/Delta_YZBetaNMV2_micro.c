@@ -1,10 +1,10 @@
 #include "EulerEquations.h"
 #include "../../../00_CommonFiles/Allocation_Operations/allocations.h"
 
-double Delta_YZBeta(ParametersType *Parameters, double *delta_old, double *gradUx, double *gradUy, double (*Ax)[4], double (*Ay)[4], double (*A0)[4], 
+double Delta_YZBetaNMV2_micro(ParametersType *Parameters, double *delta_old_NMV, double *gradUx, double *gradUy, double (*Ax)[4], double (*Ay)[4], double (*A0)[4], 
 				double *dUb, double y23, double y31, double y12, double x32, double x13, double x21, double twoArea, int e, double *invY, double *Ub)
 {
-	double *AxgradUx, *AygradUy, *Z, norm_YZ, norm_YdUx, norm_YdUy, sum_norm_YdU, norm_YU, delta1, delta2, delta;
+	double beta, *AxgradUx, *AygradUy, *Z, norm_YZ, norm_YdUx, norm_YdUy, sum_norm_YdU, norm_YU, delta1, delta;
 	double J1, J2, norm_gradRHO, Hyzbeta, aux_sum_norm_YdU, aux_Hyzbeta, aux_norm_YU;
 	int i;
 
@@ -65,6 +65,7 @@ double Delta_YZBeta(ParametersType *Parameters, double *delta_old, double *gradU
 	}
 
 	//Calculando delta1
+	beta = 1.0;
 	if(fabs(sum_norm_YdU) >= 1e-12)
 		aux_sum_norm_YdU = 1.0 / sqrt(sum_norm_YdU); 
 	else		
@@ -75,26 +76,13 @@ double Delta_YZBeta(ParametersType *Parameters, double *delta_old, double *gradU
 	else
 		aux_norm_YU = 0.0; 
 
-	aux_Hyzbeta = Hyzbeta*0.5;
+	aux_Hyzbeta = pow((Hyzbeta*0.5),beta);
 	delta1 = norm_YZ*aux_sum_norm_YdU*aux_norm_YU*aux_Hyzbeta;
 
-	//Calculando delta2
-	if(fabs(sum_norm_YdU) >= 1e-12)
-		aux_sum_norm_YdU = 1.0; 
-	else		
-		aux_sum_norm_YdU = 0.0;
-
-	if(fabs(norm_YU) >= 1e-12)
-		aux_norm_YU = 1.0/norm_YU; 
-	else
-		aux_norm_YU = 0.0; 
-
-	aux_Hyzbeta = Hyzbeta*0.5*Hyzbeta*0.5;
-	delta2 = norm_YZ*aux_sum_norm_YdU*aux_norm_YU*aux_Hyzbeta;
-
-	delta = 0.5*(delta1 + delta2);
-	
-	
+	double aux_delta, w = 0.5;	
+	aux_delta = delta1; 
+	delta = w*(aux_delta) + (1 - w)*delta_old_NMV[e];
+	delta_old_NMV[e] = delta;
 	free(AxgradUx);
 	free(AygradUy);
 	free(Z);
@@ -102,4 +90,3 @@ double Delta_YZBeta(ParametersType *Parameters, double *delta_old, double *gradU
 	return delta;
 		
 }
-

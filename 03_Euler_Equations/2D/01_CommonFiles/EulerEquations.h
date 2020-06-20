@@ -110,7 +110,7 @@ typedef struct
 }MatrixDataType;
 
 typedef struct{
-	double **M2, **R1, **R2, *invN2, *delta_old_NMV;	
+	double **M2, **R1, **R2, *invN2;	
 	double tolerance;
 }AuxBuildStructuresType;
 
@@ -126,7 +126,7 @@ typedef struct
 	double *F;
 	double *u;
 	double *du;
-	double *delta_old;
+	double *delta_old, *deltaNMV_old;
 	double *uB;
 	double *duB;
 	AuxBuildStructuresType *AuxBuild;
@@ -142,9 +142,9 @@ typedef struct
 	double (*epresc)(ParametersType *,double, double);
 	int (*InitialSolution)(ParametersType *, NodeType *, double *);
 
-	double (*ShockCapture)(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+	double (*ShockCapture)(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 					double *, double, double, double, double, double, double, double, int, double *, double*);
-	double (*ShockCapture_Micro)(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+	double (*ShockCapture_Micro)(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 					double *, double, double, double, double, double, double, double, int, double *, double*);
 	void (*Ax_Ay_calculations)(double, double, double, double [4], double [4][4], double [4][4], double);
 	double (*BC_theta)(double, double);
@@ -195,19 +195,22 @@ int setStabilizationForm(ParametersType *,FemFunctionsType *, FemOtherFunctionsT
 
 int setzeros(ParametersType *, MatrixDataType *);
 
-double Delta_CAU(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+double Delta_CAU(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 				double *, double, double, double, double, double, double, double, int, double *, double*);
 				
-double Delta_CAU_NMV(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+double Delta_CAU_NMV(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 				double *, double, double, double, double, double, double, double, int, double *, double*);
 
-double Delta_YZBeta(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
+double Delta_YZBeta(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
-double Delta_YZBetaNMV(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
+double Delta_YZBetaNMV1(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
-double Delta_NMV(double, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+double Delta_YZBetaNMV2(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
+				double *, double, double, double, double, double, double, double, int, double *, double *);
+
+double Delta_YZBetaNMV2_micro(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
 void NO_BC_no_penetrability(int, int, int, NodeType *, double, double, double, double, double, double, double, double, double, double, 
@@ -241,6 +244,8 @@ void ede_List_insertA(NodeListType **, int, int, int *);
 int Build_M_K_F_SUPG(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
 int Build_M_K_F_NMV_Transiente(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
+
+int Build_M_K_F_NMV_Estatica(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 
 int Build_M_F_NMV_Transiente(ParametersType *, MatrixDataType *, FemStructsType *, FemFunctionsType *);
 

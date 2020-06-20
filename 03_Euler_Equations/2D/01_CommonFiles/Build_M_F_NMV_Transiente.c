@@ -15,8 +15,8 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *MatrixD
 	double gradUx[4], gradUy[4];
 	double **M2_out, **R1_out, **R2_out, *invN2_out, *U, *dU, *uB, *duB;
 	double Me[12][12], Ue[12], dUe[12];
-	double tolerance;
 	double *delta_old = FemStructs->delta_old;
+	double *deltaNMV_old = FemStructs->deltaNMV_old;
 	double *F = FemStructs->F;
 	double delta_t = Parameters->DeltaT_Build;
 	double alpha = Parameters->Alpha_Build;
@@ -24,7 +24,8 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *MatrixD
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 
-	tolerance = FemStructs->AuxBuild->tolerance;
+	//double delta_soma=0.0, delta_max=0.001;
+
 	neq = Parameters->neq;
 	nel = Parameters->nel;
 	M2_out = FemStructs->AuxBuild->M2;
@@ -154,9 +155,12 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *MatrixD
 
 		/*---------------------------------------------ALTERACAO Y^-1)-------------------------------------------------------*/
 		double A0[4][4];		
-		delta = FemFunctions->ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
+		delta = FemFunctions->ShockCapture(Parameters, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
 
-
+		//delta_soma += delta;
+		//if(delta > delta_max)
+		//	delta_max = delta;
+		
 		//------------------------------------------------------------------------------
 		//  MONTAGENS DAS MATRIZES
 		//------------------------------------------------------------------------------
@@ -420,7 +424,9 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *MatrixD
 		KBh412 = ninefortieth * Kc44;
 		
 
-		deltaNMV = delta;
+		deltaNMV = FemFunctions->ShockCapture_Micro(Parameters, deltaNMV_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub);
+	//	deltaNMV = delta;
+
 
 		// *** Matriz de Rigidez KBB 4x4
 		double KBB;
@@ -1287,7 +1293,9 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *MatrixD
 		FemFunctions->assembly(Parameters, MatrixData, FemStructs, e, Me);
 
 	}//for elemento
-	
+	//double	media_delta;
+	//media_delta = delta_soma/nel;
+	//printf("\n\n Media delta= %.12f\t delta maximo=%.12f\n\n",media_delta,delta_max);
 		
 	// Liberacao dos espacos alocados
 	free(U);

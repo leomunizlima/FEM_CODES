@@ -13,7 +13,6 @@ int Build_M_K_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *Matri
 	double delta, gamma, cv;
 	double gradUx[4], gradUy[4];
 	double Me[12][12], Ke[12][12], Ne[12][12], N[12], uBaux[4];
-	double tolerance;
 	double *R = FemStructs->F;
 	double *uB_old = FemStructs->uB;
 	double *delta_old = FemStructs->delta_old;
@@ -23,7 +22,8 @@ int Build_M_K_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *Matri
 	NodeType *Node = FemStructs->Node;
 	ElementType *Element = FemStructs->Element;
 
-	tolerance = FemStructs->AuxBuild->tolerance;
+	//double delta_soma=0.0, delta_max=0.001;
+		
 	nel = Parameters->nel;
 	neq = Parameters->neq;
 	
@@ -181,7 +181,11 @@ int Build_M_K_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *Matri
 		A0[3][3] = rhoi_e * V4 * V4;      
 		
 		//  Delta do método DD
-		delta = FemFunctions->ShockCapture(tolerance, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub); //COM Y^(-1) FIXO
+		delta = FemFunctions->ShockCapture(Parameters, delta_old, gradUx, gradUy, Ax, Ay, A0, dUb, y23, y31, y12, x32, x13, x21, twoArea, e, Parameters->invY, Ub); //COM Y^(-1) FIXO
+		
+		//delta_soma += delta;
+		//if(delta > delta_max)
+		//	delta_max = delta;
 			
 		//------------------------------------------------------------------------------
 		//  MONTAGENS DAS MATRIZES
@@ -925,7 +929,10 @@ int Build_M_K_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *Matri
 		FemFunctions->assembly(Parameters, MatrixData, FemStructs, e, Ae);
 		
 	}//for elemento
-
+	//double	media_delta;
+	//media_delta = delta_soma/nel;
+	//printf("\n\n Media delta= %.12f\t delta maximo=%.12f\n\n",media_delta,delta_max);
+		
 	// Liberacao dos espacos alocados
 	free(U);
 	free(dU);

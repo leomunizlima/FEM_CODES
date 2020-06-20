@@ -31,9 +31,30 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 			exit(1);
 		}
 	}
+	else if (strcasecmp(Parameters->StabilizationForm,"NMVe")==0){
+		if (strcasecmp(Parameters->TimeIntegration,"Predictor1")==0){
+			FemOtherFunctions->Build = Build_M_K_F_NMV_Estatica;		
+			*Predictor = Predictor_Old;
+		}else{
+			printf("Time integration method is not difined correctly!\n");
+			exit(1);
+		}
+		
+		if (strcasecmp(Parameters->ShockCapture,"YZBeta")==0){
+			FemFunctions->ShockCapture = Delta_YZBetaNMV1;
+			FemFunctions->ShockCapture_Micro = Delta_YZBetaNMV1;
+		}	
+
+		else{
+			printf("Shock capture is not defined correctly!\n");
+			exit(1);
+		}
+
+	}
 	else if (strcasecmp(Parameters->StabilizationForm,"NMV1")==0||
 		strcasecmp(Parameters->StabilizationForm,"NMV2")==0){
-		if (strcasecmp(Parameters->TimeIntegration,"Predictor1")==0){		
+		if (strcasecmp(Parameters->TimeIntegration,"Predictor1")==0){
+			//FemOtherFunctions->Build = Build_M_K_F_NMV_Estatica;		
 			FemOtherFunctions->Build = Build_M_K_F_NMV_Transiente;
 			*Predictor = Predictor_Old;
 		}
@@ -79,13 +100,13 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 		
 			if (strcasecmp(Parameters->StabilizationForm,"NMV1")==0)
 			{
-				FemFunctions->ShockCapture = Delta_YZBeta;
-				FemFunctions->ShockCapture_Micro = Delta_YZBeta;
+				FemFunctions->ShockCapture = Delta_YZBetaNMV1;
+				FemFunctions->ShockCapture_Micro = Delta_YZBetaNMV1;
 			}
 			else if (strcasecmp(Parameters->StabilizationForm,"NMV2")==0)
 			{
-				FemFunctions->ShockCapture = Delta_YZBeta;
-				FemFunctions->ShockCapture_Micro = Delta_YZBetaNMV;
+				FemFunctions->ShockCapture = Delta_YZBetaNMV2;
+				FemFunctions->ShockCapture_Micro = Delta_YZBetaNMV2_micro;
 			}
 
 		}	
