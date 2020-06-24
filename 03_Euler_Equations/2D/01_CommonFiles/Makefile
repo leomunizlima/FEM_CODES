@@ -92,6 +92,15 @@ rotationNMV.c \
 ../NACA0012/NACA0012_epresc.c \
 ../NACA0012/NACA0012_BC_no_penetrability.c \
 ../NACA0012/NACA0012_theta.c \
+../NACA0512/NACA0512_InitialSolution.c \
+../NACA0512/NACA0512_gamma.c \
+../NACA0512/NACA0512_cv.c \
+../NACA0512/NACA0512_rhopresc.c \
+../NACA0512/NACA0512_v1presc.c \
+../NACA0512/NACA0512_v2presc.c \
+../NACA0512/NACA0512_epresc.c \
+../NACA0512/NACA0512_BC_no_penetrability.c \
+../NACA0512/NACA0512_theta.c \
 ../NACA1512/NACA1512_InitialSolution.c \
 ../NACA1512/NACA1512_gamma.c \
 ../NACA1512/NACA1512_cv.c \

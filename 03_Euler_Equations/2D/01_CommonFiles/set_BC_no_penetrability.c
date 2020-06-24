@@ -1,6 +1,8 @@
 #include "EulerEquations.h"
 #include "../CYLINDER/cylinder.h"
 #include "../NACA0012/naca0012.h"
+#include "../NACA0512/naca0512.h"
+#include "../NACA1512/naca1512.h"
 
 void set_BC_no_penetrability(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 {
@@ -13,6 +15,16 @@ void set_BC_no_penetrability(ParametersType *Parameters, FemFunctionsType *FemFu
 		FemFunctions->BC_theta = NACA0012_theta;
 		FemFunctions->BC_General_theta = BC_theta_OK;
 		FemFunctions->BC_no_penetrability = NACA0012_BC_no_penetrability;
+	}
+	else if (strcasecmp(Parameters->ProblemTitle,"NACA0512")==0){
+		FemFunctions->BC_theta = NACA0512_theta;
+		FemFunctions->BC_General_theta = BC_theta_OK;
+		FemFunctions->BC_no_penetrability = NACA0512_BC_no_penetrability;
+	}
+	else if (strcasecmp(Parameters->ProblemTitle,"NACA1512")==0){
+		FemFunctions->BC_theta = NACA1512_theta;
+		FemFunctions->BC_General_theta = BC_theta_OK;
+		FemFunctions->BC_no_penetrability = NACA0512_BC_no_penetrability;
 	}
 	else{
 		FemFunctions->BC_theta = NULL;

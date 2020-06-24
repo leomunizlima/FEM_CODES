@@ -8,7 +8,7 @@ int Predictor_Old_BDF(ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 	int nel, neq, passo;
 	double t, dt, alpha, norm_a, norm_Da, tol_correction;
 	double *a, *R, *Da,*u, *u_old, *u1, *u2; 
-	double *uB_old, *delta_old, *delta_old_NMV;
+	double *uB_old, *delta_old, *deltaNMV_old;
 	AuxBuildStructuresType *AuxBuild;
 
 	nel = Parameters->nel;
@@ -21,7 +21,7 @@ int Predictor_Old_BDF(ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 	u2 = (double*) mycalloc("u2 of 'Predictor_Old_BDF'", neq + 1, sizeof(double));
 	uB_old = (double*) mycalloc("uB_old of 'Predictor_Old_BDF'", nel*NDOF, sizeof(double));
 	delta_old = (double*) mycalloc("delta_old of 'Predictor_BDF'", nel, sizeof(double));
-	delta_old_NMV = (double*) mycalloc("delta_old of 'Preditor_Old_BDF'", nel, sizeof(double));
+	deltaNMV_old = (double*) mycalloc("deltaNMV_old of 'Preditor_Old_BDF'", nel, sizeof(double));
 
 	u = FemStructs->u;
 	R = FemStructs->F;
@@ -32,12 +32,12 @@ int Predictor_Old_BDF(ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 	tol_correction = Parameters->NonLinearTolerance;
 	AuxBuild = (AuxBuildStructuresType*) mycalloc("AuxBuild of 'Predictor_Old_BDF'",1,sizeof(AuxBuildStructuresType));
 	AuxBuild->tolerance = Parameters->StabilizationTolerance;
-	AuxBuild->delta_old_NMV = delta_old_NMV;
 	FemStructs->AuxBuild = AuxBuild;
 	FemStructs->du = a;
 	FemStructs->uB = uB_old;
 	FemStructs->duB = NULL;
 	FemStructs->delta_old = delta_old;
+	FemStructs->deltaNMV_old = deltaNMV_old;
 
 	FemFunctions->InitialSolution(Parameters, FemStructs->Node, u);
 
@@ -165,7 +165,7 @@ int Predictor_Old_BDF(ParametersType *Parameters, MatrixDataType *MatrixData, Fe
 	free(u2);	
 	free(uB_old);
 	free(delta_old);
-	free(delta_old_NMV);
+	free(deltaNMV_old);
 	free(AuxBuild);
 
 	return 0;

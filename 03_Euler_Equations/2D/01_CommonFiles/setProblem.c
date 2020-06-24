@@ -6,6 +6,8 @@
 #include "../EXPLOSION/explosion.h"
 #include "../BAROCLINIC/baroclinic.h"
 #include "../NACA0012/naca0012.h"
+#include "../NACA0512/naca0512.h"
+#include "../NACA1512/naca1512.h"
 #include "../CYLINDER/cylinder.h"
 
 int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
@@ -70,6 +72,23 @@ int setProblem(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 		FemFunctions->v2presc = NACA0012_v2presc;
 		FemFunctions->epresc = NACA0012_epresc;
 		FemFunctions->InitialSolution = NACA0012_InitialSolution;
+	}else if (strcasecmp(Parameters->ProblemTitle,"NACA0512")==0){
+		FemFunctions->gamma = NACA0512_gamma;
+		FemFunctions->cv = NACA0512_cv;
+		FemFunctions->rhopresc = NACA0512_rhopresc;
+		FemFunctions->v1presc = NACA0512_v1presc;
+		FemFunctions->v2presc = NACA0512_v2presc;
+		FemFunctions->epresc = NACA0512_epresc;
+		FemFunctions->InitialSolution = NACA0512_InitialSolution;
+	}else if (strcasecmp(Parameters->ProblemTitle,"NACA1512")==0){
+		FemFunctions->gamma = NACA1512_gamma;
+		FemFunctions->cv = NACA1512_cv;
+		FemFunctions->rhopresc = NACA1512_rhopresc;
+		FemFunctions->v1presc = NACA1512_v1presc;
+		FemFunctions->v2presc = NACA1512_v2presc;
+		FemFunctions->epresc = NACA1512_epresc;
+		FemFunctions->InitialSolution = NACA1512_InitialSolution;
+	
 	}else if (strcasecmp(Parameters->ProblemTitle,"CYLINDER")==0){
 		FemFunctions->gamma = CYLINDER_gamma;
 		FemFunctions->cv = CYLINDER_cv;

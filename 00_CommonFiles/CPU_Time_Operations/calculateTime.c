@@ -25,8 +25,8 @@ void calculateTime(double Preprocess_Time, double Process_Time, double Postproce
 	#endif
 
 	#ifdef EulerEquations2D
-		sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, 
-		Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme,Parameters->nnodes, Parameters->nel);
+		sprintf(FileName,"../03_output/CPU_time_%s_%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->Preconditioned,
+		Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme,Parameters->Preconditioner,Parameters->nnodes, Parameters->nel);
 	#endif
 	
 	#ifdef SSNavierStokesEquations2D

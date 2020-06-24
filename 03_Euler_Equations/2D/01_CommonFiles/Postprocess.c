@@ -38,6 +38,7 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	printf("Solver used: %s\n", Parameters->Solver);
 	printf("Solver tolerance used: %E\n", Parameters->SolverTolerance);
 	printf("Preconditioner used: %s\n", Parameters->Preconditioner);
+	printf("Algebraic Local Preconditioner used: %s\n", Parameters->Preconditioned);
 	printf("Scaling used: %s\n", Parameters->Scaling);
 	printf("Maximum number of solver iteration: %d\n", Parameters->LinearMaxIter);
 	printf("Number of restart: %d\n", Parameters->KrylovBasisVectorsQuantity);
@@ -46,7 +47,8 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 		Parameters->FinalTime, Parameters->StopAtSteadyState, Parameters->CurrentTime);
 	printf("\n========================================================================\n\n");
 
-	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme, Parameters->Preconditioner, Parameters->nnodes, Parameters->nel);
+	sprintf(FileName,"../03_output/%s_%s_%s_%s_%s_%s_%s_%s_N%d_E%d.txt", Parameters->Experiments, Parameters->ProblemTitle, Parameters->StabilizationForm, Parameters->ShockCapture, Parameters->Preconditioned,
+		Parameters->TimeIntegration, Parameters->MatrixVectorProductScheme,Parameters->Preconditioner,Parameters->nnodes, Parameters->nel);
 
 	OutFile = myfopen(FileName,"w");
 	fprintf(OutFile, "\n\n======================= PROBLEM CHARACTERISTICS ========================\n\n");
@@ -63,9 +65,15 @@ int Postprocess(ParametersType *Parameters, MatrixDataType *MatrixData, FemStruc
 	fprintf(OutFile, "Correction stopped: %s\n", Parameters->StopMulticorrection);
 	fprintf(OutFile, "Maximum number of correction iteration: %d\n", Parameters->NonLinearMaxIter);
 	fprintf(OutFile, "Matrix vector product scheme: %s\n", Parameters->MatrixVectorProductScheme);
-	fprintf(OutFile, "Reordering: %s\n", Parameters->reordering);
+	if (strcasecmp(Parameters->MatrixVectorProductScheme,"CSR")==0){
+		fprintf(OutFile, "Reordering: %s (bandwidth before: %d) (bandwidth after: %d)\n", Parameters->reordering,
+		Parameters->bandwidth_bef, Parameters->bandwidth_aft);
+	}
 	fprintf(OutFile, "Solver used: %s\n", Parameters->Solver);
 	fprintf(OutFile, "Solver tolerance used: %E\n", Parameters->SolverTolerance);
+	fprintf(OutFile, "Preconditioner used: %s\n", Parameters->Preconditioner);
+	fprintf(OutFile, "Algebraic Local Preconditioner used: %s\n", Parameters->Preconditioned);
+	fprintf(OutFile, "Scaling used: %s\n", Parameters->Scaling);
 	fprintf(OutFile, "Maximum number of solver iteration: %d\n", Parameters->LinearMaxIter);
 	fprintf(OutFile, "Number of restart: %d\n", Parameters->KrylovBasisVectorsQuantity);
 	fprintf(OutFile, "Number of %s iterations: %d\n", Parameters->Solver, Parameters->iterations);

@@ -7,7 +7,7 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	int nel, neq, passo;
 	double t, dt, alpha, norm_a, norm_Da, tol_correction;
 	double *a, *aB, *auxVec, *Da, *DaB, *u, *u_old, **R2, *R2aux, *invN2, **M2, *M2aux, *F; //Parametros do Preditor
-	double *uB, *uB_old, *delta_old, *delta_old_NMV;
+	double *uB, *uB_old, *delta_old, *deltaNMV_old;
 	double lambda, A, B, dtTR, dtBDF2;
 	AuxBuildStructuresType *AuxBuild;
 
@@ -32,7 +32,7 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	uB = (double*) mycalloc("uB of 'Predictor_TRBDF2'", nel*NDOF, sizeof(double));
 	uB_old = (double*) mycalloc("uB of 'Predictor_TRBDF2'", nel*NDOF, sizeof(double));
 	delta_old = (double*) mycalloc("delta_old of 'Predictor_TRBDF2'", nel, sizeof(double));
-	delta_old_NMV = (double*) mycalloc("delta_old of 'Preditor_New'", nel, sizeof(double));
+	deltaNMV_old = (double*) mycalloc("deltaNMV_old of 'Preditor_New'", nel, sizeof(double));
 	
 	u = FemStructs->u;
 	F = FemStructs->F;
@@ -44,9 +44,9 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	AuxBuild->M2 = M2;
 	AuxBuild->R2 = R2;
 	AuxBuild->invN2 = invN2;
-	AuxBuild->delta_old_NMV = delta_old_NMV;
 	FemStructs->AuxBuild = AuxBuild;
 	FemStructs->delta_old = delta_old;
+	FemStructs->deltaNMV_old = deltaNMV_old;
 	FemStructs->du = a;
 	FemStructs->uB = uB;
 	FemStructs->duB = aB;
@@ -215,7 +215,7 @@ int Predictor_New_TRBDF2(ParametersType *Parameters, MatrixDataType *MatrixData,
 	free(R2aux);
 	free(R2);
 	free(invN2);
-	free(delta_old_NMV);
+	free(deltaNMV_old);
 	free(AuxBuild);
 	
 	return 0;
