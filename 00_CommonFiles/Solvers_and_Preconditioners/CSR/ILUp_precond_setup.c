@@ -158,7 +158,7 @@ void ILUp (SparMAT* csmat, SparILU* lu, int p)
 				L->ma[j] = NULL;
 				U->ma[j] = NULL;
 			}
-			printf( "fatal error: Zero diagonal found...\n" );
+			printf( "fatal error: Zero diagonal found in line %d ...\n",i);
 			exit(1);
 		}
 		D[i] = 1.0 / D[i];

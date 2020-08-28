@@ -79,6 +79,7 @@ typedef struct
 	int LinearMaxIter;                           // itermax: maximum number of iteration
 	int NonLinearMaxIter;                  // Maximum nonlinear iterations: number of multicorrection
 	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
+	double r; // Ideia do Isaac
 }ParametersType;
 
 typedef struct
@@ -146,6 +147,8 @@ typedef struct
 					double *, double, double, double, double, double, double, double, int, double *, double*);
 	double (*ShockCapture_Micro)(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
 					double *, double, double, double, double, double, double, double, int, double *, double*);
+	double (*ShockCapture_NOT)(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4],
+					double *, double, double, double, double, double, double, double, int, double *, double*);
 	void (*Ax_Ay_calculations)(double, double, double, double [4], double [4][4], double [4][4], double);
 	double (*BC_theta)(double, double);
 	void (*BC_no_penetrability)(int , int, int, NodeType *, double, double, double, double, double, double,
@@ -211,6 +214,9 @@ double Delta_YZBetaNMV2(ParametersType *, double *, double *, double *, double (
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
 double Delta_YZBetaNMV2_micro(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
+				double *, double, double, double, double, double, double, double, int, double *, double *);
+
+double Delta_NOT(ParametersType *, double *, double *, double *, double (*)[4], double (*)[4], double (*)[4], 
 				double *, double, double, double, double, double, double, double, int, double *, double *);
 
 void NO_BC_no_penetrability(int, int, int, NodeType *, double, double, double, double, double, double, double, double, double, double, 

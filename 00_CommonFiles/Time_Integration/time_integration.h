@@ -3,6 +3,7 @@
 #endif
 #ifdef EulerEquations2D
 	#include "../../03_Euler_Equations/2D/01_CommonFiles/EulerEquations.h"
+	int setDelta(ParametersType *,FemFunctionsType *, FemOtherFunctionsType *);
 #endif
 #ifdef SSNavierStokesEquations2D
 	#include "../../04_SS_NavierStokes_Equations/2D/01_CommonFiles/SSNavierStokesEquations.h"
@@ -34,6 +35,8 @@ int StopByIterations(ParametersType *, double, double, int);
 int StopByNorm(ParametersType *, double, double, int);
 
 int StopBySteadyState(ParametersType *, double *, double *, double);
+
+int StopBySteadyState2(ParametersType *, double *, double *, double);
 
 int StopByTime(ParametersType *, double *, double *, double);
 

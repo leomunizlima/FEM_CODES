@@ -1275,6 +1275,7 @@ int Build_M_F_NMV_Transiente(ParametersType *Parameters, MatrixDataType *MatrixD
 
 		F[neq] = 0;
 
+
 		// Matrizes e vetores para serem utilizados na funcao calcula_DaB		for (i=0; i<4; i++)
 		for (i=0; i<4; i++)
 			R2_out[e][i] = R2[i];

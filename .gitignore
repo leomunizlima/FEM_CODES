@@ -8,6 +8,10 @@
 *.vtu
 *.vts
 *.m
+*.png
+*.tiff
+*.sh
+
 
 # Object files
 *.o

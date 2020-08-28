@@ -13,6 +13,8 @@ void setStopCriteria(ParametersType *Parameters, FemFunctionsType *FemFunctions)
 
 	if(strcasecmp(Parameters->StopAtSteadyState,"YES") == 0)
 		FemFunctions->StopTimeIntegration = StopBySteadyState;
+	else if(strcasecmp(Parameters->StopAtSteadyState,"YES2") == 0)
+		FemFunctions->StopTimeIntegration = StopBySteadyState2;
 	else if(strcasecmp(Parameters->StopAtSteadyState,"NO") == 0)
 		FemFunctions->StopTimeIntegration = StopByTime;
 	else{
@@ -65,6 +67,61 @@ int StopBySteadyState(ParametersType *Parameters, double *u, double *u_old, doub
 		return 0;			
 			
 }
+
+int StopBySteadyState2(ParametersType *Parameters, double *u, double *u_old, double t)
+{
+	int i, neq;
+	double max_value, norm_max;
+	double *diff = mycalloc("diff of 'StopBySteadyState'",Parameters->neq,sizeof(double));
+	
+	neq = Parameters->neq;
+
+	max_value = fabs(u[0] - u_old[0]);
+
+	for (i=1; i<neq; i++){
+		diff[i] = fabs(u[i] - u_old[i]);
+		if (diff[i] > max_value)
+			max_value = diff[i];
+
+	}
+	norm_max = max_value; 
+
+	free(diff);
+
+	if (Parameters->TimeIntegrationTolerance > norm_max || fabs(Parameters->FinalTime-t) < Parameters->DeltaT){
+		Parameters->CurrentTime = t;	
+		return 1;
+	}
+	else
+		return 0;			
+			
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int StopByTime(ParametersType *Parameters, double *u, double *u_old, double t)
 {

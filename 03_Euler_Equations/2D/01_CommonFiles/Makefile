@@ -35,6 +35,7 @@ NO_BC_no_penetrability.c \
 BC_General_theta.c \
 set_BC_no_penetrability.c \
 Delta_CAU.c \
+Delta_NOT.c \
 Delta_CAU_NMV.c \
 Delta_YZBeta.c \
 Delta_YZBetaNMV1.c \
@@ -175,6 +176,7 @@ rotationNMV.c \
 ../../../00_CommonFiles/Reordering/reordering.c \
 ../../../00_CommonFiles/Reordering/symrcm.c \
 ../../../00_CommonFiles/Time_Integration/Criteria.c \
+../../../00_CommonFiles/Time_Integration/setDelta.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_New.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_Old.c \
 ../../../00_CommonFiles/Time_Integration/Predictor_New_BDF.c \

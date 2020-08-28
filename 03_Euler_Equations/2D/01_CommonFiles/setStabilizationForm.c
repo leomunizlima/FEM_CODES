@@ -120,6 +120,8 @@ int setStabilizationForm(ParametersType *Parameters,FemFunctionsType *FemFunctio
 		exit(1);
 	}
 
+	FemFunctions->ShockCapture_NOT = Delta_NOT;
+
 	return 0;
 }
 

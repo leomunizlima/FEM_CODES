@@ -7,7 +7,7 @@ EXPLOSION		:Problem title
 100			:Maximum number of solver iterations
 500			:Number of vectors in krylov basis
 GMRES			:Solver
-BlockDiag		:Preconditioner(ILUp, BlockDiag, Diag or NOT)
+ILU10			:Preconditioner(ILUp, BlockDiag, Diag or NOT)
 NOT			:Scaling (NOT or BlockScaling)	
 NOT			:Reordering (Spectral, RCM0, RCM1, Sloan0, Sloan1, Sloan2 or NOT)
 PREDICTOR1		:Time integration method (Predictor1, Predictor1_BDF1, Predictor1_BDF2, Predictor2, Predictor2_BDF1, or Predictor2_BDF2)
@@ -19,7 +19,7 @@ NOT			:Local preconditioning (VLR, WSCM or NOT)
 1.0			:Mach of reference
 3			:number of multicorrection
 ITERATION		:stop multicorrection(NORM or ITERATION)
-EBE			:Matrix vector product scheme (EBE, EBE2, EDE, EDE2, or CSR)
+CSR			:Matrix vector product scheme (EBE, EBE2, EDE, EDE2, or CSR)
 NMVe			:Stabilization form (SUPG or DD)
 YZBeta			:Operator captures (CAU, CAUDD or YZBeta)
 1.0			:invY[0]=1/U1

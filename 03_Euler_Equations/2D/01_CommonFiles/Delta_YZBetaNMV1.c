@@ -32,6 +32,7 @@ double Delta_YZBetaNMV1(ParametersType *Parameters,double *delta_old, double *gr
 	// Calculo de Z = dU + AxgradUx + AygradUy
 	for (i = 0; i < 4; i++)
 		Z[i] = dUb[i] + AxgradUx[i] + AygradUy[i];
+
 	
 	// norm_YZ = ||Y^{-1}*Z||
 	norm_YZ = sqrt(invY[0]*Z[0]*invY[0]*Z[0] + invY[1]*Z[1]*invY[1]*Z[1] + invY[2]*Z[2]*invY[2]*Z[2] + invY[3]*Z[3]*invY[3]*Z[3]);
@@ -66,7 +67,7 @@ double Delta_YZBetaNMV1(ParametersType *Parameters,double *delta_old, double *gr
 
 	//Calculando delta1
 	if(fabs(sum_norm_YdU) >= 1e-12)
-		aux_sum_norm_YdU = 1.0 / sqrt(sum_norm_YdU); 
+		aux_sum_norm_YdU = 1.0 / sqrt(sum_norm_YdU)+Parameters->r; /// aqui
 	else		
 		aux_sum_norm_YdU = 0.0;
 
@@ -85,7 +86,7 @@ double Delta_YZBetaNMV1(ParametersType *Parameters,double *delta_old, double *gr
 		aux_sum_norm_YdU = 0.0;
 
 	if(fabs(norm_YU) >= 1e-12)
-		aux_norm_YU = 1.0/norm_YU; 
+		aux_norm_YU = 1.0/norm_YU; /// aqui
 	else
 		aux_norm_YU = 0.0; 
 
