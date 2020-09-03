@@ -67,7 +67,7 @@ double Delta_YZBetaNMV1(ParametersType *Parameters,double *delta_old, double *gr
 
 	//Calculando delta1
 	if(fabs(sum_norm_YdU) >= 1e-12)
-		aux_sum_norm_YdU = 1.0 / sqrt(sum_norm_YdU)+Parameters->r; /// aqui
+		aux_sum_norm_YdU = 1.0 / sqrt(sum_norm_YdU); /// aqui
 	else		
 		aux_sum_norm_YdU = 0.0;
 

@@ -220,7 +220,9 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 			norm2_e = norm2_diff/norm2_e;
 
 			fprintf(stderr,"%.3lf\t%.12lf\t%.12lf\t%.12lf\t%.12lf\n",t,norm2_U,norm2_rho,norm2_e, norm2_U + norm2_rho + norm2_e);
-			
+		
+			if (norm2_e < 1e-7) break; 
+
 			//Residue freezing
 
 

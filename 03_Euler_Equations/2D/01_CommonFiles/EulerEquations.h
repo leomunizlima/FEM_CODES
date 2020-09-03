@@ -79,7 +79,6 @@ typedef struct
 	int LinearMaxIter;                           // itermax: maximum number of iteration
 	int NonLinearMaxIter;                  // Maximum nonlinear iterations: number of multicorrection
 	int bandwidth_bef, bandwidth_aft;	// half bandwidth before and after reordering
-	double r; // Ideia do Isaac
 }ParametersType;
 
 typedef struct
