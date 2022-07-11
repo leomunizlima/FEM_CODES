@@ -1,6 +1,6 @@
 #include "time_integration.h"
 
-int Special_Paraview_Output(int, ParametersType *, FemStructsType *, FemFunctionsType *, double *, double *, double *, double *);
+//int Special_Paraview_Output(int, ParametersType *, FemStructsType *, FemFunctionsType *, double *, double *, double *, double *);
 
 int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStructsType *FemStructs,
 		FemFunctionsType *FemFunctions, FemOtherFunctionsType *FemOtherFunctions)
@@ -298,6 +298,8 @@ int Predictor_New(ParametersType *Parameters, MatrixDataType *MatrixData, FemStr
 
 }
 
+
+/*
 int Special_Paraview_Output(int passo, ParametersType *Parameters, FemStructsType *FemStructs, FemFunctionsType *FemFunctions, double *rho, double *U1, double *U2, double *e)
 {
 	int I, nnodes, nel;
@@ -318,7 +320,7 @@ int Special_Paraview_Output(int passo, ParametersType *Parameters, FemStructsTyp
 		Y = Node[I].y;
 		gamma = FemFunctions->gamma(X, Y);
 
-	/*	if (Node[I].id[1] >= 0 && Node[I].v1Type < 0){				//my alteration
+		if (Node[I].id[1] >= 0 && Node[I].v1Type < 0){				//my alteration
 			theta = FemFunctions->BC_theta(X,Y);
 			U1[I] = cos( theta ) * aux;	//projection Us -> v1 = cos(theta) * Us	
 		}
@@ -327,7 +329,7 @@ int Special_Paraview_Output(int passo, ParametersType *Parameters, FemStructsTyp
 			theta = FemFunctions->BC_theta(X,Y);
 			U2[I] =  sin( theta ) * aux;		//projection Us -> v2 = sin(theta) * Us	
 		}
-	*/
+	
 		if (Node[I].v1Type < 0){				//my alteration
 			theta = FemFunctions->BC_theta(X,Y);
 			aux = U1[I];
@@ -405,4 +407,4 @@ int Special_Paraview_Output(int passo, ParametersType *Parameters, FemStructsTyp
 
 	return 0;
 }
-
+*/

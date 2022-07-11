@@ -85,7 +85,7 @@ typedef struct
 }MatrixDataType;
 
 typedef struct{
-	double **M2, **R2, *invN2, *delta_old_NMV;	
+	double **M2, **R1, **R2, *invN2, *delta_old_NMV;	
 	double tolerance;
 }AuxBuildStructuresType;
 
@@ -99,10 +99,10 @@ typedef struct
 	ElementType *Element;
 	double *u;
 	double *du;
+	double *delta_old, *deltaNMV_old;
 	double *F;
 	double *uB;
 	double *duB;
-	double *delta_old;
 	AuxBuildStructuresType *AuxBuild;
 }FemStructsType;
 
